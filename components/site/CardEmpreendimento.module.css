@@ -1,0 +1,74 @@
+.card {
+  display: block;
+  background: #fff;
+  border: 1px solid var(--navy-12);
+}
+.card:hover {
+  border-color: var(--steel);
+}
+
+.foto {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: var(--navy);
+  overflow: hidden;
+}
+
+/* Estado vazio: nome em tipografia grande sobre navy, nunca icone quebrado */
+.semFoto {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--gap-3);
+  color: #fff;
+  text-align: center;
+  font-family: var(--fonte-display);
+  font-size: 24px;
+  line-height: 1.15;
+}
+
+.selo {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: var(--off);
+  color: var(--navy);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+}
+
+.corpo {
+  padding: var(--gap-3);
+}
+
+.tipo {
+  font-size: 10.5px;
+  letter-spacing: var(--trilha-larga);
+  text-transform: uppercase;
+  color: var(--steel);
+}
+
+.nome {
+  font-family: var(--fonte-titulo);
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin-top: var(--gap-1);
+}
+
+.local {
+  font-size: 13px;
+  color: var(--navy-70);
+  margin-top: 2px;
+}
+
+.contagem {
+  font-family: var(--fonte-titulo);
+  font-variant-numeric: tabular-nums;
+  font-size: 12.5px;
+  color: var(--navy-45);
+  margin-top: var(--gap-2);
+}

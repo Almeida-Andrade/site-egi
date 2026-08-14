@@ -1,4 +1,4 @@
-import { criarClienteServidor } from '@/lib/supabase/server'
+import { criarClientePublico } from '@/lib/supabase/publico'
 import type {
   Empreendimento, EmpreendimentoComUnidades, EmpreendimentoResumo,
   Estatisticas, FiltrosEmpreendimento, Imagem, Unidade,
@@ -37,7 +37,7 @@ function resumir(linha: LinhaComRelacoes): EmpreendimentoResumo {
 export async function listarEmpreendimentos(
   filtros: FiltrosEmpreendimento = {},
 ): Promise<EmpreendimentoResumo[]> {
-  const supabase = await criarClienteServidor()
+  const supabase = criarClientePublico()
 
   let consulta = supabase
     .from('empreendimentos')
@@ -60,7 +60,7 @@ export async function listarEmpreendimentos(
 }
 
 export async function listarBuiltToSuit(): Promise<EmpreendimentoResumo[]> {
-  const supabase = await criarClienteServidor()
+  const supabase = criarClientePublico()
   const { data, error } = await supabase
     .from('empreendimentos')
     .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), imagens(${CAMPOS_IMAGENS})`)
@@ -74,7 +74,7 @@ export async function listarBuiltToSuit(): Promise<EmpreendimentoResumo[]> {
 export async function obterEmpreendimentoPorSlug(
   slug: string,
 ): Promise<EmpreendimentoComUnidades | null> {
-  const supabase = await criarClienteServidor()
+  const supabase = criarClientePublico()
   const { data, error } = await supabase
     .from('empreendimentos')
     .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), imagens(${CAMPOS_IMAGENS})`)
@@ -93,21 +93,21 @@ export async function obterEmpreendimentoPorSlug(
 }
 
 export async function listarSlugsPublicados(): Promise<string[]> {
-  const supabase = await criarClienteServidor()
+  const supabase = criarClientePublico()
   const { data, error } = await supabase.from('empreendimentos').select('slug')
   if (error) throw new Error(`Falha ao listar slugs: ${error.message}`)
   return (data ?? []).map((l) => l.slug as string)
 }
 
 export async function listarCidades(): Promise<string[]> {
-  const supabase = await criarClienteServidor()
+  const supabase = criarClientePublico()
   const { data, error } = await supabase.from('empreendimentos').select('cidade')
   if (error) throw new Error(`Falha ao listar cidades: ${error.message}`)
   return [...new Set((data ?? []).map((l) => l.cidade as string))].sort()
 }
 
 export async function obterEstatisticas(): Promise<Estatisticas> {
-  const supabase = await criarClienteServidor()
+  const supabase = criarClientePublico()
 
   const [{ count: empreendimentos, error: erroContagem }, { data: unidades, error: erroUnidades }] = await Promise.all([
     supabase.from('empreendimentos').select('id', { count: 'exact', head: true }),

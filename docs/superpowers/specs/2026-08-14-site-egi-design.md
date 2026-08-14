@@ -50,7 +50,7 @@ O objetivo é um site que sirva a três propósitos, nesta ordem de importância
 |---|---|
 | Escopo do negócio | Locação de imóveis próprios, portfólio misto |
 | Preço | Fora do sistema. Não aparece no site nem é guardado no banco |
-| Stack | Next.js (App Router) + Supabase + Vercel |
+| Stack | Next.js (App Router) + CSS Modules + Supabase + Vercel |
 | Contato | WhatsApp direto, sem formulário |
 | Autenticação | Supabase Auth, contas criadas manualmente |
 | Unidades ocupadas | Aparecem no site, marcadas "Ocupado", sem botão de contato |
@@ -105,6 +105,15 @@ O azul `#0000FE` é 100% saturado. Em área grande ele vibra na tela e cansa a
 vista — é justamente o que dá aparência de template. Fica restrito a elementos de
 poucos pixels.
 
+### Estilos
+
+CSS Modules, sem framework de utilitários. A direção é editorial e específica —
+tipografia serifada grande, grade assimétrica, tabela densa — ou seja, muito
+estilo próprio por componente e pouca repetição de utilitário, que é onde um
+framework como Tailwind rende menos e polui o JSX. Tokens globais em
+`app/tokens.css`, estilos de componente em arquivos `.module.css` ao lado do
+componente.
+
 ### Tipografia
 
 - **Instrument Serif** — títulos da home e números grandes. Dá o tom editorial.
@@ -136,7 +145,9 @@ create table empreendimentos (
   nome          text not null,
   descricao     text,
   tipo          text not null check (tipo in
-                  ('galeria','predio_comercial','galpao','residencial','misto','terreno')),
+                  ('centro_comercial','galpao','residencial','casa','sala_avulsa',
+                   'apartamento','misto','terreno')),
+  built_to_suit boolean not null default false,
   endereco      text,
   bairro        text,
   cidade        text not null default 'São Luís',
@@ -158,7 +169,8 @@ create table unidades (
   empreendimento_id uuid not null references empreendimentos(id) on delete cascade,
   identificacao     text not null,
   tipo              text not null check (tipo in
-                      ('sala','loja','galpao','kitnet','apartamento','terreno')),
+                      ('loja','sala','mezanino','cobertura','galpao','apartamento',
+                       'casa','vaga','container','area','terreno')),
   area_m2           numeric(10,2),
   piso              text,
   status            text not null default 'disponivel'
@@ -350,43 +362,88 @@ O site é a única presença indexável da empresa, então isso não é detalhe.
 O teste de RLS é o mais importante: é a única barreira entre o banco e a
 internet, e uma policy errada não dá erro — ela simplesmente vaza.
 
-## 15. Dados de mockup
+## 15. Portfólio real e dados de seed
 
-A primeira entrega roda com dados fictícios, para que o site possa ser avaliado
-visualmente antes da relação real chegar. O seed cobre deliberadamente os casos
-que estressam o layout:
+O relatório de contratos de 03/08/2026 fornecido pela empresa dá a estrutura
+real: **18 empreendimentos, cerca de 148 unidades, 14 disponíveis** — ocupação de
+aproximadamente 91%.
 
-| Empreendimento | Tipo | Unidades | Localização |
+| Empreendimento | Tipo | Unidades | Disponíveis |
 |---|---|---|---|
-| Center Valley | galeria | 18 salas e lojas, 4 livres | endereço exato |
-| CD Tirirical | galpão | 1, ocupada | endereço exato |
-| Galeria Rio Anil | predio_comercial | 6 salas, 2 livres | endereço exato |
-| Kitnets Cohab | residencial | 12 kitnets, 7 livres | **região, sem endereço** |
-| Galpões Itaqui | galpão | 3, todos ocupados | endereço exato |
+| Mateus Maiobão | galpao · built to suit | 1 | 0 |
+| Mateus Pedreiras | galpao · built to suit | 1 | 0 |
+| ODT Beach | misto · built to suit | 1 | 0 |
+| Galpão Turu | galpao | 1 | 0 |
+| Salas 1105/1106 Century | sala_avulsa | 2 | 0 |
+| Sala 603 Jaracaty | sala_avulsa | 1 | 0 |
+| Casa Calhau | casa | 1 | 0 |
+| Casa Maiobão | casa | 1 | 0 |
+| Apto Est. Mar 134 | apartamento | 1 | 0 |
+| Centro Comercial Ana Dina | centro_comercial | 21 | 9 |
+| Centro Comercial e Empresarial Galeria A | centro_comercial | 13 | 0 |
+| Centro Comercial Olgamérica | centro_comercial | 12 | 0 |
+| Centro Comercial Pátio Aririzal | centro_comercial | 20 | 1 |
+| Centro Comercial Pátio Brasil | centro_comercial | 11 | 0 |
+| Condomínio Residencial Angra dos Reis | residencial | 16 | 0 |
+| Condomínio Residencial Búzios | residencial | 12 | 0 |
+| Condomínio Residencial Guarujá | residencial | 20 | 3 |
+| Condomínio Residencial Paraty | residencial | 13 | 1 |
 
-Os quatro extremos que precisam funcionar: um empreendimento de unidade única, um
-de dezoito, um totalmente ocupado e um sem endereço exato.
+Abrangência geográfica: São Luís, São José de Ribamar (as lojas 04 a 11 da
+Olgamérica estão locadas a secretarias da prefeitura) e Pedreiras.
 
-As fotos do seed vêm do Unsplash, escolhidas por coerência de tipo — galpão
-logístico com foto de galpão, galeria com foto de galeria. Ficam num diretório
-`seed/` e são enviadas ao bucket pelo script, não referenciadas por URL externa,
-para que o caminho de upload seja exercitado de verdade desde o começo.
+### O que NÃO entra no banco
 
-O seed é idempotente e reversível: um comando popula, outro limpa. Quando a
-relação real chegar, a limpeza roda uma vez e os dados fictícios não deixam
-resíduo.
+O relatório de origem é um documento de contratos. Contém nome completo de
+locatários pessoa física, valor de cada aluguel, datas de vigência e situação de
+pagamento. **Nada disso entra no Supabase.** A base fica exposta na internet e a
+chave anon é pública por design; dado que não existe no banco não vaza.
+
+Do relatório, migram exatamente três informações: nome do empreendimento,
+identificação da unidade e disponibilidade. A anotação "(50%)" que aparece em
+Pátio Aririzal e Búzios é participação societária e também fica de fora.
+
+### Built to suit
+
+Mateus Maiobão, Mateus Pedreiras e ODT Beach nunca estarão disponíveis para
+locação — são imóveis construídos sob medida para o locatário. Ainda assim são o
+ativo de imagem mais forte da empresa. Ganham `built_to_suit = true` e aparecem
+na home como seção de cases, com o Grupo Mateus nomeado, em vez de linha em
+tabela de disponibilidade.
+
+### Seed
+
+O seed usa a estrutura real acima — nomes de empreendimentos, identificação de
+unidades e status verdadeiros. Apenas as fotos são de terceiros (Unsplash),
+escolhidas por coerência de tipo, e ficam num diretório `seed/fotos/`. São
+enviadas ao bucket pelo próprio script, e não referenciadas por URL externa, para
+que o caminho de upload seja exercitado de verdade desde o começo.
+
+Os endereços entram vazios com `localizacao_aproximada = true`, exibindo apenas
+cidade, até que a conferência manual no Google Maps seja feita.
+
+O seed é idempotente e reversível: um comando popula, outro limpa.
+
+O seed inclui um 19º registro despublicado, `Galpão Maracanã (rascunho)`, que
+existe apenas para o teste de RLS verificar que conteúdo não publicado é
+invisível ao público.
 
 ## 16. Pendências
 
-- **Relação de empreendimentos:** o usuário vai enviar a lista completa com
-  localizações. Os endereços precisarão ser conferidos manualmente no Google Maps
-  para obter o embed correto de cada um — inclusive decidindo, caso a caso, quais
-  entram como região em vez de endereço exato. Trabalho previsto para depois da
-  implementação.
+- **Endereços:** o relatório de contratos deu os nomes e a estrutura de unidades,
+  mas não os endereços. Cada um dos 18 empreendimentos precisará ser localizado
+  manualmente no Google Maps para obter o embed — inclusive decidindo, caso a
+  caso, quais ficam como região em vez de endereço exato. Trabalho previsto para
+  depois da implementação.
 - **Logo:** arquivo `EGI_LOGO.png` já disponível em
   `C:\Users\victo\Downloads\EGI_LOGO.png`. Falta versão vetorial, se existir.
 - **Fotos reais:** os mockups usam imagens do Unsplash. A qualidade da direção
   escura depende diretamente da qualidade das fotos dos imóveis.
 - **Domínio:** a definir. `grupoaandrade.com.br` existe e está vazio.
-- **Números institucionais:** a home tem faixa de estatísticas (m² administrados,
-  anos de mercado). Os valores reais precisam vir da empresa.
+- **Números institucionais:** a home tem faixa de estatísticas. Empreendimentos
+  (18), unidades (~148) e taxa de ocupação (~91%) saem do próprio banco. Faltam
+  metros quadrados administrados e ano de fundação, que precisam vir da empresa.
+
+- **Áreas em m²:** o relatório de contratos não traz área das unidades. A coluna
+  `area_m2` fica nula no seed, e a tabela da ficha omite a coluna quando nenhuma
+  unidade do empreendimento tem área preenchida.

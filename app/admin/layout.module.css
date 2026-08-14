@@ -1,0 +1,33 @@
+.moldura {
+  min-height: 100vh;
+  background: var(--off);
+}
+
+.barra {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-4);
+  padding: var(--gap-3) var(--gap-4);
+  background: var(--navy);
+  color: #fff;
+}
+
+.logo {
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  font-size: 13px;
+}
+
+.navegacao {
+  display: flex;
+  gap: var(--gap-4);
+  font-size: 13px;
+  margin-left: var(--gap-4);
+}
+
+.usuario {
+  margin-left: auto;
+  font-size: 12px;
+  opacity: 0.6;
+}

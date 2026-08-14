@@ -1,0 +1,98 @@
+.form {
+  display: grid;
+  gap: var(--gap-3);
+  background: #fff;
+  border: 1px solid var(--navy-12);
+  padding: var(--gap-4);
+}
+
+.campo {
+  display: grid;
+  gap: var(--gap-1);
+}
+.campo > span {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy-45);
+}
+.campo input,
+.campo select,
+.campo textarea {
+  font: inherit;
+  font-size: 14px;
+  padding: 10px;
+  border: 1px solid var(--navy-12);
+  background: #fff;
+  color: var(--navy);
+}
+
+.linha {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--gap-3);
+}
+
+.chaves {
+  display: grid;
+  gap: var(--gap-2);
+  font-size: 13px;
+}
+
+.erro {
+  font-size: 13px;
+  color: #b00020;
+  max-width: 60ch;
+}
+
+.acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-4);
+}
+
+.salvar {
+  font: inherit;
+  font-size: 13px;
+  padding: 12px 24px;
+  background: var(--navy);
+  color: #fff;
+  border: 0;
+  cursor: pointer;
+}
+.salvar:disabled {
+  opacity: 0.6;
+}
+
+.arquivar {
+  font: inherit;
+  font-size: 12.5px;
+  background: none;
+  border: 0;
+  color: var(--navy-45);
+  cursor: pointer;
+}
+.arquivar:hover {
+  color: #b00020;
+}
+
+.desfazer {
+  font-size: 13px;
+  background: var(--navy-08);
+  padding: var(--gap-3);
+}
+.desfazer button {
+  font: inherit;
+  font-size: 13px;
+  background: none;
+  border: 0;
+  color: var(--pure);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .linha {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,36 @@
+.pagina {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--gap-5) var(--gap-4);
+}
+
+.voltar {
+  font-size: 12.5px;
+  color: var(--navy-45);
+}
+.voltar:hover {
+  color: var(--pure);
+}
+
+.titulo {
+  font-family: var(--fonte-titulo);
+  font-size: 26px;
+  font-weight: 600;
+  margin: var(--gap-2) 0 var(--gap-4);
+}
+
+.dica {
+  font-size: 13px;
+  color: var(--navy-45);
+  margin-bottom: var(--gap-3);
+}
+
+.secao {
+  font-family: var(--fonte-titulo);
+  font-size: var(--escala-secao);
+  letter-spacing: var(--trilha-larga);
+  text-transform: uppercase;
+  color: var(--navy-45);
+  font-weight: 500;
+  margin: var(--gap-5) 0 var(--gap-3);
+}

@@ -1,0 +1,13 @@
+.botao {
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  background: transparent;
+  border: 1px solid var(--branco-24);
+  color: #fff;
+  padding: 5px 12px;
+}
+.botao:hover {
+  background: var(--pure);
+  border-color: var(--pure);
+}

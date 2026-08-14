@@ -1,0 +1,51 @@
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--gap-4);
+  padding: 20px var(--gap-5);
+  border-bottom: 1px solid var(--navy-12);
+}
+
+.escuro {
+  background: var(--navy);
+  color: #fff;
+  border-bottom-color: var(--branco-09);
+}
+
+.logo {
+  font-family: var(--fonte-titulo);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  font-size: 15px;
+  line-height: 1;
+}
+.logo span {
+  display: block;
+  margin-top: 3px;
+  font-weight: 400;
+  font-size: 9.5px;
+  letter-spacing: 0.3em;
+  opacity: 0.55;
+}
+
+.navegacao {
+  display: flex;
+  gap: var(--gap-5);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+.navegacao a { padding-bottom: 3px; border-bottom: 2px solid transparent; }
+.navegacao a:hover { border-bottom-color: var(--pure); }
+
+.acao {
+  border: 1px solid currentColor;
+  padding: 9px 18px;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+.acao:hover { background: var(--pure); border-color: var(--pure); color: #fff; }
+
+@media (max-width: 860px) {
+  .navegacao { display: none; }
+}

@@ -1,0 +1,14 @@
+.chip {
+  display: inline-block;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 500;
+  padding: 4px 9px;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+.disponivel { background: rgba(59, 88, 165, 0.14); color: var(--steel); }
+.ocupado    { background: var(--navy-08); color: var(--navy-45); }
+.reservado  { background: rgba(0, 0, 254, 0.1); color: var(--pure); }
+.manutencao { background: var(--navy-08); color: var(--navy-45); }

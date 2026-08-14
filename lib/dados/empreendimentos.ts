@@ -10,6 +10,15 @@ const CAMPOS = `
   cep, localizacao_aproximada, maps_embed_url, maps_link, publicado, destaque, ordem
 `
 
+const CAMPOS_UNIDADES = `
+  id, empreendimento_id, identificacao, tipo, area_m2, piso, status, disponivel_em,
+  descricao, caracteristicas, ordem
+`
+
+const CAMPOS_IMAGENS = `
+  id, storage_path, alt, capa, ordem
+`
+
 type LinhaComRelacoes = Empreendimento & {
   unidades: Unidade[]
   imagens: Imagem[]
@@ -32,7 +41,7 @@ export async function listarEmpreendimentos(
 
   let consulta = supabase
     .from('empreendimentos')
-    .select(`${CAMPOS}, unidades(*), imagens(*)`)
+    .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), imagens(${CAMPOS_IMAGENS})`)
     .eq('built_to_suit', false)
     .order('ordem', { ascending: true })
     .order('nome', { ascending: true })
@@ -54,7 +63,7 @@ export async function listarBuiltToSuit(): Promise<EmpreendimentoResumo[]> {
   const supabase = await criarClienteServidor()
   const { data, error } = await supabase
     .from('empreendimentos')
-    .select(`${CAMPOS}, unidades(*), imagens(*)`)
+    .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), imagens(${CAMPOS_IMAGENS})`)
     .eq('built_to_suit', true)
     .order('ordem', { ascending: true })
 
@@ -68,7 +77,7 @@ export async function obterEmpreendimentoPorSlug(
   const supabase = await criarClienteServidor()
   const { data, error } = await supabase
     .from('empreendimentos')
-    .select(`${CAMPOS}, unidades(*), imagens(*)`)
+    .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), imagens(${CAMPOS_IMAGENS})`)
     .eq('slug', slug)
     .maybeSingle()
 
@@ -100,12 +109,13 @@ export async function listarCidades(): Promise<string[]> {
 export async function obterEstatisticas(): Promise<Estatisticas> {
   const supabase = await criarClienteServidor()
 
-  const [{ count: empreendimentos }, { data: unidades, error }] = await Promise.all([
+  const [{ count: empreendimentos, error: erroContagem }, { data: unidades, error: erroUnidades }] = await Promise.all([
     supabase.from('empreendimentos').select('id', { count: 'exact', head: true }),
     supabase.from('unidades').select('status'),
   ])
 
-  if (error) throw new Error(`Falha ao calcular estatísticas: ${error.message}`)
+  if (erroContagem) throw new Error(`Falha ao contar empreendimentos: ${erroContagem.message}`)
+  if (erroUnidades) throw new Error(`Falha ao calcular estatísticas: ${erroUnidades.message}`)
 
   const total = unidades?.length ?? 0
   const disponiveis = (unidades ?? []).filter((u) => u.status === 'disponivel').length

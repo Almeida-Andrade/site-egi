@@ -13,7 +13,20 @@
   border-bottom-color: var(--branco-09);
 }
 
+.marca {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-2);
+}
+
+.selo {
+  width: 40px;
+  height: 40px;
+  flex: none;
+}
+
 .logo {
+  display: block;
   font-family: var(--fonte-titulo);
   font-weight: 700;
   letter-spacing: 0.22em;

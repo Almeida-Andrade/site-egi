@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import estilos from './Cabecalho.module.css'
 
@@ -9,9 +10,19 @@ const variantesEstilos: Record<'claro' | 'escuro', string> = {
 export function Cabecalho({ variante = 'claro' }: { variante?: 'claro' | 'escuro' }) {
   return (
     <header className={`${estilos.cabecalho} ${variantesEstilos[variante]}`.trim()}>
-      <Link href="/" className={estilos.logo}>
-        EGI
-        <span>EMPREENDIMENTOS</span>
+      <Link href="/" className={estilos.marca} aria-label="E.G.I Empreendimentos — início">
+        <Image
+          src="/logo-egi.png"
+          alt=""
+          width={40}
+          height={40}
+          className={estilos.selo}
+          priority
+        />
+        <span className={estilos.logo} aria-hidden="true">
+          EGI
+          <span>EMPREENDIMENTOS</span>
+        </span>
       </Link>
 
       <nav className={estilos.navegacao} aria-label="Principal">

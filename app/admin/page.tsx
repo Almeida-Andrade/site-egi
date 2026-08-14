@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { criarClienteNavegador } from '@/lib/supabase/client'
 import estilos from './page.module.css'
@@ -35,9 +36,14 @@ export default function Login() {
   return (
     <main className={estilos.pagina}>
       <form className={estilos.caixa} onSubmit={entrar}>
-        <div className={estilos.logo}>
-          EGI<span>EMPREENDIMENTOS</span>
-        </div>
+        <Image
+          src="/logo-egi.png"
+          alt="E.G.I Empreendimentos"
+          width={64}
+          height={64}
+          className={estilos.selo}
+          priority
+        />
         <h1 className={estilos.titulo}>Painel administrativo</h1>
 
         <label className={estilos.campo}>

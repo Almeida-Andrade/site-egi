@@ -80,3 +80,10 @@
   opacity: 0.6;
   cursor: default;
 }
+
+.selo {
+  width: 64px;
+  height: 64px;
+  justify-self: center;
+  margin-bottom: var(--gap-2);
+}

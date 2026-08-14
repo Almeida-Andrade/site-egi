@@ -69,24 +69,6 @@ export const MARCAS: Marca[] = [
   { nome: 'Nefroclínicas', arquivo: '/marcas/nefroclinicas.svg', proporcao: 4.4 },
 ]
 
-export const PASSOS: { titulo: string; texto: string }[] = [
-  {
-    titulo: 'Escolha o espaço',
-    texto:
-      'O portfólio mostra unidade por unidade, com a situação de cada uma. O que está livre está marcado como livre.',
-  },
-  {
-    titulo: 'Fale direto conosco',
-    texto:
-      'Uma mensagem no WhatsApp já identifica o imóvel e a unidade. Sem formulário, sem espera por retorno de corretor.',
-  },
-  {
-    titulo: 'Negocie com o proprietário',
-    texto:
-      'Os imóveis são nossos. Não há intermediação nem cadeia de comissões entre você e quem decide.',
-  },
-]
-
 /** Números do Center Valley conforme o portfólio de obras do grupo. */
 export const CENTER_VALLEY = {
   cidade: 'Pedreiras — MA',

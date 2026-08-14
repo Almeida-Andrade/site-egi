@@ -13,7 +13,7 @@ import {
 } from '@/lib/dados/empreendimentos'
 import { CarrosselMarcas } from '@/components/site/CarrosselMarcas'
 import { OndeEstamos } from '@/components/site/OndeEstamos'
-import { CATEGORIAS, CENTER_VALLEY, PASSOS } from '@/lib/conteudo'
+import { CATEGORIAS, CENTER_VALLEY } from '@/lib/conteudo'
 import { DadosEstruturados } from '@/components/site/DadosEstruturados'
 import estilos from './page.module.css'
 
@@ -217,31 +217,12 @@ export default async function Home() {
               <CarrosselMarcas />
             </Revelar>
           </section>
-
-          <section className={estilos.secao} aria-labelledby="titulo-passos">
-            <Revelar>
-              <h2 id="titulo-passos" className={estilos.secaoTitulo}>
-                Como funciona
-              </h2>
-            </Revelar>
-            <ol className={estilos.passos}>
-              {PASSOS.map((p, i) => (
-                <Revelar key={p.titulo} indice={i} esticar>
-                  <li className={estilos.passo}>
-                    <span className={estilos.passoNumero}>{String(i + 1).padStart(2, '0')}</span>
-                    <h3 className={estilos.passoTitulo}>{p.titulo}</h3>
-                    <p className={estilos.passoTexto}>{p.texto}</p>
-                  </li>
-                </Revelar>
-              ))}
-            </ol>
-          </section>
         </div>
 
         <OndeEstamos />
       </main>
 
-      <Rodape colado />
+      <Rodape />
 
       <DadosEstruturados
         dados={{

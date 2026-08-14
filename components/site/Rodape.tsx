@@ -2,14 +2,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import estilos from './Rodape.module.css'
 
-/**
- * `colado` remove o respiro acima do rodapé. Serve quando a seção anterior já é
- * navy — na home, a faixa de chamada — porque aí o respiro apareceria como uma
- * tira clara entre dois blocos escuros.
- */
-export function Rodape({ colado = false }: { colado?: boolean } = {}) {
+export function Rodape() {
   return (
-    <footer className={`${estilos.rodape} ${colado ? estilos.colado : ''}`.trim()}>
+    <footer className={estilos.rodape}>
       <div className={estilos.faixa}>
         <div>
           <Image

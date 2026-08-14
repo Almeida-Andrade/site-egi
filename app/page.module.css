@@ -106,11 +106,6 @@
   margin: 0 auto;
   padding: var(--gap-7) var(--gap-5) 0;
 }
-/* A última seção de cada bloco já traz margin-bottom; sem isto o respiro
-   dobraria antes das faixas de largura total. */
-.conteudo > .secao:last-child {
-  margin-bottom: 0;
-}
 
 .secao {
   margin-bottom: var(--gap-7);
@@ -292,45 +287,8 @@
   margin-top: var(--gap-5);
 }
 
-/* ---------- Como funciona ---------- */
-
-.passos {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap-4);
-  margin: var(--gap-5) 0 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: passo;
-}
-
-.passo {
-  border-top: 2px solid var(--navy);
-  padding-top: var(--gap-3);
-}
-.passoNumero {
-  font-family: var(--fonte-display);
-  font-size: 15px;
-  color: var(--steel);
-  font-variant-numeric: tabular-nums;
-}
-.passoTitulo {
-  margin-top: var(--gap-1);
-  font-family: var(--fonte-titulo);
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: -0.015em;
-}
-.passoTexto {
-  margin-top: var(--gap-2);
-  font-size: 14.5px;
-  line-height: 1.6;
-  color: var(--navy-70);
-}
-
 @media (max-width: 960px) {
-  .categorias,
-  .passos {
+  .categorias {
     grid-template-columns: repeat(2, 1fr);
   }
   .valley {
@@ -345,8 +303,7 @@
 }
 
 @media (max-width: 640px) {
-  .categorias,
-  .passos {
+  .categorias {
     grid-template-columns: 1fr;
   }
   .valleyNumeros {

@@ -1,9 +1,14 @@
 import Link from 'next/link'
 import estilos from './Cabecalho.module.css'
 
+const variantesEstilos: Record<'claro' | 'escuro', string> = {
+  claro: '',
+  escuro: estilos.escuro,
+}
+
 export function Cabecalho({ variante = 'claro' }: { variante?: 'claro' | 'escuro' }) {
   return (
-    <header className={`${estilos.cabecalho} ${estilos[variante]}`}>
+    <header className={`${estilos.cabecalho} ${variantesEstilos[variante]}`.trim()}>
       <Link href="/" className={estilos.logo}>
         EGI
         <span>EMPREENDIMENTOS</span>

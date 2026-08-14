@@ -13,14 +13,14 @@ type LinhaAdmin = {
   tipo: TipoEmpreendimento
   cidade: string
   publicado: boolean
-  unidades: { status: string }[]
+  unidades: { status: string; arquivado_em: string | null }[]
 }
 
 export default async function ListaAdmin() {
   const supabase = await criarClienteServidor()
   const { data, error } = await supabase
     .from('empreendimentos')
-    .select('id, nome, slug, tipo, cidade, publicado, unidades(status)')
+    .select('id, nome, slug, tipo, cidade, publicado, unidades(status, arquivado_em)')
     .is('arquivado_em', null)
     .order('ordem')
 
@@ -49,22 +49,27 @@ export default async function ListaAdmin() {
           </tr>
         </thead>
         <tbody>
-          {linhas.map((l) => (
-            <tr key={l.id}>
-              <td>
-                <Link href={`/admin/empreendimentos/${l.id}`} className={estilos.link}>
-                  {l.nome}
-                </Link>
-              </td>
-              <td>{rotuloTipoEmpreendimento(l.tipo)}</td>
-              <td>{l.cidade}</td>
-              <td className={estilos.num}>{l.unidades.length}</td>
-              <td className={estilos.num}>
-                {l.unidades.filter((u) => u.status === 'disponivel').length}
-              </td>
-              <td>{l.publicado ? 'Publicado' : 'Rascunho'}</td>
-            </tr>
-          ))}
+          {linhas.map((l) => {
+            // Unidade arquivada não conta: o painel mostraria mais unidades do
+            // que o site, e o operador passaria a informação errada.
+            const ativas = l.unidades.filter((u) => u.arquivado_em == null)
+            return (
+              <tr key={l.id}>
+                <td>
+                  <Link href={`/admin/empreendimentos/${l.id}`} className={estilos.link}>
+                    {l.nome}
+                  </Link>
+                </td>
+                <td>{rotuloTipoEmpreendimento(l.tipo)}</td>
+                <td>{l.cidade}</td>
+                <td className={estilos.num}>{ativas.length}</td>
+                <td className={estilos.num}>
+                  {ativas.filter((u) => u.status === 'disponivel').length}
+                </td>
+                <td>{l.publicado ? 'Publicado' : 'Rascunho'}</td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </main>

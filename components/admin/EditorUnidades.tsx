@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { criarClienteNavegador } from '@/lib/supabase/client'
 import { revalidarSite } from '@/lib/dados/admin'
-import type { StatusUnidade, TipoUnidade, Unidade } from '@/lib/tipos'
+import type { StatusUnidade, TipoUnidade, Unidade, UnidadeAdmin } from '@/lib/tipos'
 import { rotuloStatus, rotuloTipoUnidade } from '@/lib/utils/rotulos'
 import { ordenarUnidades } from '@/lib/dados/ordenacao'
 import estilos from './EditorUnidades.module.css'
@@ -27,20 +27,33 @@ export function EditorUnidades({
   empreendimentoId,
   slug,
   iniciais,
+  arquivadasIniciais,
 }: {
   empreendimentoId: string
   slug: string
   iniciais: Unidade[]
+  arquivadasIniciais: UnidadeAdmin[]
 }) {
   const [unidades, setUnidades] = useState(ordenarUnidades(iniciais))
+  const [arquivadas, setArquivadas] = useState(arquivadasIniciais)
   const [nova, setNova] = useState({ identificacao: '', tipo: 'loja' as TipoUnidade })
   const [salvandoId, setSalvandoId] = useState<string | null>(null)
   const [erro, setErro] = useState<string | null>(null)
+  const [aviso, setAviso] = useState<string | null>(null)
+
+  async function revalidar() {
+    try {
+      await revalidarSite(slug)
+    } catch {
+      setAviso('Alteração salva, mas o site público pode levar até um minuto para refletir.')
+    }
+  }
 
   async function trocarStatus(unidade: Unidade, status: StatusUnidade) {
     if (unidade.status === status) return
     setSalvandoId(unidade.id)
     setErro(null)
+    setAviso(null)
 
     const supabase = criarClienteNavegador()
     const { error } = await supabase.from('unidades').update({ status }).eq('id', unidade.id)
@@ -53,7 +66,7 @@ export function EditorUnidades({
 
     setUnidades(unidades.map((u) => (u.id === unidade.id ? { ...u, status } : u)))
     setSalvandoId(null)
-    await revalidarSite(slug)
+    await revalidar()
   }
 
   async function adicionar(evento: React.FormEvent) {
@@ -61,6 +74,7 @@ export function EditorUnidades({
     const identificacao = nova.identificacao.trim()
     if (!identificacao) return
     setErro(null)
+    setAviso(null)
 
     const supabase = criarClienteNavegador()
     const { data, error } = await supabase
@@ -82,15 +96,20 @@ export function EditorUnidades({
 
     setUnidades(ordenarUnidades([...unidades, data as Unidade]))
     setNova({ identificacao: '', tipo: nova.tipo })
-    await revalidarSite(slug)
+    await revalidar()
   }
 
   async function arquivar(unidade: Unidade) {
+    if (!confirm(`Arquivar ${unidade.identificacao}? Ela sai do site, mas pode ser restaurada.`))
+      return
+
     setErro(null)
+    setAviso(null)
+    const marca = new Date().toISOString()
     const supabase = criarClienteNavegador()
     const { error } = await supabase
       .from('unidades')
-      .update({ arquivado_em: new Date().toISOString() })
+      .update({ arquivado_em: marca })
       .eq('id', unidade.id)
 
     if (error) {
@@ -99,12 +118,33 @@ export function EditorUnidades({
     }
 
     setUnidades(unidades.filter((u) => u.id !== unidade.id))
-    await revalidarSite(slug)
+    setArquivadas([...arquivadas, { ...unidade, arquivado_em: marca }])
+    await revalidar()
+  }
+
+  async function restaurar(unidade: UnidadeAdmin) {
+    setErro(null)
+    setAviso(null)
+    const supabase = criarClienteNavegador()
+    const { error } = await supabase
+      .from('unidades')
+      .update({ arquivado_em: null })
+      .eq('id', unidade.id)
+
+    if (error) {
+      setErro(`Falha ao restaurar ${unidade.identificacao}: ${error.message}`)
+      return
+    }
+
+    setArquivadas(arquivadas.filter((u) => u.id !== unidade.id))
+    setUnidades(ordenarUnidades([...unidades, { ...unidade, arquivado_em: undefined } as Unidade]))
+    await revalidar()
   }
 
   return (
     <div>
       {erro && <p className={estilos.erro}>{erro}</p>}
+      {aviso && <p className={estilos.aviso}>{aviso}</p>}
 
       <table className={estilos.tabela}>
         <thead>
@@ -163,6 +203,24 @@ export function EditorUnidades({
         </select>
         <button type="submit">Adicionar unidade</button>
       </form>
+
+      {arquivadas.length > 0 && (
+        <details className={estilos.arquivadas}>
+          <summary>Arquivadas ({arquivadas.length})</summary>
+          <ul>
+            {arquivadas.map((u) => (
+              <li key={u.id}>
+                <span>
+                  {u.identificacao} · {rotuloTipoUnidade(u.tipo)}
+                </span>
+                <button type="button" className={estilos.restaurar} onClick={() => restaurar(u)}>
+                  Restaurar
+                </button>
+              </li>
+            ))}
+          </ul>
+        </details>
+      )}
     </div>
   )
 }

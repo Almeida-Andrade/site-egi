@@ -74,3 +74,16 @@ export interface Estatisticas {
   disponiveis: number
   ocupacao: number // percentual inteiro, 0 a 100
 }
+
+/**
+ * Formas usadas apenas no painel. `arquivado_em` fica fora dos tipos públicos
+ * porque as consultas do site não trazem essa coluna — declarar lá seria o tipo
+ * mentindo sobre o que chega do banco.
+ */
+export interface EmpreendimentoAdmin extends Empreendimento {
+  arquivado_em: string | null
+}
+
+export interface UnidadeAdmin extends Unidade {
+  arquivado_em: string | null
+}

@@ -21,15 +21,26 @@ export function UploadImagens({
   const [imagens, setImagens] = useState(iniciais)
   const [enviando, setEnviando] = useState(false)
   const [erros, setErros] = useState<string[]>([])
+  const [aviso, setAviso] = useState<string | null>(null)
+
+  async function revalidar() {
+    try {
+      await revalidarSite(slug)
+    } catch {
+      setAviso('Alteração salva, mas o site público pode levar até um minuto para refletir.')
+    }
+  }
 
   async function enviar(arquivos: FileList | null) {
     if (!arquivos?.length) return
     setEnviando(true)
     setErros([])
+    setAviso(null)
 
     const supabase = criarClienteNavegador()
     const novas: Imagem[] = []
     const falhas: string[] = []
+    const jaTemCapa = imagens.some((i) => i.capa)
 
     // O try fica dentro do laço de propósito: uma foto corrompida no meio de
     // dez não pode derrubar as outras nove.
@@ -49,7 +60,7 @@ export function UploadImagens({
             empreendimento_id: empreendimentoId,
             storage_path: caminho,
             alt: arquivo.name.replace(/\.[^.]+$/, ''),
-            capa: imagens.length === 0 && novas.length === 0,
+            capa: !jaTemCapa && novas.length === 0,
             ordem: imagens.length + novas.length,
           })
           .select()
@@ -70,40 +81,80 @@ export function UploadImagens({
     setImagens([...imagens, ...novas])
     setErros(falhas)
     setEnviando(false)
-    if (novas.length > 0) await revalidarSite(slug)
+    if (novas.length > 0) await revalidar()
   }
 
   async function remover(imagem: Imagem) {
+    if (!confirm('Remover esta foto? A exclusão é definitiva — não há como desfazer.')) return
+
+    setErros([])
+    setAviso(null)
     const supabase = criarClienteNavegador()
+
     const { error } = await supabase.from('imagens').delete().eq('id', imagem.id)
     if (error) {
       setErros([`Falha ao remover: ${error.message}`])
       return
     }
-    await supabase.storage.from('imoveis').remove([imagem.storage_path])
-    setImagens(imagens.filter((i) => i.id !== imagem.id))
-    await revalidarSite(slug)
+
+    const { error: erroStorage } = await supabase.storage
+      .from('imoveis')
+      .remove([imagem.storage_path])
+    if (erroStorage) {
+      setAviso(
+        `A foto saiu do site, mas o arquivo permaneceu no armazenamento: ${erroStorage.message}`,
+      )
+    }
+
+    const restantes = imagens.filter((i) => i.id !== imagem.id)
+
+    // Apagar a capa deixaria o empreendimento sem nenhuma — promove a próxima.
+    if (imagem.capa && restantes.length > 0) {
+      const sucessora = restantes[0]
+      const { error: erroCapa } = await supabase
+        .from('imagens')
+        .update({ capa: true })
+        .eq('id', sucessora.id)
+
+      if (erroCapa) {
+        setErros([`Foto removida, mas nenhuma capa foi definida: ${erroCapa.message}`])
+        setImagens(restantes)
+        return
+      }
+      setImagens(restantes.map((i) => ({ ...i, capa: i.id === sucessora.id })))
+    } else {
+      setImagens(restantes)
+    }
+
+    await revalidar()
   }
 
   async function definirCapa(imagem: Imagem) {
+    setErros([])
+    setAviso(null)
     const supabase = criarClienteNavegador()
-    const { error: erroLimpar } = await supabase
-      .from('imagens')
-      .update({ capa: false })
-      .eq('empreendimento_id', empreendimentoId)
-    if (erroLimpar) {
-      setErros([`Falha ao definir capa: ${erroLimpar.message}`])
-      return
-    }
 
+    // Marca a nova capa primeiro. Se o segundo passo falhar, o empreendimento
+    // fica com duas capas — visualmente inofensivo — em vez de nenhuma.
     const { error } = await supabase.from('imagens').update({ capa: true }).eq('id', imagem.id)
     if (error) {
       setErros([`Falha ao definir capa: ${error.message}`])
       return
     }
 
+    const { error: erroLimpar } = await supabase
+      .from('imagens')
+      .update({ capa: false })
+      .eq('empreendimento_id', empreendimentoId)
+      .neq('id', imagem.id)
+
+    if (erroLimpar) {
+      setErros([`Capa definida, mas a anterior não foi desmarcada: ${erroLimpar.message}`])
+      return
+    }
+
     setImagens(imagens.map((i) => ({ ...i, capa: i.id === imagem.id })))
-    await revalidarSite(slug)
+    await revalidar()
   }
 
   return (
@@ -127,6 +178,8 @@ export function UploadImagens({
           ))}
         </ul>
       )}
+
+      {aviso && <p className={estilos.aviso}>{aviso}</p>}
 
       <div className={estilos.grade}>
         {imagens.map((img) => (

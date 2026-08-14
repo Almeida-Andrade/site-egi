@@ -27,7 +27,10 @@ export function CardEmpreendimento({ empreendimento: e }: { empreendimento: Empr
       </div>
 
       <div className={estilos.corpo}>
-        <span className={estilos.tipo}>{rotuloTipoEmpreendimento(e.tipo)}</span>
+        <span className={estilos.tipo}>
+          {rotuloTipoEmpreendimento(e.tipo)}
+          {e.built_to_suit && <b className={estilos.bts}>Built to suit</b>}
+        </span>
         <h3 className={estilos.nome}>{e.nome}</h3>
         <p className={estilos.local}>
           {e.bairro ? `${e.bairro} · ` : ''}

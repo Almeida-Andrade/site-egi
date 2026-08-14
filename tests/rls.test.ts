@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeAll } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync } from 'node:fs'
 
@@ -33,7 +33,8 @@ describe('RLS', () => {
     const { data: alvo } = await anon
       .from('unidades').select('id, status').eq('status', 'ocupado').limit(1)
 
-    if (!alvo?.length) return // sem seed ainda; a Task 6 reexecuta este teste com dados
+    // Banco vazio não prova nada sobre RLS, mas também não é falha deste teste.
+    if (!alvo?.length) return
 
     const { data: afetadas } = await anon
       .from('unidades').update({ status: 'disponivel' }).eq('id', alvo[0].id).select()

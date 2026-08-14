@@ -1,36 +1,101 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Site da E.G.I Empreendimentos
 
-## Getting Started
+Site institucional e portfólio de locação da E.G.I Empreendimentos, de São Luís (MA). Mostra os imóveis próprios da empresa com a situação real de cada unidade e leva o interessado direto ao WhatsApp.
 
-First, run the development server:
+Next.js (App Router) · Supabase (Postgres, Auth e Storage) · CSS Modules.
+
+## Rodando localmente
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra <http://localhost:3000>. O painel fica em `/admin`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Crie um `.env.local` na raiz:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<chave anon>
+NEXT_PUBLIC_WHATSAPP=5598984812793
+NEXT_PUBLIC_TELEFONE=559832355008
+```
 
-## Learn More
+Os testes de RLS e o script de upload de fotos também leem `ADMIN_EMAIL` e `ADMIN_PASSWORD` desse arquivo, com as credenciais de um usuário criado à mão no Supabase Auth.
 
-To learn more about Next.js, take a look at the following resources:
+**A chave `service_role` não entra neste projeto.** Nem no código, nem no `.env.local`, nem nas variáveis da Vercel. Ela ignora RLS, e RLS é a única barreira entre o banco e a internet.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Como os dados são organizados
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Dois níveis. Um **empreendimento** é o imóvel (um centro comercial, um galpão, um condomínio). Uma **unidade** é o que se aluga dentro dele (loja, sala, apartamento, mezanino, vaga). Um galpão inteiro é um empreendimento com uma unidade só; o Pátio Aririzal tem vinte. As duas formas passam pela mesma consulta.
 
-## Deploy on Vercel
+Fotos são do empreendimento, não da unidade.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+A localização tem dois graus: endereço exato ou só bairro e cidade, conforme `localizacao_aproximada`. Quando é aproximada, o site não monta link de mapa — a busca cairia no centro do bairro e passaria uma precisão que não existe.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### O que não entra no banco
+
+Nome do locatário, valor do aluguel, datas de contrato, dia de vencimento, situação de pagamento e contato do inquilino. Nada disso é necessário para o site, e o site é público. O banco guarda apenas se a unidade está livre ou ocupada.
+
+Unidade em carência aparece como ocupada. Carência é estado de contrato, não de disponibilidade.
+
+## Segurança
+
+Todo acesso público usa a chave anon com RLS ligada. As políticas expõem apenas empreendimentos publicados e não arquivados; rascunho devolve 404 mesmo com a URL certa, e há um empreendimento despublicado no banco justamente para o teste provar isso.
+
+O painel exige sessão do Supabase Auth. Contas são criadas à mão — não há cadastro aberto.
+
+O middleware protege `/admin`, e `robots.txt` o desindexa.
+
+## Banco
+
+Migrações em `supabase/migrations/`, aplicadas em ordem.
+
+| Arquivo | O que faz |
+| --- | --- |
+| `0001_schema.sql` | Tabelas `empreendimentos`, `unidades`, `imagens`, `perfis` |
+| `0002_rls.sql` | Políticas de RLS |
+| `0003_storage.sql` | Bucket `imoveis` e suas políticas |
+| `0004_seed.sql` | Carga inicial do portfólio |
+| `0005_enderecos.sql` | Endereços, áreas e datas de entrega |
+| `0006_situacao_unidades.sql` | Disponibilidade conforme a relação de contratos |
+
+⚠️ **`0004_seed.sql` começa com `delete from empreendimentos`.** Reexecutá-lo apaga, por cascade, as linhas de `imagens` das fotos reais e deixa os arquivos órfãos no Storage. Se precisar mesmo rodar de novo, rode `npx tsx scripts/upload-fotos-reais.ts` logo depois. Foi por isso que endereços e disponibilidade entraram como migrações novas em vez de edição do seed.
+
+## Fotos
+
+As fotos reais ficam em `seed/fotos-reais/`, com `manifesto.json` dizendo a qual empreendimento cada uma pertence, em que ordem e qual é a capa.
+
+```bash
+npx tsx scripts/upload-fotos-reais.ts
+```
+
+O script é idempotente: sobe os arquivos, reaproveita as linhas que já existem em `imagens` e remove apenas os nomes de placeholder conhecidos. Foto enviada pelo painel nunca casa com essa lista e por isso sobrevive.
+
+Quatro fotos no manifesto (Center Valley, Selfit Anjo da Guarda, Selfit Anil e Skyfit Turu) esperam o cadastro dos respectivos empreendimentos. O script avisa quais ficaram de fora.
+
+## Testes
+
+```bash
+npm test          # unitários (Vitest)
+npm run test:e2e  # ponta a ponta (Playwright)
+```
+
+Os testes evitam depender de contagens exatas do portfólio: número de unidades e de imóveis disponíveis muda a cada contrato assinado, e um teste preso ao total de hoje quebraria sem nada estar errado. Onde a contagem importa — como o imóvel 100% locado — o teste afirma o zero antes de checar o comportamento.
+
+`tests/rls.test.ts` fala com o Supabase real e prova que a chave anon não lê rascunho nem altera unidade.
+
+## Busca
+
+Sitemap e `robots.txt` são gerados por `app/sitemap.ts` e `app/robots.ts`. Cada rota declara a própria canônica — a listagem aponta para `/empreendimentos` sem query, já que os filtros geram muitas URLs com o mesmo conteúdo recortado.
+
+As fichas trazem JSON-LD de `Place` e de `BreadcrumbList`; a home, de `RealEstateAgent`. O cartão de compartilhamento de cada ficha usa a foto do próprio imóvel, o que importa porque o contato acontece por WhatsApp.
+
+`URL_SITE`, em `lib/site.ts`, resolve para `NEXT_PUBLIC_URL_SITE`, senão para o domínio de produção da Vercel, senão para `localhost`.
+
+## Deploy
+
+Vercel. Registre `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY` nas variáveis do projeto. Com domínio próprio, defina também `NEXT_PUBLIC_URL_SITE`.
+
+As páginas públicas usam ISR. O painel chama `revalidatePath` ao salvar, então uma alteração aparece no site logo em seguida, sem esperar o cache expirar.

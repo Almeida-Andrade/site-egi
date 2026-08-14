@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { Cabecalho } from '@/components/site/Cabecalho'
 import { Rodape } from '@/components/site/Rodape'
 import { obterEstatisticas } from '@/lib/dados/empreendimentos'
@@ -5,11 +6,15 @@ import estilos from './page.module.css'
 
 export const revalidate = 300
 
-export const metadata = {
+const DESCRICAO =
+  'A E.G.I Empreendimentos administra e loca imóveis próprios em São Luís, ' +
+  'São José de Ribamar e Pedreiras — de galpões de grande porte a apartamentos.'
+
+export const metadata: Metadata = {
   title: 'A EGI',
-  description:
-    'A E.G.I Empreendimentos administra e loca imóveis próprios em São Luís, ' +
-    'São José de Ribamar e Pedreiras — de galpões de grande porte a apartamentos.',
+  description: DESCRICAO,
+  alternates: { canonical: '/sobre' },
+  openGraph: { url: '/sobre', title: 'A EGI', description: DESCRICAO },
 }
 
 export default async function Sobre() {

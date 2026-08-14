@@ -1,13 +1,18 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Cabecalho } from '@/components/site/Cabecalho'
 import { Rodape } from '@/components/site/Rodape'
 import estilos from './page.module.css'
 
-export const metadata = {
+const DESCRICAO =
+  'Fale com a E.G.I Empreendimentos por WhatsApp, telefone ou e-mail. ' +
+  'Sede na Av. dos Sambaquis, 34 — Ed. Galeria A, Calhau, São Luís (MA).'
+
+export const metadata: Metadata = {
   title: 'Contato',
-  description:
-    'Fale com a E.G.I Empreendimentos por WhatsApp, telefone ou e-mail. ' +
-    'Sede na Av. dos Sambaquis, 34 — Ed. Galeria A, Calhau, São Luís (MA).',
+  description: DESCRICAO,
+  alternates: { canonical: '/contato' },
+  openGraph: { url: '/contato', title: 'Contato', description: DESCRICAO },
 }
 
 export default function Contato() {

@@ -12,6 +12,7 @@ const TIPOS: TipoEmpreendimento[] = [
   'sala_avulsa',
   'casa',
   'apartamento',
+  'misto',
 ]
 
 export function Filtros({ cidades }: { cidades: string[] }) {

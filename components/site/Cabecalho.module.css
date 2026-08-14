@@ -18,7 +18,6 @@
   align-items: center;
 }
 
-/* Largura segue a proporcao real do arquivo (1608x549) */
 .logo {
   width: auto;
   height: 46px;

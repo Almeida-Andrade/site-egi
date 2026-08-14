@@ -1,4 +1,7 @@
--- Idempotente: limpa antes de inserir
+-- ATENÇÃO: este delete leva junto, por cascade, as linhas de `imagens` das
+-- fotos reais, e os arquivos ficam órfãos no Storage. Não reexecute este seed
+-- sem rodar `npx tsx scripts/upload-fotos-reais.ts` logo depois. Endereços e
+-- disponibilidade vivem em 0005 e 0006 justamente para não passar por aqui.
 delete from empreendimentos;
 
 insert into empreendimentos (id, slug, nome, tipo, built_to_suit, cidade,

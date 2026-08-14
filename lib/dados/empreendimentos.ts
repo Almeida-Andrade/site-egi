@@ -34,6 +34,11 @@ function resumir(linha: LinhaComRelacoes): EmpreendimentoResumo {
   }
 }
 
+/**
+ * Portfólio inteiro, inclusive os built to suit. Eles também aparecem numa
+ * seção própria da home, mas ficar de fora daqui os tornava inalcançáveis pela
+ * navegação e fazia a contagem da home não bater com a da listagem.
+ */
 export async function listarEmpreendimentos(
   filtros: FiltrosEmpreendimento = {},
 ): Promise<EmpreendimentoResumo[]> {
@@ -42,7 +47,6 @@ export async function listarEmpreendimentos(
   let consulta = supabase
     .from('empreendimentos')
     .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), imagens(${CAMPOS_IMAGENS})`)
-    .eq('built_to_suit', false)
     .order('ordem', { ascending: true })
     .order('nome', { ascending: true })
 
@@ -97,6 +101,19 @@ export async function listarSlugsPublicados(): Promise<string[]> {
   const { data, error } = await supabase.from('empreendimentos').select('slug')
   if (error) throw new Error(`Falha ao listar slugs: ${error.message}`)
   return (data ?? []).map((l) => l.slug as string)
+}
+
+/** Slug e data da última edição, para o `lastModified` do sitemap. */
+export async function listarRotasPublicadas(): Promise<
+  { slug: string; atualizadoEm: string }[]
+> {
+  const supabase = criarClientePublico()
+  const { data, error } = await supabase.from('empreendimentos').select('slug, updated_at')
+  if (error) throw new Error(`Falha ao listar rotas: ${error.message}`)
+  return (data ?? []).map((l) => ({
+    slug: l.slug as string,
+    atualizadoEm: l.updated_at as string,
+  }))
 }
 
 export async function listarCidades(): Promise<string[]> {

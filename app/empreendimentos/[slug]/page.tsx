@@ -10,6 +10,7 @@ import { listarSlugsPublicados, obterEmpreendimentoPorSlug } from '@/lib/dados/e
 import { rotuloTipoEmpreendimento, urlImagem } from '@/lib/utils/rotulos'
 import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
 import { linkBuscaMaps } from '@/lib/utils/maps'
+import { URL_SITE } from '@/lib/site'
 import { DadosEstruturados } from '@/components/site/DadosEstruturados'
 import estilos from './page.module.css'
 
@@ -32,13 +33,28 @@ export async function generateMetadata({
   const capa = e.imagens[0]
   const livres = e.unidades.filter((u) => u.status === 'disponivel').length
 
+  const descricao =
+    e.descricao ??
+    `${rotuloTipoEmpreendimento(e.tipo)} em ${e.cidade}. ` +
+      `${e.unidades.length} unidades, ${livres} disponíveis para locação.`
+
+  const caminho = `/empreendimentos/${e.slug}`
+
   return {
     title: e.nome,
-    description:
-      e.descricao ??
-      `${rotuloTipoEmpreendimento(e.tipo)} em ${e.cidade}. ` +
-        `${e.unidades.length} unidades, ${livres} disponíveis para locação.`,
-    openGraph: capa ? { images: [urlImagem(capa.storage_path)] } : undefined,
+    description: descricao,
+    alternates: { canonical: caminho },
+    openGraph: {
+      type: 'article',
+      url: caminho,
+      title: e.nome,
+      description: descricao,
+      // A foto do imóvel manda no card do WhatsApp. Sem capa, cai no og.jpg da
+      // marca herdado do layout.
+      ...(capa && {
+        images: [{ url: urlImagem(capa.storage_path), alt: capa.alt ?? e.nome }],
+      }),
+    },
   }
 }
 
@@ -122,6 +138,9 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
             '@context': 'https://schema.org',
             '@type': 'Place',
             name: e.nome,
+            description: e.descricao ?? undefined,
+            url: `${URL_SITE}/empreendimentos/${e.slug}`,
+            photo: e.imagens.map((i) => urlImagem(i.storage_path)),
             address: {
               '@type': 'PostalAddress',
               streetAddress: e.localizacao_aproximada ? undefined : e.endereco,
@@ -129,6 +148,23 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
               addressRegion: e.uf,
               addressCountry: 'BR',
             },
+          }}
+        />
+
+        <DadosEstruturados
+          dados={{
+            '@context': 'https://schema.org',
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              { '@type': 'ListItem', position: 1, name: 'Início', item: URL_SITE },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Empreendimentos',
+                item: `${URL_SITE}/empreendimentos`,
+              },
+              { '@type': 'ListItem', position: 3, name: e.nome },
+            ],
           }}
         />
       </main>

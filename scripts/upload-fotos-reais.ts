@@ -23,8 +23,9 @@ const supabase = createClient(
 
 const PASTA = 'seed/fotos-reais'
 
-/** Nomes gerados por upload-fotos-seed.ts. Só estes são removidos — uma foto
- *  enviada pelo painel nunca casa com a lista e por isso é preservada. */
+/** Fotos genéricas usadas antes das reais existirem. Só estes nomes são
+ *  removidos — uma foto enviada pelo painel nunca casa com a lista e por isso
+ *  é preservada. */
 const PLACEHOLDERS = [
   'centro-comercial-1.jpg',
   'centro-comercial-2.jpg',
@@ -75,7 +76,6 @@ async function main() {
   for (const [slug, itens] of porEmpreendimento) {
     const empreendimentoId = porSlug.get(slug)!
 
-    // 1. Sobe os arquivos
     for (const item of itens) {
       const caminho = `empreendimentos/${empreendimentoId}/${item.arquivo}`
       const { error: erroUpload } = await supabase.storage
@@ -87,8 +87,8 @@ async function main() {
       if (erroUpload) throw new Error(`${slug} (upload): ${erroUpload.message}`)
     }
 
-    // 2. Registra as linhas novas antes de mexer nas antigas, para que o
-    //    empreendimento nunca fique sem capa se algo falhar no meio.
+    // Registra as linhas novas antes de mexer nas antigas, para que o
+    // empreendimento nunca fique sem capa se algo falhar no meio.
     for (const item of itens) {
       const caminho = `empreendimentos/${empreendimentoId}/${item.arquivo}`
 
@@ -109,7 +109,6 @@ async function main() {
       if (erroLinha) throw new Error(`${slug} (imagens): ${erroLinha.message}`)
     }
 
-    // 3. Remove os placeholders deste empreendimento
     const antigos = PLACEHOLDERS.map((n) => `empreendimentos/${empreendimentoId}/${n}`)
 
     const { error: erroApaga } = await supabase

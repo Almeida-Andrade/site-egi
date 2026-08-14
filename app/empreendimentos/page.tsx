@@ -1,4 +1,5 @@
 import { Suspense } from 'react'
+import type { Metadata } from 'next'
 import { Cabecalho } from '@/components/site/Cabecalho'
 import { Rodape } from '@/components/site/Rodape'
 import { CardEmpreendimento } from '@/components/site/CardEmpreendimento'
@@ -9,11 +10,21 @@ import estilos from './page.module.css'
 
 export const revalidate = 60
 
-export const metadata = {
+const DESCRICAO =
+  'Galpões, centros comerciais, salas, lojas e apartamentos para locação em ' +
+  'São Luís, São José de Ribamar e Pedreiras.'
+
+export const metadata: Metadata = {
   title: 'Empreendimentos',
-  description:
-    'Galpões, centros comerciais, salas, lojas e apartamentos para locação em ' +
-    'São Luís, São José de Ribamar e Pedreiras.',
+  description: DESCRICAO,
+  // Canônica sem query: os filtros de tipo, cidade e disponibilidade geram
+  // dezenas de URLs com o mesmo conteúdo recortado.
+  alternates: { canonical: '/empreendimentos' },
+  openGraph: {
+    url: '/empreendimentos',
+    title: 'Empreendimentos',
+    description: DESCRICAO,
+  },
 }
 
 export default async function Pagina({

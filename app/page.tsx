@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Cabecalho } from '@/components/site/Cabecalho'
@@ -13,6 +14,11 @@ import estilos from './page.module.css'
 
 export const revalidate = 60
 
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+  openGraph: { url: '/' },
+}
+
 export default async function Home() {
   const [estatisticas, destaques, cases] = await Promise.all([
     obterEstatisticas(),
@@ -20,7 +26,9 @@ export default async function Home() {
     listarBuiltToSuit(),
   ])
 
-  const emDestaque = destaques.filter((e) => e.destaque).slice(0, 3)
+  // Os built to suit têm seção própria logo abaixo; repeti-los aqui encheria a
+  // home com os mesmos três cartões duas vezes.
+  const emDestaque = destaques.filter((e) => e.destaque && !e.built_to_suit).slice(0, 3)
 
   return (
     <>

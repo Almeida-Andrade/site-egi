@@ -1,22 +1,28 @@
 import type { MetadataRoute } from 'next'
-import { listarSlugsPublicados } from '@/lib/dados/empreendimentos'
+import { listarRotasPublicadas } from '@/lib/dados/empreendimentos'
 import { URL_SITE } from '@/lib/site'
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const slugs = await listarSlugsPublicados()
+export const revalidate = 3600
 
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const rotas = await listarRotasPublicadas()
+
+  // A home mostra os destaques e os números do portfólio, então muda sempre que
+  // uma unidade é locada. As institucionais são estáveis.
   const fixas: MetadataRoute.Sitemap = [
-    { url: URL_SITE, priority: 1 },
-    { url: `${URL_SITE}/empreendimentos`, priority: 0.9 },
-    { url: `${URL_SITE}/sobre`, priority: 0.5 },
-    { url: `${URL_SITE}/contato`, priority: 0.5 },
+    { url: URL_SITE, priority: 1, changeFrequency: 'daily' },
+    { url: `${URL_SITE}/empreendimentos`, priority: 0.9, changeFrequency: 'daily' },
+    { url: `${URL_SITE}/sobre`, priority: 0.5, changeFrequency: 'yearly' },
+    { url: `${URL_SITE}/contato`, priority: 0.5, changeFrequency: 'yearly' },
   ]
 
   return [
     ...fixas,
-    ...slugs.map((slug) => ({
+    ...rotas.map(({ slug, atualizadoEm }) => ({
       url: `${URL_SITE}/empreendimentos/${slug}`,
+      lastModified: new Date(atualizadoEm),
       priority: 0.8,
+      changeFrequency: 'weekly' as const,
     })),
   ]
 }

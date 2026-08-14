@@ -7,10 +7,13 @@ export function Rodape() {
     <footer className={estilos.rodape}>
       <div className={estilos.faixa}>
         <div>
-          <div className={estilos.marca}>
-            <Image src="/logo-egi.png" alt="" width={44} height={44} className={estilos.selo} />
-            <span className={estilos.logo}>EGI EMPREENDIMENTOS</span>
-          </div>
+          <Image
+            src="/logo-egi-clara.png"
+            alt="E.G.I Empreendimentos"
+            width={1608}
+            height={549}
+            className={estilos.logo}
+          />
           <p className={estilos.lema}>Grandes empreendimentos começam com grandes sonhos.</p>
         </div>
 

@@ -9,7 +9,13 @@
   padding: var(--gap-6) var(--gap-5) var(--gap-5);
 }
 
-.logo { font-family: var(--fonte-titulo); font-weight: 700; letter-spacing: 0.22em; font-size: 14px; }
+
+/* Largura segue a proporcao real do arquivo (1608x549) */
+.logo {
+  width: auto;
+  height: 42px;
+}
+
 .lema { margin-top: var(--gap-3); font-family: var(--fonte-display); font-size: 22px; opacity: 0.75; max-width: 22ch; }
 
 .coluna { display: flex; flex-direction: column; gap: var(--gap-2); font-size: 13.5px; }
@@ -38,14 +44,4 @@
   .faixa { grid-template-columns: 1fr; }
 }
 
-.marca {
-  display: flex;
-  align-items: center;
-  gap: var(--gap-2);
-}
 
-.selo {
-  width: 44px;
-  height: 44px;
-  flex: none;
-}

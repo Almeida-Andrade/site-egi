@@ -39,8 +39,8 @@ export default function Login() {
         <Image
           src="/logo-egi.png"
           alt="E.G.I Empreendimentos"
-          width={64}
-          height={64}
+          width={1608}
+          height={549}
           className={estilos.selo}
           priority
         />

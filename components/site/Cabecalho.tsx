@@ -7,22 +7,25 @@ const variantesEstilos: Record<'claro' | 'escuro', string> = {
   escuro: estilos.escuro,
 }
 
+// O letreiro da logo é navy; sobre o cabeçalho escuro ele sumiria, por isso a
+// variante clara traz o mesmo lockup com o texto em off-white.
+const variantesLogo: Record<'claro' | 'escuro', string> = {
+  claro: '/logo-egi.png',
+  escuro: '/logo-egi-clara.png',
+}
+
 export function Cabecalho({ variante = 'claro' }: { variante?: 'claro' | 'escuro' }) {
   return (
     <header className={`${estilos.cabecalho} ${variantesEstilos[variante]}`.trim()}>
-      <Link href="/" className={estilos.marca} aria-label="E.G.I Empreendimentos — início">
+      <Link href="/" className={estilos.marca}>
         <Image
-          src="/logo-egi.png"
-          alt=""
-          width={40}
-          height={40}
-          className={estilos.selo}
+          src={variantesLogo[variante]}
+          alt="E.G.I Empreendimentos"
+          width={1608}
+          height={549}
+          className={estilos.logo}
           priority
         />
-        <span className={estilos.logo} aria-hidden="true">
-          EGI
-          <span>EMPREENDIMENTOS</span>
-        </span>
       </Link>
 
       <nav className={estilos.navegacao} aria-label="Principal">

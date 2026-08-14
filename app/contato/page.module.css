@@ -21,7 +21,7 @@
 
 .canais {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--gap-3);
   margin-top: var(--gap-6);
 }
@@ -40,6 +40,8 @@
   font-family: var(--fonte-titulo);
   font-size: 19px;
   font-weight: 600;
+  /* O e-mail é uma palavra só e mais longa que a caixa no celular */
+  overflow-wrap: anywhere;
 }
 
 .rotulo {
@@ -52,6 +54,32 @@
 .dica {
   font-size: 12.5px;
   color: var(--navy-45);
+}
+
+.sede {
+  margin-top: var(--gap-6);
+  padding-top: var(--gap-4);
+  border-top: 1px solid var(--navy-12);
+  display: grid;
+  gap: var(--gap-1);
+  max-width: 46ch;
+}
+.sede address {
+  font-style: normal;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--navy-70);
+}
+.sede a {
+  justify-self: start;
+  margin-top: var(--gap-2);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--navy-12);
+  padding-bottom: 2px;
+}
+.sede a:hover {
+  border-color: var(--steel);
 }
 
 @media (max-width: 860px) {

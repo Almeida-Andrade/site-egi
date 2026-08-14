@@ -19,7 +19,10 @@
 .lema { margin-top: var(--gap-3); font-family: var(--fonte-display); font-size: 22px; opacity: 0.75; max-width: 22ch; }
 
 .coluna { display: flex; flex-direction: column; gap: var(--gap-2); font-size: 13.5px; }
+.coluna a { overflow-wrap: anywhere; }
 .coluna a:hover { color: #93a6d8; }
+
+.sede { opacity: 0.6; line-height: 1.6; margin-top: var(--gap-1); }
 
 .rotulo {
   font-size: var(--escala-secao);

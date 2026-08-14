@@ -33,6 +33,13 @@ export default async function Sobre() {
           <p>
             Trabalhamos também com built to suit: imóveis construídos sob medida para a
             operação do locatário, como as unidades do Grupo Mateus em Maiobão e Pedreiras.
+            E com core and shell, em que a estrutura é entregue pronta para o cliente
+            personalizar por dentro — caminho das unidades Selfit e Skyfit.
+          </p>
+          <p>
+            Entre os locatários dos nossos imóveis estão Grupo Mateus, Caixa Econômica
+            Federal, Selfit, Skyfit, Pague Menos, Shineray e órgãos públicos estaduais e
+            municipais.
           </p>
           <p>
             Por sermos proprietários dos imóveis que administramos, a negociação é direta —
@@ -40,6 +47,8 @@ export default async function Sobre() {
           </p>
         </div>
 
+        {/* "Anos de mercado" fica por último: hoje o portfólio tem 18
+            empreendimentos, e dois "18" lado a lado se leem como erro. */}
         <div className={estilos.numeros}>
           <div>
             <b>{e.empreendimentos}</b>
@@ -54,8 +63,8 @@ export default async function Sobre() {
             <small>Taxa de ocupação</small>
           </div>
           <div>
-            <b>3</b>
-            <small>Cidades</small>
+            <b>18+</b>
+            <small>Anos de mercado</small>
           </div>
         </div>
       </main>

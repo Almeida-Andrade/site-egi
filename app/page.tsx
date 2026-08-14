@@ -110,8 +110,15 @@ export default async function Home() {
           '@type': 'RealEstateAgent',
           name: 'E.G.I Empreendimentos',
           telephone: '+55-98-3235-5008',
+          email: 'egiempreendimentos@grupoalmeidaandrade.com.br',
           areaServed: ['São Luís', 'São José de Ribamar', 'Pedreiras'],
-          address: { '@type': 'PostalAddress', addressRegion: 'MA', addressCountry: 'BR' },
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'Av. dos Sambaquis, 34 — Ed. Galeria A',
+            addressLocality: 'São Luís',
+            addressRegion: 'MA',
+            addressCountry: 'BR',
+          },
           sameAs: ['https://www.instagram.com/egi.empreendimentos/'],
         }}
       />

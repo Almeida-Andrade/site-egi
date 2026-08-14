@@ -4,10 +4,13 @@ test('home mostra o hero e os números do portfólio', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Grandes empreendimentos')
 
+  // Sem números exatos: o portfólio muda conforme a EGI cadastra imóveis, e um
+  // teste preso ao total de hoje quebra a cada edição no painel sem que nada
+  // tenha se quebrado de fato. O que importa é que a consulta trouxe dados.
   const numeros = page.getByLabel('A EGI em números')
-  await expect(numeros).toContainText('18')
-  await expect(numeros).toContainText('148')
-  await expect(numeros).toContainText('91%')
+  await expect(numeros).toContainText(/[1-9]\d*\s*Empreendimentos/i)
+  await expect(numeros).toContainText(/[1-9]\d*\s*Unidades/i)
+  await expect(numeros).toContainText(/\d{1,3}%\s*Taxa de ocupação/i)
 })
 
 test('listagem filtra por tipo pela URL', async ({ page }) => {

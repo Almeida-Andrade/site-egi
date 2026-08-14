@@ -1,10 +1,13 @@
+import Link from 'next/link'
 import { Cabecalho } from '@/components/site/Cabecalho'
 import { Rodape } from '@/components/site/Rodape'
 import estilos from './page.module.css'
 
 export const metadata = {
   title: 'Contato',
-  description: 'Fale com a E.G.I Empreendimentos por telefone ou WhatsApp.',
+  description:
+    'Fale com a E.G.I Empreendimentos por WhatsApp, telefone ou e-mail. ' +
+    'Sede na Av. dos Sambaquis, 34 — Ed. Galeria A, Calhau, São Luís (MA).',
 }
 
 export default function Contato() {
@@ -43,6 +46,24 @@ export default function Contato() {
             <b>@egi.empreendimentos</b>
             <span className={estilos.dica}>Novidades e lançamentos</span>
           </a>
+
+          <a className={estilos.canal} href="mailto:egiempreendimentos@grupoalmeidaandrade.com.br">
+            <span className={estilos.rotulo}>E-mail</span>
+            <b>egiempreendimentos@grupoalmeidaandrade.com.br</b>
+            <span className={estilos.dica}>Para propostas e documentos</span>
+          </a>
+        </div>
+
+        <div className={estilos.sede}>
+          <span className={estilos.rotulo}>Sede</span>
+          <address>
+            Av. dos Sambaquis, 34 — Ed. Galeria A
+            <br />
+            Calhau, São Luís — MA
+          </address>
+          <Link href="/empreendimentos/centro-comercial-empresarial-galeria-a">
+            Conheça a Galeria A →
+          </Link>
         </div>
       </main>
       <Rodape />

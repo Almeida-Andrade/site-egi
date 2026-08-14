@@ -23,6 +23,14 @@ export function Rodape() {
           <a href="https://wa.me/5598984812793" target="_blank" rel="noopener noreferrer">
             WhatsApp (98) 98481-2793
           </a>
+          <a href="mailto:egiempreendimentos@grupoalmeidaandrade.com.br">
+            egiempreendimentos@grupoalmeidaandrade.com.br
+          </a>
+          <span className={estilos.sede}>
+            Av. dos Sambaquis, 34 — Ed. Galeria A
+            <br />
+            Calhau, São Luís — MA
+          </span>
         </div>
 
         <div className={estilos.coluna}>

@@ -9,6 +9,7 @@ import { contarPorStatus } from '@/components/site/logicaUnidades'
 import { listarSlugsPublicados, obterEmpreendimentoPorSlug } from '@/lib/dados/empreendimentos'
 import { rotuloTipoEmpreendimento, urlImagem } from '@/lib/utils/rotulos'
 import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
+import { linkBuscaMaps } from '@/lib/utils/maps'
 import { DadosEstruturados } from '@/components/site/DadosEstruturados'
 import estilos from './page.module.css'
 
@@ -52,6 +53,10 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
     ? [e.bairro, e.cidade].filter(Boolean).join(' · ')
     : [e.endereco, e.bairro, `${e.cidade} — ${e.uf}`].filter(Boolean).join(', ')
 
+  // O link salvo no painel manda; sem ele, uma busca pelo endereço já leva o
+  // visitante ao lugar certo sem depender de cadastro manual.
+  const comoChegar = e.maps_link ?? linkBuscaMaps(e)
+
   return (
     <>
       <Cabecalho />
@@ -87,9 +92,7 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
             {e.maps_embed_url ? (
               <MapaEmbed url={e.maps_embed_url} titulo={e.nome} />
             ) : (
-              <p className={estilos.semMapa}>
-                {e.cidade} — {e.uf}
-              </p>
+              <p className={estilos.semMapa}>{local}</p>
             )}
 
             <a
@@ -101,10 +104,10 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
               {contagem.disponivel > 0 ? 'Falar no WhatsApp' : 'Avise-me quando vagar'}
             </a>
 
-            {e.maps_link && (
+            {comoChegar && (
               <a
                 className={estilos.comoChegar}
-                href={e.maps_link}
+                href={comoChegar}
                 target="_blank"
                 rel="noopener noreferrer"
               >

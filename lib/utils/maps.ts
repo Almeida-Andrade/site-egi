@@ -25,3 +25,26 @@ export function extrairUrlMaps(entrada: string): string | null {
 
   return url.toString()
 }
+
+/**
+ * Link de busca no Google Maps montado a partir do endereço. Serve de "como
+ * chegar" enquanto o empreendimento não tem um maps_link próprio salvo pelo
+ * painel. Devolve null quando o endereço é aproximado ou não existe — nesse
+ * caso a busca cairia no centro do bairro e passaria precisão que não temos.
+ */
+export function linkBuscaMaps(dados: {
+  endereco: string | null
+  bairro: string | null
+  cidade: string
+  uf: string
+  localizacao_aproximada: boolean
+}): string | null {
+  if (dados.localizacao_aproximada) return null
+  if (!dados.endereco) return null
+
+  const consulta = [dados.endereco, dados.bairro, dados.cidade, dados.uf, 'Brasil']
+    .filter(Boolean)
+    .join(', ')
+
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(consulta)}`
+}

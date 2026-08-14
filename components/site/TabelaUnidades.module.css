@@ -1,0 +1,103 @@
+.abas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-2);
+  margin-bottom: var(--gap-3);
+}
+
+.aba,
+.abaAtiva {
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 7px 13px;
+  border: 1px solid var(--navy-12);
+  background: transparent;
+  color: var(--navy);
+}
+.aba span,
+.abaAtiva span {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.55;
+  margin-left: 4px;
+}
+.aba:hover {
+  border-color: var(--steel);
+}
+.abaAtiva {
+  background: var(--navy);
+  border-color: var(--navy);
+  color: #fff;
+}
+
+.tabela {
+  font-size: 13.5px;
+}
+.tabela th {
+  text-align: left;
+  padding: 0 var(--gap-3) 9px 0;
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--navy-45);
+  font-weight: 500;
+  border-bottom: 1px solid var(--navy-12);
+}
+.tabela td {
+  padding: 11px var(--gap-3) 11px 0;
+  border-bottom: 1px solid var(--navy-08);
+}
+
+.ident {
+  font-family: var(--fonte-titulo);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.acaoCelula {
+  text-align: right;
+}
+
+.acao {
+  color: var(--pure);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.acao:hover {
+  text-decoration: underline;
+}
+
+.vazio {
+  margin-top: var(--gap-4);
+  color: var(--navy-45);
+  font-size: 13.5px;
+}
+
+/* Em telas estreitas a tabela vira lista: cabecalho some, cada linha empilha */
+@media (max-width: 720px) {
+  .tabela thead {
+    display: none;
+  }
+  .tabela tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px var(--gap-3);
+    padding: var(--gap-3) 0;
+    border-bottom: 1px solid var(--navy-08);
+  }
+  .tabela td {
+    border: 0;
+    padding: 0;
+  }
+  .acaoCelula {
+    grid-column: 1 / -1;
+    text-align: left;
+    margin-top: var(--gap-2);
+  }
+}

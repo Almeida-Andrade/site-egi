@@ -1,0 +1,41 @@
+.principal {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  background: var(--navy);
+  overflow: hidden;
+}
+
+.semFoto {
+  aspect-ratio: 16 / 10;
+  background: var(--navy);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  padding: var(--gap-4);
+  text-align: center;
+  font-family: var(--fonte-display);
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.miniaturas {
+  display: flex;
+  gap: var(--gap-2);
+  margin-top: var(--gap-2);
+  flex-wrap: wrap;
+}
+
+.mini,
+.miniAtiva {
+  position: relative;
+  width: 96px;
+  aspect-ratio: 4 / 3;
+  border: 1px solid var(--navy-12);
+  padding: 0;
+  cursor: pointer;
+  background: var(--navy);
+  overflow: hidden;
+}
+.miniAtiva {
+  border-color: var(--pure);
+}

@@ -202,15 +202,22 @@
 /* ---------- Center Valley ---------- */
 
 .valley {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  align-items: stretch;
   background: var(--navy);
   color: #fff;
   margin-top: var(--gap-6);
 }
 
+.valleyFoto {
+  position: relative;
+  min-height: 440px;
+}
+
 .valleyTexto {
-  max-width: var(--largura-max);
-  margin: 0 auto;
   padding: var(--gap-7) var(--gap-5);
+  max-width: calc(var(--largura-max) / 2);
 }
 
 .kickerClaro {
@@ -279,38 +286,10 @@
   background: var(--pure);
 }
 
-/* ---------- Clientes ---------- */
-
-.clientes {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--gap-4);
+/* Sangra até as bordas da coluna de leitura: a fita precisa entrar e sair da
+   tela, não parar dentro de uma caixa. */
+.marcas {
   margin-top: var(--gap-5);
-}
-
-.clienteGrupo {
-  border-top: 1px solid var(--navy-12);
-  padding-top: var(--gap-3);
-}
-.clienteRotulo {
-  display: block;
-  font-size: 10.5px;
-  letter-spacing: var(--trilha-larga);
-  text-transform: uppercase;
-  color: var(--navy-45);
-  margin-bottom: var(--gap-2);
-}
-.clienteGrupo ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 7px;
-}
-.clienteGrupo li {
-  font-family: var(--fonte-titulo);
-  font-size: 15.5px;
-  font-weight: 500;
 }
 
 /* ---------- Como funciona ---------- */
@@ -349,74 +328,24 @@
   color: var(--navy-70);
 }
 
-/* ---------- Chamada final ---------- */
-
-.chamada {
-  background: var(--navy);
-  color: #fff;
-  margin-top: var(--gap-7);
-  padding: var(--gap-7) var(--gap-5);
-}
-.chamada > * {
-  max-width: var(--largura-max);
-  margin: 0 auto;
-}
-
-.chamadaTitulo {
-  font-family: var(--fonte-display);
-  font-weight: 400;
-  font-size: var(--escala-display);
-  line-height: 1.05;
-  max-width: 18ch;
-}
-.chamadaTexto {
-  margin-top: var(--gap-3);
-  opacity: 0.7;
-  max-width: 48ch;
-}
-.chamadaAcoes {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--gap-4);
-  margin-top: var(--gap-5);
-}
-.chamadaPrincipal {
-  border: 1px solid #fff;
-  background: #fff;
-  color: var(--navy);
-  padding: 14px 28px;
-  font-size: 12.5px;
-  letter-spacing: 0.08em;
-  transition:
-    background-color 200ms ease,
-    color 200ms ease,
-    border-color 200ms ease;
-}
-.chamadaPrincipal:hover {
-  background: var(--pure);
-  border-color: var(--pure);
-  color: #fff;
-}
-.chamadaSecundaria {
-  font-size: 13px;
-  color: #93a6d8;
-}
-.chamadaSecundaria:hover {
-  color: #fff;
-}
-
 @media (max-width: 960px) {
   .categorias,
-  .clientes,
   .passos {
     grid-template-columns: repeat(2, 1fr);
+  }
+  .valley {
+    grid-template-columns: 1fr;
+  }
+  .valleyTexto {
+    max-width: none;
+  }
+  .valleyFoto {
+    min-height: 300px;
   }
 }
 
 @media (max-width: 640px) {
   .categorias,
-  .clientes,
   .passos {
     grid-template-columns: 1fr;
   }
@@ -430,8 +359,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .categoria,
-  .categoriaSeta,
-  .chamadaPrincipal {
+  .categoriaSeta {
     transition: none;
   }
 }

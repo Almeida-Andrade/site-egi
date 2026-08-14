@@ -11,7 +11,9 @@ import {
   listarEmpreendimentos,
   obterEstatisticas,
 } from '@/lib/dados/empreendimentos'
-import { CATEGORIAS, CENTER_VALLEY, CLIENTES, PASSOS } from '@/lib/conteudo'
+import { CarrosselMarcas } from '@/components/site/CarrosselMarcas'
+import { OndeEstamos } from '@/components/site/OndeEstamos'
+import { CATEGORIAS, CENTER_VALLEY, PASSOS } from '@/lib/conteudo'
 import { DadosEstruturados } from '@/components/site/DadosEstruturados'
 import estilos from './page.module.css'
 
@@ -21,8 +23,6 @@ export const metadata: Metadata = {
   alternates: { canonical: '/' },
   openGraph: { url: '/' },
 }
-
-const WHATSAPP = 'https://wa.me/5598984812793'
 
 export default async function Home() {
   const [estatisticas, portfolio, cases] = await Promise.all([
@@ -160,9 +160,20 @@ export default async function Home() {
           </section>
         </div>
 
-      {/* Sem foto de propósito: a do Center Valley já é o hero, e repeti-la a
-          meia página seria a mesma imagem duas vezes. Aqui mandam os números. */}
+      {/* Mesma fotografia do hero, em recorte fechado no letreiro e na entrada.
+          O hero mostra o conjunto sob véu escuro; aqui o prédio aparece limpo,
+          e os dois enquadramentos não se leem como repetição. */}
       <section className={estilos.valley} aria-labelledby="titulo-valley">
+        <div className={estilos.valleyFoto}>
+          <Image
+            src="/center-valley-entrada.jpg"
+            alt="Entrada do Center Valley Shopping, em Pedreiras"
+            fill
+            sizes="(max-width: 900px) 100vw, 45vw"
+            style={{ objectFit: 'cover' }}
+          />
+        </div>
+
         <Revelar className={estilos.valleyTexto}>
           <p className={estilos.kickerClaro}>{CENTER_VALLEY.cidade}</p>
           <h2 id="titulo-valley" className={estilos.valleyTitulo}>
@@ -202,20 +213,9 @@ export default async function Home() {
               </p>
             </Revelar>
 
-            <div className={estilos.clientes}>
-              {CLIENTES.map((g, i) => (
-                <Revelar key={g.grupo} indice={i} esticar>
-                  <div className={estilos.clienteGrupo}>
-                    <span className={estilos.clienteRotulo}>{g.grupo}</span>
-                    <ul>
-                      {g.marcas.map((m) => (
-                        <li key={m}>{m}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </Revelar>
-              ))}
-            </div>
+            <Revelar className={estilos.marcas}>
+              <CarrosselMarcas />
+            </Revelar>
           </section>
 
           <section className={estilos.secao} aria-labelledby="titulo-passos">
@@ -238,28 +238,7 @@ export default async function Home() {
           </section>
         </div>
 
-      <section className={estilos.chamada}>
-        <Revelar>
-          <h2 className={estilos.chamadaTitulo}>Procurando espaço para a sua operação?</h2>
-          <p className={estilos.chamadaTexto}>
-            {estatisticas.disponiveis} unidades disponíveis agora em São Luís, São José de
-            Ribamar e Pedreiras.
-          </p>
-          <div className={estilos.chamadaAcoes}>
-            <a
-              className={estilos.chamadaPrincipal}
-              href={WHATSAPP}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Falar no WhatsApp
-            </a>
-            <Link href="/empreendimentos?disponiveis=1" className={estilos.chamadaSecundaria}>
-              Ver o que está livre →
-            </Link>
-          </div>
-        </Revelar>
-      </section>
+        <OndeEstamos />
       </main>
 
       <Rodape colado />

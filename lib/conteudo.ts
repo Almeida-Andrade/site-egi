@@ -39,28 +39,34 @@ export const CATEGORIAS: Categoria[] = [
  * Marcas que ocupam imóveis da EGI, como a própria empresa divulga no slide
  * "Nossos clientes e parceiros" do portfólio comercial.
  *
- * Vai como texto, não como logotipo: os arquivos de marca no PPTX estão em
- * 24×24 px, tamanho de ícone de lista, inservível para exibição.
+ * Os arquivos vieram do site oficial de cada marca, exceto Caixa, Governo do
+ * Maranhão e Shineray, que saíram do Wikimedia Commons. Os do PPTX não serviam:
+ * estão em 24×24 px, tamanho de ícone de lista.
+ *
+ * A parede é monocromática. Além de unificar nove identidades de cores
+ * diferentes, resolve o logo do Grupo Mateus, que só existe em versão branca —
+ * o filtro o transforma em silhueta escura como todos os outros.
+ *
+ * Ficaram de fora, por não terem arquivo utilizável: Skyfit, Vetor Móveis,
+ * Clínica Performe, ODT Beach Tênis e Instituto Viver.
  */
-export const CLIENTES: { grupo: string; marcas: string[] }[] = [
-  {
-    grupo: 'Varejo',
-    marcas: ['Grupo Mateus', 'Shineray do Brasil', 'Selfit Academias', 'Skyfit Academia', 'Vetor Móveis'],
-  },
-  {
-    grupo: 'Público e financeiro',
-    marcas: [
-      'Caixa Econômica Federal',
-      'Banco BTG Pactual',
-      'Governo do Maranhão',
-      'Prefeitura de S. J. Ribamar',
-      'Instituto Viver',
-    ],
-  },
-  {
-    grupo: 'Saúde e lazer',
-    marcas: ['Nefroclínicas', 'Clínica Performe', 'Grupo Pague Menos', 'ODT Beach Tênis'],
-  },
+export interface Marca {
+  nome: string
+  arquivo: string
+  /** Proporção largura/altura, para o navegador reservar o espaço certo. */
+  proporcao: number
+}
+
+export const MARCAS: Marca[] = [
+  { nome: 'Grupo Mateus', arquivo: '/marcas/grupo-mateus.png', proporcao: 710 / 119 },
+  { nome: 'Caixa Econômica Federal', arquivo: '/marcas/caixa.svg', proporcao: 3.1 },
+  { nome: 'Selfit Academias', arquivo: '/marcas/selfit.svg', proporcao: 2.6 },
+  { nome: 'Banco BTG Pactual', arquivo: '/marcas/btg-pactual.svg', proporcao: 4.2 },
+  { nome: 'Governo do Maranhão', arquivo: '/marcas/governo-ma.png', proporcao: 446 / 137 },
+  { nome: 'Grupo Pague Menos', arquivo: '/marcas/pague-menos.svg', proporcao: 2.9 },
+  { nome: 'Prefeitura de São José de Ribamar', arquivo: '/marcas/ribamar.png', proporcao: 513 / 200 },
+  { nome: 'Shineray do Brasil', arquivo: '/marcas/shineray.png', proporcao: 241 / 200 },
+  { nome: 'Nefroclínicas', arquivo: '/marcas/nefroclinicas.svg', proporcao: 4.4 },
 ]
 
 export const PASSOS: { titulo: string; texto: string }[] = [

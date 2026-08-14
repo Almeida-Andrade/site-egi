@@ -1,0 +1,77 @@
+.trilho {
+  overflow: hidden;
+  /* Apaga as pontas: os logos entram e saem sem bater na borda da tela. */
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.faixa {
+  display: flex;
+  width: max-content;
+  animation: desliza 42s linear infinite;
+}
+.trilho:hover .faixa {
+  animation-play-state: paused;
+}
+
+.fita {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-6);
+  margin: 0;
+  padding: 0 calc(var(--gap-6) / 2);
+  list-style: none;
+}
+
+.item img {
+  height: 40px;
+  width: auto;
+  max-width: 190px;
+  object-fit: contain;
+  /* `grayscale` unifica nove identidades de cores diferentes. Foi preferido a
+     `brightness(0)`, que fundia num borrão os brasões do Governo do Maranhão e
+     de Ribamar — neles as letras são vazadas em branco, e zerar o brilho
+     pintava vazado e fundo da mesma cor. O logo do Grupo Mateus, que só existe
+     em versão branca, foi escurecido no próprio arquivo. */
+  filter: grayscale(1);
+  opacity: 0.6;
+  transition: opacity 220ms ease;
+}
+.item img:hover {
+  opacity: 1;
+}
+
+@keyframes desliza {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 640px) {
+  .fita {
+    gap: var(--gap-5);
+  }
+  .item img {
+    height: 32px;
+    max-width: 150px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trilho {
+    mask-image: none;
+  }
+  .faixa {
+    animation: none;
+    width: 100%;
+  }
+  /* Parada, a segunda cópia seria repetição visível. */
+  .faixa .fita:last-child {
+    display: none;
+  }
+  .fita {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--gap-4) var(--gap-5);
+    padding: 0;
+  }
+}

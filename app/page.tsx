@@ -9,7 +9,6 @@ import {
   obterEstatisticas,
 } from '@/lib/dados/empreendimentos'
 import { DadosEstruturados } from '@/components/site/DadosEstruturados'
-import { urlImagem } from '@/lib/utils/rotulos'
 import estilos from './page.module.css'
 
 export const revalidate = 60
@@ -22,7 +21,6 @@ export default async function Home() {
   ])
 
   const emDestaque = destaques.filter((e) => e.destaque).slice(0, 3)
-  const capaHero = destaques.find((e) => e.capa)?.capa
 
   return (
     <>
@@ -30,17 +28,17 @@ export default async function Home() {
         <Cabecalho variante="escuro" />
 
         <section className={estilos.hero}>
-          {capaHero && (
-            <Image
-              src={urlImagem(capaHero.storage_path)}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              style={{ objectFit: 'cover' }}
-              className={estilos.heroFoto}
-            />
-          )}
+          {/* Imagem fixa, não a capa de um empreendimento: a primeira dobra não
+              deve mudar de cara quando o portfólio for reordenado no painel. */}
+          <Image
+            src="/hero-corporativo.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            style={{ objectFit: 'cover' }}
+            className={estilos.heroFoto}
+          />
           <div className={estilos.heroTexto}>
             <p className={estilos.kicker}>São Luís · Maranhão</p>
             <h1 className={estilos.titulo}>

@@ -9,6 +9,7 @@ import { contarPorStatus } from '@/components/site/logicaUnidades'
 import { listarSlugsPublicados, obterEmpreendimentoPorSlug } from '@/lib/dados/empreendimentos'
 import { rotuloTipoEmpreendimento, urlImagem } from '@/lib/utils/rotulos'
 import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
+import { DadosEstruturados } from '@/components/site/DadosEstruturados'
 import estilos from './page.module.css'
 
 export const revalidate = 60
@@ -112,6 +113,21 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
             )}
           </aside>
         </div>
+
+        <DadosEstruturados
+          dados={{
+            '@context': 'https://schema.org',
+            '@type': 'Place',
+            name: e.nome,
+            address: {
+              '@type': 'PostalAddress',
+              streetAddress: e.localizacao_aproximada ? undefined : e.endereco,
+              addressLocality: e.cidade,
+              addressRegion: e.uf,
+              addressCountry: 'BR',
+            },
+          }}
+        />
       </main>
       <Rodape />
     </>

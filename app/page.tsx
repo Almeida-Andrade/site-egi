@@ -8,6 +8,7 @@ import {
   listarEmpreendimentos,
   obterEstatisticas,
 } from '@/lib/dados/empreendimentos'
+import { DadosEstruturados } from '@/components/site/DadosEstruturados'
 import { urlImagem } from '@/lib/utils/rotulos'
 import estilos from './page.module.css'
 
@@ -104,6 +105,18 @@ export default async function Home() {
       </main>
 
       <Rodape />
+
+      <DadosEstruturados
+        dados={{
+          '@context': 'https://schema.org',
+          '@type': 'RealEstateAgent',
+          name: 'E.G.I Empreendimentos',
+          telephone: '+55-98-3235-5008',
+          areaServed: ['São Luís', 'São José de Ribamar', 'Pedreiras'],
+          address: { '@type': 'PostalAddress', addressRegion: 'MA', addressCountry: 'BR' },
+          sameAs: ['https://www.instagram.com/egi.empreendimentos/'],
+        }}
+      />
     </>
   )
 }

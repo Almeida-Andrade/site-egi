@@ -1,0 +1,61 @@
+.pagina {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: var(--gap-7) var(--gap-5) 0;
+}
+
+.kicker {
+  font-size: 10.5px;
+  letter-spacing: var(--trilha-larga);
+  text-transform: uppercase;
+  color: var(--steel);
+}
+
+.titulo {
+  font-family: var(--fonte-display);
+  font-weight: 400;
+  font-size: var(--escala-display);
+  line-height: 1.05;
+  margin-top: var(--gap-3);
+}
+
+.canais {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-3);
+  margin-top: var(--gap-6);
+}
+
+.canal {
+  display: grid;
+  gap: var(--gap-1);
+  border: 1px solid var(--navy-12);
+  padding: var(--gap-4);
+  background: #fff;
+}
+.canal:hover {
+  border-color: var(--steel);
+}
+.canal b {
+  font-family: var(--fonte-titulo);
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.rotulo {
+  font-size: 10.5px;
+  letter-spacing: var(--trilha-larga);
+  text-transform: uppercase;
+  color: var(--navy-45);
+}
+
+.dica {
+  font-size: 12.5px;
+  color: var(--navy-45);
+}
+
+@media (max-width: 860px) {
+  .canais {
+    grid-template-columns: 1fr;
+  }
+}

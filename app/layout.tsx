@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Instrument_Serif, Archivo, Inter } from 'next/font/google'
+import { URL_SITE } from '@/lib/site'
 import './globals.css'
 
 const display = Instrument_Serif({
@@ -13,7 +14,7 @@ const corpo = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://egiempreendimentos.com.br'),
+  metadataBase: new URL(URL_SITE),
   title: {
     default: 'E.G.I Empreendimentos — Locação de imóveis próprios em São Luís',
     template: '%s · E.G.I Empreendimentos',

@@ -1,0 +1,62 @@
+.pagina {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: var(--gap-7) var(--gap-5) 0;
+}
+
+.kicker {
+  font-size: 10.5px;
+  letter-spacing: var(--trilha-larga);
+  text-transform: uppercase;
+  color: var(--steel);
+}
+
+.titulo {
+  font-family: var(--fonte-display);
+  font-weight: 400;
+  font-size: var(--escala-display);
+  line-height: 1.05;
+  margin-top: var(--gap-3);
+  max-width: 18ch;
+}
+.titulo em {
+  font-style: italic;
+  color: var(--steel);
+}
+
+.texto {
+  margin-top: var(--gap-5);
+  max-width: 62ch;
+  display: grid;
+  gap: var(--gap-3);
+  color: var(--navy-70);
+}
+
+.numeros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin-top: var(--gap-6);
+  border-top: 1px solid var(--navy-12);
+}
+.numeros > div {
+  padding: var(--gap-4) var(--gap-4) var(--gap-4) 0;
+}
+.numeros b {
+  display: block;
+  font-family: var(--fonte-display);
+  font-weight: 400;
+  font-size: 38px;
+  font-variant-numeric: tabular-nums;
+}
+.numeros small {
+  font-size: 10.5px;
+  letter-spacing: var(--trilha-larga);
+  text-transform: uppercase;
+  color: var(--navy-45);
+}
+
+@media (max-width: 720px) {
+  .numeros {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

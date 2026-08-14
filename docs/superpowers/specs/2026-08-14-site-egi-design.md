@@ -49,13 +49,14 @@ O objetivo é um site que sirva a três propósitos, nesta ordem de importância
 | Tema | Decisão |
 |---|---|
 | Escopo do negócio | Locação de imóveis próprios, portfólio misto |
-| Preço | Não aparece no site. "Consulte valores" com botão de contato |
+| Preço | Fora do sistema. Não aparece no site nem é guardado no banco |
 | Stack | Next.js (App Router) + Supabase + Vercel |
 | Contato | WhatsApp direto, sem formulário |
 | Autenticação | Supabase Auth, contas criadas manualmente |
 | Unidades ocupadas | Aparecem no site, marcadas "Ocupado", sem botão de contato |
 | Mapa | Iframe do Google Maps, sem API key |
 | Fotos | Por empreendimento apenas, não por unidade |
+| Localização | Dois níveis: endereço exato ou apenas região/bairro |
 | Direção visual | Home escura editorial + listagens em grade clara |
 
 ### Por que "ocupado" aparece
@@ -67,9 +68,20 @@ disponibilidade, ela some.
 
 ### Por que preço não aparece
 
-Galpão e sala corporativa se negociam caso a caso. O valor fica gravado no banco
-para controle interno e nunca é exposto ao público — a proteção é estrutural,
-não cosmética (ver seção 6).
+Galpão e sala corporativa se negociam caso a caso. O valor não entra no sistema —
+nem no site, nem no banco. Não é dado escondido, é dado ausente, o que elimina
+qualquer risco de exposição acidental e simplifica a camada de segurança.
+
+### Localização em dois níveis
+
+A relação real de imóveis da EGI mistura duas coisas: prédios com endereço exato
+e várias unidades dentro, e conjuntos identificados apenas por região — kitnets
+espalhadas por um bairro, por exemplo. Forçar endereço único nos dois casos
+produziria endereço inventado ou mapa quebrado.
+
+A coluna `localizacao_aproximada` distingue os casos. Quando verdadeira, a ficha
+exibe bairro e cidade no lugar do endereço, e o mapa centraliza na região sem
+marcar um ponto específico.
 
 ## 4. Direção visual
 
@@ -130,6 +142,7 @@ create table empreendimentos (
   cidade        text not null default 'São Luís',
   uf            char(2) not null default 'MA',
   cep           text,
+  localizacao_aproximada boolean not null default false,
   maps_embed_url text,
   maps_link      text,
   publicado     boolean not null default false,
@@ -150,7 +163,6 @@ create table unidades (
   piso              text,
   status            text not null default 'disponivel'
                       check (status in ('disponivel','ocupado','reservado','manutencao')),
-  valor_aluguel     numeric(12,2),
   disponivel_em     date,
   descricao         text,
   caracteristicas   text[] not null default '{}',
@@ -204,26 +216,17 @@ RLS ligada em todas as tabelas. Regras:
 - **Escrita** em qualquer tabela: somente `authenticated`.
 - **`perfis`**: cada usuário lê e edita apenas a própria linha.
 
-### O valor do aluguel
+### Sem dado sensível por coluna
 
-RLS controla linha, não coluna. Se o site consultasse `unidades` direto, a coluna
-`valor_aluguel` viajaria para o navegador mesmo sem ser renderizada — bastaria
-abrir o DevTools para ver. A solução é uma view:
+RLS controla linha, não coluna. Enquanto o valor do aluguel estava previsto no
+modelo, era preciso uma view para impedir que a coluna viajasse até o navegador
+mesmo sem ser renderizada. Com o valor fora do sistema, nenhuma coluna de
+`unidades` é sensível: tudo que está lá é justamente o que o site exibe. O site
+consulta a tabela direto e a RLS de linha basta.
 
-```sql
-create view unidades_publicas
-with (security_invoker = true) as
-select id, empreendimento_id, identificacao, tipo, area_m2, piso,
-       status, disponivel_em, descricao, caracteristicas, ordem
-from unidades
-where arquivado_em is null;
-```
-
-O site público consulta `unidades_publicas`. O painel, autenticado, consulta
-`unidades`. A coluna de valor não tem caminho até o cliente anônimo.
-
-`security_invoker = true` é obrigatório: sem ele a view roda com as permissões de
-quem a criou e passa por cima da RLS da tabela base.
+Se algum dia entrar um campo interno em `unidades` — anotação de contrato, nome
+do inquilino —, a view volta a ser necessária. Registrado aqui para que a decisão
+seja revisitada em vez de esquecida.
 
 ### Chaves
 
@@ -276,7 +279,9 @@ mudança de status aparece em segundos.
 
 A página que recebe os cliques vindos do Instagram. Estrutura:
 
-- Cabeçalho: nome, endereço, contador de disponibilidade
+- Cabeçalho: nome, localização e contador de disponibilidade. A localização mostra
+  o endereço completo ou, quando `localizacao_aproximada` está marcada, apenas
+  bairro e cidade
 - Galeria de fotos do empreendimento
 - **Tabela de unidades** com filtro por status (Todas / Disponíveis / Ocupadas /
   Reservadas). Colunas: identificação, tipo, área, piso, situação.
@@ -339,17 +344,44 @@ O site é a única presença indexável da empresa, então isso não é detalhe.
 - Unitários: extração de URL do campo de mapa (link curto, link longo, iframe
   colado, texto inválido), geração de slug, compressão de imagem
 - Integração: policies de RLS — anônimo não lê rascunho, anônimo não escreve,
-  `valor_aluguel` não aparece em `unidades_publicas`
+  anônimo não lê unidade de empreendimento despublicado
 - End-to-end: fluxo de trocar status de unidade no painel e ver refletido no site
 
 O teste de RLS é o mais importante: é a única barreira entre o banco e a
 internet, e uma policy errada não dá erro — ela simplesmente vaza.
 
-## 15. Pendências
+## 15. Dados de mockup
+
+A primeira entrega roda com dados fictícios, para que o site possa ser avaliado
+visualmente antes da relação real chegar. O seed cobre deliberadamente os casos
+que estressam o layout:
+
+| Empreendimento | Tipo | Unidades | Localização |
+|---|---|---|---|
+| Center Valley | galeria | 18 salas e lojas, 4 livres | endereço exato |
+| CD Tirirical | galpão | 1, ocupada | endereço exato |
+| Galeria Rio Anil | predio_comercial | 6 salas, 2 livres | endereço exato |
+| Kitnets Cohab | residencial | 12 kitnets, 7 livres | **região, sem endereço** |
+| Galpões Itaqui | galpão | 3, todos ocupados | endereço exato |
+
+Os quatro extremos que precisam funcionar: um empreendimento de unidade única, um
+de dezoito, um totalmente ocupado e um sem endereço exato.
+
+As fotos do seed vêm do Unsplash, escolhidas por coerência de tipo — galpão
+logístico com foto de galpão, galeria com foto de galeria. Ficam num diretório
+`seed/` e são enviadas ao bucket pelo script, não referenciadas por URL externa,
+para que o caminho de upload seja exercitado de verdade desde o começo.
+
+O seed é idempotente e reversível: um comando popula, outro limpa. Quando a
+relação real chegar, a limpeza roda uma vez e os dados fictícios não deixam
+resíduo.
+
+## 16. Pendências
 
 - **Relação de empreendimentos:** o usuário vai enviar a lista completa com
   localizações. Os endereços precisarão ser conferidos manualmente no Google Maps
-  para obter o embed correto de cada um. Trabalho previsto para depois da
+  para obter o embed correto de cada um — inclusive decidindo, caso a caso, quais
+  entram como região em vez de endereço exato. Trabalho previsto para depois da
   implementação.
 - **Logo:** arquivo `EGI_LOGO.png` já disponível em
   `C:\Users\victo\Downloads\EGI_LOGO.png`. Falta versão vetorial, se existir.

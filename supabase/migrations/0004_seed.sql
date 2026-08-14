@@ -1,27 +1,27 @@
 -- Idempotente: limpa antes de inserir
 delete from empreendimentos;
 
-insert into empreendimentos (slug, nome, tipo, built_to_suit, cidade,
+insert into empreendimentos (id, slug, nome, tipo, built_to_suit, cidade,
                              localizacao_aproximada, publicado, destaque, ordem) values
-  ('mateus-maiobao','Mateus Maiobão','galpao',true,'São Luís',true,true,true,1),
-  ('mateus-pedreiras','Mateus Pedreiras','galpao',true,'Pedreiras',true,true,true,2),
-  ('odt-beach','ODT Beach','misto',true,'São Luís',true,true,true,3),
-  ('centro-comercial-ana-dina','Centro Comercial Ana Dina','centro_comercial',false,'São Luís',true,true,true,10),
-  ('centro-comercial-empresarial-galeria-a','Centro Comercial e Empresarial Galeria A','centro_comercial',false,'São Luís',true,true,false,11),
-  ('centro-comercial-olgamerica','Centro Comercial Olgamérica','centro_comercial',false,'São José de Ribamar',true,true,false,12),
-  ('centro-comercial-patio-aririzal','Centro Comercial Pátio Aririzal','centro_comercial',false,'São Luís',true,true,true,13),
-  ('centro-comercial-patio-brasil','Centro Comercial Pátio Brasil','centro_comercial',false,'São Luís',true,true,false,14),
-  ('residencial-angra-dos-reis','Condomínio Residencial Angra dos Reis','residencial',false,'São Luís',true,true,false,20),
-  ('residencial-buzios','Condomínio Residencial Búzios','residencial',false,'São Luís',true,true,false,21),
-  ('residencial-guaruja','Condomínio Residencial Guarujá','residencial',false,'São Luís',true,true,true,22),
-  ('residencial-paraty','Condomínio Residencial Paraty','residencial',false,'São Luís',true,true,false,23),
-  ('galpao-turu','Galpão Turu','galpao',false,'São Luís',true,true,false,30),
-  ('salas-1105-1106-century','Salas 1105/1106 — Century','sala_avulsa',false,'São Luís',true,true,false,31),
-  ('sala-603-jaracaty','Sala 603 — Jaracaty','sala_avulsa',false,'São Luís',true,true,false,32),
-  ('casa-calhau','Casa Calhau','casa',false,'São Luís',true,true,false,33),
-  ('casa-maiobao','Casa Maiobão','casa',false,'São Luís',true,true,false,34),
-  ('apto-est-mar-134','Apto Est. Mar 134','apartamento',false,'São Luís',true,true,false,35),
-  ('galpao-maracana-rascunho','Galpão Maracanã (rascunho)','galpao',false,'São Luís',true,false,false,99);
+  (md5('mateus-maiobao')::uuid,'mateus-maiobao','Mateus Maiobão','galpao',true,'São Luís',true,true,true,1),
+  (md5('mateus-pedreiras')::uuid,'mateus-pedreiras','Mateus Pedreiras','galpao',true,'Pedreiras',true,true,true,2),
+  (md5('odt-beach')::uuid,'odt-beach','ODT Beach','misto',true,'São Luís',true,true,true,3),
+  (md5('centro-comercial-ana-dina')::uuid,'centro-comercial-ana-dina','Centro Comercial Ana Dina','centro_comercial',false,'São Luís',true,true,true,10),
+  (md5('centro-comercial-empresarial-galeria-a')::uuid,'centro-comercial-empresarial-galeria-a','Centro Comercial e Empresarial Galeria A','centro_comercial',false,'São Luís',true,true,false,11),
+  (md5('centro-comercial-olgamerica')::uuid,'centro-comercial-olgamerica','Centro Comercial Olgamérica','centro_comercial',false,'São José de Ribamar',true,true,false,12),
+  (md5('centro-comercial-patio-aririzal')::uuid,'centro-comercial-patio-aririzal','Centro Comercial Pátio Aririzal','centro_comercial',false,'São Luís',true,true,true,13),
+  (md5('centro-comercial-patio-brasil')::uuid,'centro-comercial-patio-brasil','Centro Comercial Pátio Brasil','centro_comercial',false,'São Luís',true,true,false,14),
+  (md5('residencial-angra-dos-reis')::uuid,'residencial-angra-dos-reis','Condomínio Residencial Angra dos Reis','residencial',false,'São Luís',true,true,false,20),
+  (md5('residencial-buzios')::uuid,'residencial-buzios','Condomínio Residencial Búzios','residencial',false,'São Luís',true,true,false,21),
+  (md5('residencial-guaruja')::uuid,'residencial-guaruja','Condomínio Residencial Guarujá','residencial',false,'São Luís',true,true,true,22),
+  (md5('residencial-paraty')::uuid,'residencial-paraty','Condomínio Residencial Paraty','residencial',false,'São Luís',true,true,false,23),
+  (md5('galpao-turu')::uuid,'galpao-turu','Galpão Turu','galpao',false,'São Luís',true,true,false,30),
+  (md5('salas-1105-1106-century')::uuid,'salas-1105-1106-century','Salas 1105/1106 — Century','sala_avulsa',false,'São Luís',true,true,false,31),
+  (md5('sala-603-jaracaty')::uuid,'sala-603-jaracaty','Sala 603 — Jaracaty','sala_avulsa',false,'São Luís',true,true,false,32),
+  (md5('casa-calhau')::uuid,'casa-calhau','Casa Calhau','casa',false,'São Luís',true,true,false,33),
+  (md5('casa-maiobao')::uuid,'casa-maiobao','Casa Maiobão','casa',false,'São Luís',true,true,false,34),
+  (md5('apto-est-mar-134')::uuid,'apto-est-mar-134','Apto Est. Mar 134','apartamento',false,'São Luís',true,true,false,35),
+  (md5('galpao-maracana-rascunho')::uuid,'galpao-maracana-rascunho','Galpão Maracanã (rascunho)','galpao',false,'São Luís',true,false,false,99);
 
 -- Built to suit e avulsos: uma unidade cada, todas ocupadas
 insert into unidades (empreendimento_id, identificacao, tipo, status, ordem)

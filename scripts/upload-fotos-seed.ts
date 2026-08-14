@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { readFileSync, readdirSync } from 'node:fs'
+import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 for (const linha of readFileSync('.env.local', 'utf8').split('\n')) {
@@ -46,13 +46,30 @@ async function main() {
         .upload(caminho, conteudo, { contentType: 'image/jpeg', upsert: true })
       if (erroUpload) throw new Error(`${emp.slug}: ${erroUpload.message}`)
 
-      await supabase.from('imagens').insert({
-        empreendimento_id: emp.id,
-        storage_path: caminho,
-        alt: `Fachada — ${emp.slug}`,
-        capa: i === 0,
-        ordem: i,
-      })
+      const { data: existente, error: erroConsulta } = await supabase
+        .from('imagens')
+        .select('id')
+        .eq('empreendimento_id', emp.id)
+        .eq('storage_path', caminho)
+        .maybeSingle()
+      if (erroConsulta) throw new Error(`${emp.slug}: ${erroConsulta.message}`)
+
+      if (existente) {
+        const { error: erroImagem } = await supabase
+          .from('imagens')
+          .update({ alt: `Fachada — ${emp.slug}`, capa: i === 0, ordem: i })
+          .eq('id', existente.id)
+        if (erroImagem) throw new Error(`${emp.slug}: ${erroImagem.message}`)
+      } else {
+        const { error: erroImagem } = await supabase.from('imagens').insert({
+          empreendimento_id: emp.id,
+          storage_path: caminho,
+          alt: `Fachada — ${emp.slug}`,
+          capa: i === 0,
+          ordem: i,
+        })
+        if (erroImagem) throw new Error(`${emp.slug}: ${erroImagem.message}`)
+      }
     }
     console.log(`ok ${emp.slug}`)
   }

@@ -1,0 +1,51 @@
+.pagina {
+  max-width: var(--largura-max);
+  margin: 0 auto;
+  padding: var(--gap-6) var(--gap-5) 0;
+}
+
+.cabecalho {
+  margin-bottom: var(--gap-4);
+}
+
+.kicker {
+  font-size: 10.5px;
+  letter-spacing: var(--trilha-larga);
+  text-transform: uppercase;
+  color: var(--steel);
+}
+
+.titulo {
+  font-family: var(--fonte-titulo);
+  font-size: var(--escala-titulo);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  margin-top: var(--gap-2);
+}
+
+.contagem {
+  font-family: var(--fonte-titulo);
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: var(--navy-45);
+  margin-top: var(--gap-1);
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap-4);
+  margin-top: var(--gap-5);
+}
+
+.vazio {
+  margin: var(--gap-6) 0;
+  color: var(--navy-70);
+  max-width: 44ch;
+}
+
+@media (max-width: 860px) {
+  .grade {
+    grid-template-columns: 1fr;
+  }
+}

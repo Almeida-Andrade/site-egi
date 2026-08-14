@@ -1,0 +1,55 @@
+/* Escondida por padrão: sem JavaScript nada a removeria, e a página ficaria
+   coberta para sempre. A classe `js` é posta pelo script do layout. */
+.cortina {
+  display: none;
+}
+
+:global(html.js) .cortina {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--navy);
+  transition: opacity 400ms ease;
+}
+:global(html.js) .cortina[data-saindo='true'] {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* O símbolo da marca desenhado em CSS: um quadrado azul com o recorte navy no
+   canto. Assim a cortina não depende de nenhum arquivo carregar. */
+.marca {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  background: var(--pure);
+  animation: pulsa 1400ms ease-in-out infinite;
+}
+.marca::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 46%;
+  height: 46%;
+  background: var(--navy);
+  box-shadow: -4px -4px 0 0 var(--navy);
+}
+
+@keyframes pulsa {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cortina {
+    display: none;
+  }
+}

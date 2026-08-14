@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Instrument_Serif, Archivo, Inter } from 'next/font/google'
+import { Cortina } from '@/components/site/Cortina'
 import { URL_SITE } from '@/lib/site'
 import './globals.css'
 
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `document.documentElement.classList.add('js')`,
           }}
         />
+        <Cortina />
         {children}
       </body>
     </html>

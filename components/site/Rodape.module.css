@@ -1,4 +1,5 @@
 .rodape { background: var(--navy); color: #fff; margin-top: var(--gap-7); }
+.colado { margin-top: 0; }
 
 .faixa {
   display: grid;

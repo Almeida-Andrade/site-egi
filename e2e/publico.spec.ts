@@ -19,8 +19,20 @@ test('listagem filtra por tipo pela URL', async ({ page }) => {
 })
 
 test('listagem filtra por disponibilidade pela URL', async ({ page }) => {
+  const cartoes = 'main a[href^="/empreendimentos/"]'
+
+  await page.goto('/empreendimentos')
+  const total = await page.locator(cartoes).count()
+
   await page.goto('/empreendimentos?disponiveis=1')
-  await expect(page.locator('main a[href^="/empreendimentos/"]')).toHaveCount(4)
+  const filtrados = await page.locator(cartoes).count()
+
+  // O número exato muda a cada contrato assinado. O que o filtro promete é:
+  // sobra alguma coisa, sobra menos que o portfólio inteiro, e tudo que sobrou
+  // anuncia unidade livre.
+  expect(filtrados).toBeGreaterThan(0)
+  expect(filtrados).toBeLessThan(total)
+  await expect(page.locator(cartoes, { hasText: /dispon[ií]ve/i })).toHaveCount(filtrados)
 })
 
 test('ficha lista unidades e a aba de disponíveis reduz a tabela', async ({ page }) => {
@@ -33,7 +45,11 @@ test('ficha lista unidades e a aba de disponíveis reduz a tabela', async ({ pag
 })
 
 test('empreendimento lotado não oferece contato por unidade', async ({ page }) => {
-  await page.goto('/empreendimentos/centro-comercial-patio-brasil')
+  // Galeria A está 100% locada na relação de contratos atual. Se um dia vagar,
+  // este teste falha — e a correção é apontá-lo para outro imóvel cheio, não
+  // afrouxar a asserção.
+  await page.goto('/empreendimentos/centro-comercial-empresarial-galeria-a')
+  await expect(page.getByRole('button', { name: /^Disponíveis\s*0/ })).toBeVisible()
   await expect(page.getByText('Tenho interesse')).toHaveCount(0)
   await expect(page.getByRole('link', { name: 'Avise-me quando vagar' })).toBeVisible()
 })

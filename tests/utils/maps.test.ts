@@ -28,4 +28,17 @@ describe('extrairUrlMaps', () => {
   it('rejeita texto vazio', () => {
     expect(extrairUrlMaps('   ')).toBeNull()
   })
+
+  it('rejeita caminho não exato /maps/embedded', () => {
+    expect(extrairUrlMaps('https://www.google.com/maps/embedded?pb=X')).toBeNull()
+  })
+
+  it('rejeita URL com credenciais embutidas', () => {
+    expect(extrairUrlMaps('https://user:pass@www.google.com/maps/embed?pb=X')).toBeNull()
+  })
+
+  it('extrai iframe correto quando img src precede', () => {
+    const iframeCorreto = `<img src="https://evil.com/x"><iframe src="${EMBED}"></iframe>`
+    expect(extrairUrlMaps(iframeCorreto)).toBe(EMBED)
+  })
 })

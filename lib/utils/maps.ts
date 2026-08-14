@@ -8,7 +8,7 @@ export function extrairUrlMaps(entrada: string): string | null {
   const texto = entrada.trim()
   if (!texto) return null
 
-  const doIframe = texto.match(/src=["']([^"']+)["']/i)
+  const doIframe = texto.match(/<iframe\s[^>]*src=["']([^"']+)["']/i)
   const bruta = doIframe ? doIframe[1] : texto
 
   let url: URL
@@ -19,8 +19,9 @@ export function extrairUrlMaps(entrada: string): string | null {
   }
 
   if (url.protocol !== 'https:') return null
+  if (url.username || url.password) return null
   if (!HOSTS_PERMITIDOS.includes(url.hostname)) return null
-  if (!url.pathname.startsWith('/maps/embed')) return null
+  if (url.pathname !== '/maps/embed') return null
 
   return url.toString()
 }

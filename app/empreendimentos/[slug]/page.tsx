@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Cabecalho } from '@/components/site/Cabecalho'
 import { Rodape } from '@/components/site/Rodape'
+import { Transicao } from '@/components/site/Transicao'
 import { Galeria } from '@/components/site/Galeria'
 import { MapaEmbed } from '@/components/site/MapaEmbed'
 import { TabelaUnidades } from '@/components/site/TabelaUnidades'
@@ -76,98 +77,100 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
   return (
     <>
       <Cabecalho />
-      <main className={estilos.pagina}>
-        <header className={estilos.cabecalho}>
-          <p className={estilos.trilha}>
-            {rotuloTipoEmpreendimento(e.tipo)}
-            {e.built_to_suit && <span className={estilos.selo}>Built to suit</span>}
-          </p>
-          <h1 className={estilos.titulo}>{e.nome}</h1>
-          <p className={estilos.local}>
-            {local}
-            {contagem.total > 0 && (
-              <span className={estilos.disponibilidade}>
-                {contagem.disponivel} de {contagem.total} disponíveis
-              </span>
-            )}
-          </p>
-        </header>
+      <Transicao>
+        <main className={estilos.pagina}>
+          <header className={estilos.cabecalho}>
+            <p className={estilos.trilha}>
+              {rotuloTipoEmpreendimento(e.tipo)}
+              {e.built_to_suit && <span className={estilos.selo}>Built to suit</span>}
+            </p>
+            <h1 className={estilos.titulo}>{e.nome}</h1>
+            <p className={estilos.local}>
+              {local}
+              {contagem.total > 0 && (
+                <span className={estilos.disponibilidade}>
+                  {contagem.disponivel} de {contagem.total} disponíveis
+                </span>
+              )}
+            </p>
+          </header>
 
-        <div className={estilos.corpo}>
-          <div className={estilos.principal}>
-            <Galeria imagens={e.imagens} nome={e.nome} />
+          <div className={estilos.corpo}>
+            <div className={estilos.principal}>
+              <Galeria imagens={e.imagens} nome={e.nome} />
 
-            {e.descricao && <p className={estilos.descricao}>{e.descricao}</p>}
+              {e.descricao && <p className={estilos.descricao}>{e.descricao}</p>}
 
-            <h2 className={estilos.subtitulo}>Unidades</h2>
-            <TabelaUnidades unidades={e.unidades} empreendimento={e.nome} />
-          </div>
+              <h2 className={estilos.subtitulo}>Unidades</h2>
+              <TabelaUnidades unidades={e.unidades} empreendimento={e.nome} />
+            </div>
 
-          <aside className={estilos.lateral}>
-            <h2 className={estilos.subtitulo}>Localização</h2>
-            {e.maps_embed_url ? (
-              <MapaEmbed url={e.maps_embed_url} titulo={e.nome} />
-            ) : (
-              <p className={estilos.semMapa}>{local}</p>
-            )}
+            <aside className={estilos.lateral}>
+              <h2 className={estilos.subtitulo}>Localização</h2>
+              {e.maps_embed_url ? (
+                <MapaEmbed url={e.maps_embed_url} titulo={e.nome} />
+              ) : (
+                <p className={estilos.semMapa}>{local}</p>
+              )}
 
-            <a
-              className={estilos.whatsapp}
-              href={montarLinkWhatsApp({ empreendimento: e.nome })}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {contagem.disponivel > 0 ? 'Falar no WhatsApp' : 'Avise-me quando vagar'}
-            </a>
-
-            {comoChegar && (
               <a
-                className={estilos.comoChegar}
-                href={comoChegar}
+                className={estilos.whatsapp}
+                href={montarLinkWhatsApp({ empreendimento: e.nome })}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Como chegar →
+                {contagem.disponivel > 0 ? 'Falar no WhatsApp' : 'Avise-me quando vagar'}
               </a>
-            )}
-          </aside>
-        </div>
 
-        <DadosEstruturados
-          dados={{
-            '@context': 'https://schema.org',
-            '@type': 'Place',
-            name: e.nome,
-            description: e.descricao ?? undefined,
-            url: `${URL_SITE}/empreendimentos/${e.slug}`,
-            photo: e.imagens.map((i) => urlImagem(i.storage_path)),
-            address: {
-              '@type': 'PostalAddress',
-              streetAddress: e.localizacao_aproximada ? undefined : e.endereco,
-              addressLocality: e.cidade,
-              addressRegion: e.uf,
-              addressCountry: 'BR',
-            },
-          }}
-        />
+              {comoChegar && (
+                <a
+                  className={estilos.comoChegar}
+                  href={comoChegar}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Como chegar →
+                </a>
+              )}
+            </aside>
+          </div>
 
-        <DadosEstruturados
-          dados={{
-            '@context': 'https://schema.org',
-            '@type': 'BreadcrumbList',
-            itemListElement: [
-              { '@type': 'ListItem', position: 1, name: 'Início', item: URL_SITE },
-              {
-                '@type': 'ListItem',
-                position: 2,
-                name: 'Empreendimentos',
-                item: `${URL_SITE}/empreendimentos`,
+          <DadosEstruturados
+            dados={{
+              '@context': 'https://schema.org',
+              '@type': 'Place',
+              name: e.nome,
+              description: e.descricao ?? undefined,
+              url: `${URL_SITE}/empreendimentos/${e.slug}`,
+              photo: e.imagens.map((i) => urlImagem(i.storage_path)),
+              address: {
+                '@type': 'PostalAddress',
+                streetAddress: e.localizacao_aproximada ? undefined : e.endereco,
+                addressLocality: e.cidade,
+                addressRegion: e.uf,
+                addressCountry: 'BR',
               },
-              { '@type': 'ListItem', position: 3, name: e.nome },
-            ],
-          }}
-        />
-      </main>
+            }}
+          />
+
+          <DadosEstruturados
+            dados={{
+              '@context': 'https://schema.org',
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Início', item: URL_SITE },
+                {
+                  '@type': 'ListItem',
+                  position: 2,
+                  name: 'Empreendimentos',
+                  item: `${URL_SITE}/empreendimentos`,
+                },
+                { '@type': 'ListItem', position: 3, name: e.nome },
+              ],
+            }}
+          />
+        </main>
+      </Transicao>
       <Rodape />
     </>
   )

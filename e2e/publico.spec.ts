@@ -71,3 +71,68 @@ test('painel exige sessão', async ({ page }) => {
   await expect(page).toHaveURL('/admin')
   await expect(page.getByRole('heading', { name: 'Painel administrativo' })).toBeVisible()
 })
+
+test.describe('navegação no celular', () => {
+  test.use({ viewport: { width: 390, height: 844 } })
+
+  test('menu abre, navega e fecha — a barra de links não existe nesta largura', async ({
+    page,
+  }) => {
+    await page.goto('/empreendimentos')
+
+    // O defeito que isto guarda: abaixo de 860px a barra some. Se o hambúrguer
+    // sumir junto, o site fica sem navegação no aparelho onde ele mais é aberto.
+    await expect(page.locator('header nav[aria-label="Principal"]').first()).toBeHidden()
+
+    const botao = page.getByRole('button', { name: 'Abrir menu' })
+    await expect(botao).toBeVisible()
+
+    const alvo = await botao.boundingBox()
+    expect(alvo!.width).toBeGreaterThanOrEqual(44)
+    expect(alvo!.height).toBeGreaterThanOrEqual(44)
+
+    await botao.click()
+    await expect(page.getByRole('button', { name: 'Fechar menu' })).toHaveAttribute(
+      'aria-expanded',
+      'true',
+    )
+
+    const painel = page.locator('#menu-mobile')
+    await expect(painel.getByRole('link', { name: 'Empreendimentos' })).toBeVisible()
+    await expect(painel.getByRole('link', { name: 'Falar no WhatsApp' })).toBeVisible()
+
+    await painel.getByRole('link', { name: 'Contato' }).click()
+    await expect(page).toHaveURL(/\/contato$/)
+
+    // Fecha ao navegar: senão o painel cobriria a página nova.
+    await expect(painel).toBeHidden()
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Vamos conversar')
+  })
+
+  test('Esc fecha o menu e devolve a rolagem', async ({ page }) => {
+    await page.goto('/sobre')
+    await page.getByRole('button', { name: 'Abrir menu' }).click()
+    await expect(page.locator('body')).toHaveCSS('overflow', 'hidden')
+
+    await page.keyboard.press('Escape')
+    await expect(page.locator('#menu-mobile')).toBeHidden()
+    await expect(page.locator('body')).not.toHaveCSS('overflow', 'hidden')
+  })
+})
+
+// `header > nav` é a barra do desktop. O menu do celular também tem um nav com
+// aria-current, mas dentro de #menu-mobile — sem o filho direto, o seletor
+// pegaria os dois.
+const ITEM_ATIVO = 'header > nav a[aria-current="page"]'
+
+test('cabeçalho marca a página atual', async ({ page }) => {
+  await page.goto('/sobre')
+  await expect(page.locator(ITEM_ATIVO)).toHaveText('A EGI')
+
+  await page.goto('/empreendimentos/residencial-buzios')
+  await expect(page.locator(ITEM_ATIVO)).toHaveText('Empreendimentos')
+
+  // Na home nenhum item representa a rota.
+  await page.goto('/')
+  await expect(page.locator(ITEM_ATIVO)).toHaveCount(0)
+})

@@ -2,6 +2,8 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { Cabecalho } from '@/components/site/Cabecalho'
 import { Rodape } from '@/components/site/Rodape'
+import { Transicao } from '@/components/site/Transicao'
+import { Revelar } from '@/components/site/Revelar'
 import { CardEmpreendimento } from '@/components/site/CardEmpreendimento'
 import { Filtros } from '@/components/site/Filtros'
 import { listarCidades, listarEmpreendimentos } from '@/lib/dados/empreendimentos'
@@ -46,32 +48,36 @@ export default async function Pagina({
   return (
     <>
       <Cabecalho />
-      <main className={estilos.pagina}>
-        <header className={estilos.cabecalho}>
-          <p className={estilos.kicker}>Portfólio</p>
-          <h1 className={estilos.titulo}>Empreendimentos</h1>
-          <p className={estilos.contagem}>
-            {lista.length} {lista.length === 1 ? 'empreendimento' : 'empreendimentos'}
-          </p>
-        </header>
+      <Transicao>
+        <main className={estilos.pagina}>
+          <header className={estilos.cabecalho}>
+            <p className={estilos.kicker}>Portfólio</p>
+            <h1 className={estilos.titulo}>Empreendimentos</h1>
+            <p className={estilos.contagem}>
+              {lista.length} {lista.length === 1 ? 'empreendimento' : 'empreendimentos'}
+            </p>
+          </header>
 
-        <Suspense>
-          <Filtros cidades={cidades} />
-        </Suspense>
+          <Suspense>
+            <Filtros cidades={cidades} />
+          </Suspense>
 
-        {lista.length === 0 ? (
-          <p className={estilos.vazio}>
-            Nenhum empreendimento com esses filtros. Limpe os filtros para ver o portfólio
-            completo.
-          </p>
-        ) : (
-          <div className={estilos.grade}>
-            {lista.map((e) => (
-              <CardEmpreendimento key={e.id} empreendimento={e} />
-            ))}
-          </div>
-        )}
-      </main>
+          {lista.length === 0 ? (
+            <p className={estilos.vazio}>
+              Nenhum empreendimento com esses filtros. Limpe os filtros para ver o portfólio
+              completo.
+            </p>
+          ) : (
+            <div className={estilos.grade}>
+              {lista.map((e, i) => (
+                <Revelar key={e.id} indice={i} esticar>
+                  <CardEmpreendimento empreendimento={e} />
+                </Revelar>
+              ))}
+            </div>
+          )}
+        </main>
+      </Transicao>
       <Rodape />
     </>
   )

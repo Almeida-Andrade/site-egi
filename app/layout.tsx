@@ -53,7 +53,17 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR" className={`${display.variable} ${titulo.variable} ${corpo.variable}`}>
-      <body>{children}</body>
+      <body>
+        {/* Marca que há JavaScript antes do corpo ser pintado. As animações de
+            entrada partem de opacidade zero: sem esta classe, um script que
+            falhasse deixaria a página em branco para sempre. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add('js')`,
+          }}
+        />
+        {children}
+      </body>
     </html>
   )
 }

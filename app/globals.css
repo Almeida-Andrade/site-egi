@@ -32,3 +32,53 @@ table { border-collapse: collapse; width: 100%; }
   padding: 0; margin: -1px; overflow: hidden;
   clip-path: inset(50%); white-space: nowrap;
 }
+
+/* ---------- Movimento ---------- */
+
+/*
+ * Transição entre páginas: a saída é rápida para não competir por atenção, a
+ * entrada é um pouco mais lenta e espera a saída terminar.
+ */
+::view-transition-old(.pagina-sai) {
+  animation: 140ms ease-in both esmaece-sai;
+}
+::view-transition-new(.pagina-entra) {
+  animation: 240ms ease-out 120ms both esmaece-entra;
+}
+
+@keyframes esmaece-sai {
+  to { opacity: 0; }
+}
+@keyframes esmaece-entra {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* O cabeçalho é a âncora: some do instantâneo antigo para não piscar duplicado
+   e não anima no novo. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) { display: none; }
+::view-transition-new(site-header) { animation: none; }
+
+/* A camada da transição captura o ponteiro; sem isto, cliques durante a
+   animação se perdem. */
+::view-transition { pointer-events: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

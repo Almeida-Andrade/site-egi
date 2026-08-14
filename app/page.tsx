@@ -3,6 +3,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Cabecalho } from '@/components/site/Cabecalho'
 import { Rodape } from '@/components/site/Rodape'
+import { Transicao } from '@/components/site/Transicao'
+import { Revelar } from '@/components/site/Revelar'
 import { CardEmpreendimento } from '@/components/site/CardEmpreendimento'
 import {
   listarBuiltToSuit,
@@ -31,7 +33,7 @@ export default async function Home() {
   const emDestaque = destaques.filter((e) => e.destaque && !e.built_to_suit).slice(0, 3)
 
   return (
-    <>
+    <Transicao>
       <div className={estilos.topo}>
         <Cabecalho variante="escuro" />
 
@@ -83,28 +85,36 @@ export default async function Home() {
 
       <main className={estilos.conteudo}>
         <section className={estilos.secao}>
-          <div className={estilos.secaoTopo}>
-            <h2 className={estilos.secaoTitulo}>Em destaque</h2>
-            <Link href="/empreendimentos" className={estilos.verTodos}>
-              Ver todos →
-            </Link>
-          </div>
+          <Revelar>
+            <div className={estilos.secaoTopo}>
+              <h2 className={estilos.secaoTitulo}>Em destaque</h2>
+              <Link href="/empreendimentos" className={estilos.verTodos}>
+                Ver todos →
+              </Link>
+            </div>
+          </Revelar>
           <div className={estilos.grade}>
-            {emDestaque.map((e) => (
-              <CardEmpreendimento key={e.id} empreendimento={e} />
+            {emDestaque.map((e, i) => (
+              <Revelar key={e.id} indice={i} esticar>
+                <CardEmpreendimento empreendimento={e} />
+              </Revelar>
             ))}
           </div>
         </section>
 
         <section className={estilos.secao}>
-          <h2 className={estilos.secaoTitulo}>Built to suit</h2>
-          <p className={estilos.secaoTexto}>
-            Imóveis construídos sob medida para operações de grande porte, entre elas as
-            unidades do Grupo Mateus em Maiobão e Pedreiras.
-          </p>
+          <Revelar>
+            <h2 className={estilos.secaoTitulo}>Built to suit</h2>
+            <p className={estilos.secaoTexto}>
+              Imóveis construídos sob medida para operações de grande porte, entre elas as
+              unidades do Grupo Mateus em Maiobão e Pedreiras.
+            </p>
+          </Revelar>
           <div className={estilos.grade}>
-            {cases.map((e) => (
-              <CardEmpreendimento key={e.id} empreendimento={e} />
+            {cases.map((e, i) => (
+              <Revelar key={e.id} indice={i} esticar>
+                <CardEmpreendimento empreendimento={e} />
+              </Revelar>
             ))}
           </div>
         </section>
@@ -130,6 +140,6 @@ export default async function Home() {
           sameAs: ['https://www.instagram.com/egi.empreendimentos/'],
         }}
       />
-    </>
+    </Transicao>
   )
 }

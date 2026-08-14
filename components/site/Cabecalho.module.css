@@ -1,4 +1,6 @@
 .cabecalho {
+  position: relative;
+  z-index: 10;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -23,23 +25,37 @@
   height: 46px;
 }
 
-.navegacao {
-  display: flex;
-  gap: var(--gap-5);
-  font-size: 13px;
-  letter-spacing: 0.05em;
-}
-.navegacao a { padding-bottom: 3px; border-bottom: 2px solid transparent; }
-.navegacao a:hover { border-bottom-color: var(--pure); }
-
 .acao {
   border: 1px solid currentColor;
   padding: 9px 18px;
   font-size: 12px;
   letter-spacing: 0.08em;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
 }
-.acao:hover { background: var(--pure); border-color: var(--pure); color: #fff; }
+.acao:hover {
+  background: var(--pure);
+  border-color: var(--pure);
+  color: #fff;
+}
 
 @media (max-width: 860px) {
-  .navegacao { display: none; }
+  .cabecalho {
+    padding: 14px var(--gap-4);
+  }
+  .logo {
+    height: 38px;
+  }
+  /* No celular o WhatsApp mora dentro do menu, com alvo de toque maior. */
+  .acao {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .acao {
+    transition: none;
+  }
 }

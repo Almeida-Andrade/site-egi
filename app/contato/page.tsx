@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Cabecalho } from '@/components/site/Cabecalho'
 import { Rodape } from '@/components/site/Rodape'
+import { Transicao } from '@/components/site/Transicao'
 import estilos from './page.module.css'
 
 const DESCRICAO =
@@ -19,58 +20,60 @@ export default function Contato() {
   return (
     <>
       <Cabecalho />
-      <main className={estilos.pagina}>
-        <p className={estilos.kicker}>Contato</p>
-        <h1 className={estilos.titulo}>Vamos conversar sobre o seu espaço.</h1>
+      <Transicao>
+        <main className={estilos.pagina}>
+          <p className={estilos.kicker}>Contato</p>
+          <h1 className={estilos.titulo}>Vamos conversar sobre o seu espaço.</h1>
 
-        <div className={estilos.canais}>
-          <a
-            className={estilos.canal}
-            href="https://wa.me/5598984812793"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className={estilos.rotulo}>WhatsApp</span>
-            <b>(98) 98481-2793</b>
-            <span className={estilos.dica}>Resposta mais rápida</span>
-          </a>
+          <div className={estilos.canais}>
+            <a
+              className={estilos.canal}
+              href="https://wa.me/5598984812793"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className={estilos.rotulo}>WhatsApp</span>
+              <b>(98) 98481-2793</b>
+              <span className={estilos.dica}>Resposta mais rápida</span>
+            </a>
 
-          <a className={estilos.canal} href="tel:+559832355008">
-            <span className={estilos.rotulo}>Telefone</span>
-            <b>(98) 3235-5008</b>
-            <span className={estilos.dica}>Horário comercial</span>
-          </a>
+            <a className={estilos.canal} href="tel:+559832355008">
+              <span className={estilos.rotulo}>Telefone</span>
+              <b>(98) 3235-5008</b>
+              <span className={estilos.dica}>Horário comercial</span>
+            </a>
 
-          <a
-            className={estilos.canal}
-            href="https://www.instagram.com/egi.empreendimentos/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className={estilos.rotulo}>Instagram</span>
-            <b>@egi.empreendimentos</b>
-            <span className={estilos.dica}>Novidades e lançamentos</span>
-          </a>
+            <a
+              className={estilos.canal}
+              href="https://www.instagram.com/egi.empreendimentos/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className={estilos.rotulo}>Instagram</span>
+              <b>@egi.empreendimentos</b>
+              <span className={estilos.dica}>Novidades e lançamentos</span>
+            </a>
 
-          <a className={estilos.canal} href="mailto:egiempreendimentos@grupoalmeidaandrade.com.br">
-            <span className={estilos.rotulo}>E-mail</span>
-            <b>egiempreendimentos@grupoalmeidaandrade.com.br</b>
-            <span className={estilos.dica}>Para propostas e documentos</span>
-          </a>
-        </div>
+            <a className={estilos.canal} href="mailto:egiempreendimentos@grupoalmeidaandrade.com.br">
+              <span className={estilos.rotulo}>E-mail</span>
+              <b>egiempreendimentos@grupoalmeidaandrade.com.br</b>
+              <span className={estilos.dica}>Para propostas e documentos</span>
+            </a>
+          </div>
 
-        <div className={estilos.sede}>
-          <span className={estilos.rotulo}>Sede</span>
-          <address>
-            Av. dos Sambaquis, 34 — Ed. Galeria A
-            <br />
-            Calhau, São Luís — MA
-          </address>
-          <Link href="/empreendimentos/centro-comercial-empresarial-galeria-a">
-            Conheça a Galeria A →
-          </Link>
-        </div>
-      </main>
+          <div className={estilos.sede}>
+            <span className={estilos.rotulo}>Sede</span>
+            <address>
+              Av. dos Sambaquis, 34 — Ed. Galeria A
+              <br />
+              Calhau, São Luís — MA
+            </address>
+            <Link href="/empreendimentos/centro-comercial-empresarial-galeria-a">
+              Conheça a Galeria A →
+            </Link>
+          </div>
+        </main>
+      </Transicao>
       <Rodape />
     </>
   )

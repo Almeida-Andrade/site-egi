@@ -1,6 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { NavegacaoPrincipal } from './NavegacaoPrincipal'
+import { MenuMobile } from './MenuMobile'
 import estilos from './Cabecalho.module.css'
+
+const WHATSAPP = 'https://wa.me/5598984812793'
 
 const variantesEstilos: Record<'claro' | 'escuro', string> = {
   claro: '',
@@ -16,7 +20,17 @@ const variantesLogo: Record<'claro' | 'escuro', string> = {
 
 export function Cabecalho({ variante = 'claro' }: { variante?: 'claro' | 'escuro' }) {
   return (
-    <header className={`${estilos.cabecalho} ${variantesEstilos[variante]}`.trim()}>
+    <header
+      className={[
+        estilos.cabecalho,
+        variantesEstilos[variante],
+        variante === 'escuro' ? 'cabecalho-escuro' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+      // Âncora da transição entre páginas: o conteúdo se move, o cabeçalho não.
+      style={{ viewTransitionName: 'site-header' }}
+    >
       <Link href="/" className={estilos.marca}>
         <Image
           src={variantesLogo[variante]}
@@ -28,21 +42,13 @@ export function Cabecalho({ variante = 'claro' }: { variante?: 'claro' | 'escuro
         />
       </Link>
 
-      <nav className={estilos.navegacao} aria-label="Principal">
-        <Link href="/empreendimentos">Empreendimentos</Link>
-        <Link href="/empreendimentos?disponiveis=1">Disponíveis</Link>
-        <Link href="/sobre">A EGI</Link>
-        <Link href="/contato">Contato</Link>
-      </nav>
+      <NavegacaoPrincipal />
 
-      <a
-        className={estilos.acao}
-        href="https://wa.me/5598984812793"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a className={estilos.acao} href={WHATSAPP} target="_blank" rel="noopener noreferrer">
         WhatsApp
       </a>
+
+      <MenuMobile whatsapp={WHATSAPP} />
     </header>
   )
 }

@@ -1,0 +1,39 @@
+.revelar {
+  opacity: 1;
+  transform: none;
+}
+
+/* Devolve ao filho o esticamento que ele tinha quando era o item da grade. */
+.esticar {
+  display: flex;
+}
+.esticar > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/*
+ * O estado escondido só existe quando há JavaScript. Se o script falhar, o
+ * conteúdo permanece visível em vez de sumir para sempre — por isso a regra
+ * fica sob `.js`, classe que o próprio script põe no <html>.
+ */
+:global(html.js) .revelar {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 620ms cubic-bezier(0.16, 1, 0.3, 1) var(--atraso, 0ms),
+    transform 620ms cubic-bezier(0.16, 1, 0.3, 1) var(--atraso, 0ms);
+}
+
+:global(html.js) .revelar[data-visivel='true'] {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(html.js) .revelar {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

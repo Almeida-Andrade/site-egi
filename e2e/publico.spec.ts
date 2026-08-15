@@ -132,7 +132,21 @@ test('cabeçalho marca a página atual', async ({ page }) => {
   await page.goto('/empreendimentos/residencial-buzios')
   await expect(page.locator(ITEM_ATIVO)).toHaveText('Empreendimentos')
 
-  // Na home nenhum item representa a rota.
   await page.goto('/')
+  await expect(page.locator(ITEM_ATIVO)).toHaveText('Início')
+
+  // No painel nenhum item do site representa a rota.
+  await page.goto('/admin')
   await expect(page.locator(ITEM_ATIVO)).toHaveCount(0)
+})
+
+test('hero leva ao filtro de disponíveis, que saiu do menu', async ({ page }) => {
+  await page.goto('/')
+  await expect(page.locator('header > nav').getByRole('link', { name: 'Disponíveis' })).toHaveCount(
+    0,
+  )
+
+  await page.getByRole('link', { name: /unidades disponíveis agora/ }).click()
+  await expect(page).toHaveURL(/disponiveis=1/)
+  await expect(page.locator('main a[href^="/empreendimentos/"]').first()).toBeVisible()
 })

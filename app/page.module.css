@@ -61,6 +61,13 @@
   margin: var(--gap-4) 0;
 }
 
+.heroAcoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-4);
+}
+
 .cta {
   display: inline-block;
   border: 1px solid var(--branco-24);
@@ -71,6 +78,20 @@
 .cta:hover {
   background: var(--pure);
   border-color: var(--pure);
+}
+
+.ctaLivre {
+  font-size: 13px;
+  color: #93a6d8;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition:
+    color 200ms ease,
+    border-color 200ms ease;
+}
+.ctaLivre:hover {
+  color: #fff;
+  border-bottom-color: var(--pure);
 }
 
 .numeros {
@@ -316,7 +337,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .categoria,
-  .categoriaSeta {
+  .categoriaSeta,
+  .ctaLivre {
     transition: none;
   }
 }

@@ -15,14 +15,22 @@ describe('itemAtivo', () => {
     expect(itemAtivo('/contato')).toBe('/contato')
   })
 
-  it('não acende nada na home nem no painel', () => {
-    expect(itemAtivo('/')).toBeNull()
+  it('acende Início na home', () => {
+    expect(itemAtivo('/')).toBe('/')
+  })
+
+  it('não acende nada no painel', () => {
     expect(itemAtivo('/admin')).toBeNull()
+    expect(itemAtivo('/admin/empreendimentos')).toBeNull()
+  })
+
+  it('não tem mais o filtro de disponíveis como item de menu', () => {
+    expect(ITENS_NAVEGACAO.map((i) => i.href)).not.toContain('/empreendimentos?disponiveis=1')
   })
 
   it('devolve sempre um href que existe no menu', () => {
     const hrefs = ITENS_NAVEGACAO.map((i) => i.href)
-    for (const caminho of ['/empreendimentos', '/empreendimentos/x', '/sobre', '/contato']) {
+    for (const caminho of ['/', '/empreendimentos', '/empreendimentos/x', '/sobre', '/contato']) {
       expect(hrefs).toContain(itemAtivo(caminho))
     }
   })

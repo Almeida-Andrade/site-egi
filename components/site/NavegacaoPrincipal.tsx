@@ -11,24 +11,27 @@ export function NavegacaoPrincipal() {
   const ativo = itemAtivo(caminho)
 
   const nav = useRef<HTMLElement>(null)
-  const [marca, setMarca] = useState<{ x: number; largura: number } | null>(null)
+  const marca = useRef<HTMLSpanElement>(null)
+  const [sobre, setSobre] = useState<string | null>(null)
+  const [posicao, setPosicao] = useState<{ x: number; largura: number } | null>(null)
+
+  // O traço segue o item sob o cursor e volta ao da página ao sair.
+  const alvo = sobre ?? ativo
 
   const medir = useCallback(() => {
-    const alvo = nav.current?.querySelector<HTMLElement>('[data-ativo="true"]')
-    if (!alvo || !nav.current) {
-      setMarca(null)
-      return
-    }
-    setMarca({ x: alvo.offsetLeft, largura: alvo.offsetWidth })
-  }, [])
+    const item = alvo
+      ? nav.current?.querySelector<HTMLElement>(`[data-href="${CSS.escape(alvo)}"]`)
+      : null
+    setPosicao(item ? { x: item.offsetLeft, largura: item.offsetWidth } : null)
+  }, [alvo])
 
   useLayoutEffect(() => {
     medir()
-  }, [medir, ativo])
+  }, [medir])
 
   useEffect(() => {
     // As fontes chegam depois da primeira pintura e mudam a largura dos itens;
-    // sem remedir, o indicador fica deslocado até o próximo clique.
+    // sem remedir, o traço fica deslocado até o próximo movimento do cursor.
     document.fonts?.ready.then(medir)
 
     const observador = new ResizeObserver(medir)
@@ -36,15 +39,36 @@ export function NavegacaoPrincipal() {
     return () => observador.disconnect()
   }, [medir])
 
+  useEffect(() => {
+    // O cabeçalho é remontado a cada navegação, então o traço nasce em x=0 —
+    // que é justamente onde fica o primeiro item do menu. Animar a partir dali
+    // faria parecer que ele sempre parte de "Início" para chegar ao destino.
+    // A transição só entra depois do primeiro quadro: ao trocar de página o
+    // traço aparece já no lugar, e o deslize fica reservado ao cursor.
+    const quadro = requestAnimationFrame(() => {
+      marca.current?.setAttribute('data-anima', 'true')
+    })
+    return () => cancelAnimationFrame(quadro)
+  }, [])
+
   return (
-    <nav className={estilos.navegacao} aria-label="Principal" ref={nav}>
+    <nav
+      className={estilos.navegacao}
+      aria-label="Principal"
+      ref={nav}
+      onMouseLeave={() => setSobre(null)}
+    >
       {ITENS_NAVEGACAO.map((item) => (
         <Link
           key={item.href}
           href={item.href}
+          data-href={item.href}
           data-ativo={ativo === item.href}
           aria-current={ativo === item.href ? 'page' : undefined}
           className={estilos.item}
+          onMouseEnter={() => setSobre(item.href)}
+          onFocus={() => setSobre(item.href)}
+          onBlur={() => setSobre(null)}
         >
           {item.rotulo}
         </Link>
@@ -53,12 +77,13 @@ export function NavegacaoPrincipal() {
       {/* Fora do fluxo e sem conteúdo: é decoração. Quem usa leitor de tela se
           orienta pelo aria-current, não por este traço. */}
       <span
+        ref={marca}
         aria-hidden
         className={estilos.marca}
-        data-visivel={marca !== null}
+        data-visivel={posicao !== null}
         style={
-          marca
-            ? { transform: `translateX(${marca.x}px)`, width: `${marca.largura}px` }
+          posicao
+            ? { transform: `translateX(${posicao.x}px)`, width: `${posicao.largura}px` }
             : undefined
         }
       />

@@ -3,10 +3,16 @@ export interface ItemNavegacao {
   rotulo: string
 }
 
-/** Itens do menu principal, compartilhados entre o cabeçalho e o menu mobile. */
+/**
+ * Itens do menu principal, compartilhados entre o cabeçalho e o menu mobile.
+ *
+ * "Disponíveis" não está aqui: era um filtro da listagem, não uma página, então
+ * nunca podia acender sozinho no indicador. Virou chamada no hero, onde diz
+ * quantas unidades estão livres.
+ */
 export const ITENS_NAVEGACAO: ItemNavegacao[] = [
+  { href: '/', rotulo: 'Início' },
   { href: '/empreendimentos', rotulo: 'Empreendimentos' },
-  { href: '/empreendimentos?disponiveis=1', rotulo: 'Disponíveis' },
   { href: '/sobre', rotulo: 'A EGI' },
   { href: '/contato', rotulo: 'Contato' },
 ]
@@ -17,8 +23,7 @@ export const ITENS_NAVEGACAO: ItemNavegacao[] = [
  * A query fica de fora de propósito. Ler `useSearchParams` num componente de
  * cliente obriga o Next a envolvê-lo em `Suspense`, e numa página estática isso
  * faz o menu inteiro aparecer depois da hidratação — ou seja, piscar a cada
- * carregamento. Um destaque piscando é pior que "Disponíveis" nunca acender
- * sozinho, até porque ele é um filtro da listagem, não uma página à parte.
+ * carregamento.
  *
  * A ficha de um imóvel acende "Empreendimentos".
  */

@@ -50,7 +50,7 @@ export default async function Home() {
           {/* Imagem fixa, não a capa de um empreendimento: a primeira dobra não
               deve mudar de cara quando o portfólio for reordenado no painel. */}
           <Image
-            src="/hero-center-valley.jpg"
+            src="/hero-corporativo.jpg"
             alt=""
             fill
             priority
@@ -66,9 +66,18 @@ export default async function Home() {
               começam com <em>grandes sonhos</em>.
             </h1>
             <div className={estilos.filete} />
-            <Link href="/empreendimentos" className={estilos.cta}>
-              Ver empreendimentos
-            </Link>
+            <div className={estilos.heroAcoes}>
+              <Link href="/empreendimentos" className={estilos.cta}>
+                Ver empreendimentos
+              </Link>
+              {/* Ocupou o lugar do item "Disponíveis", que saiu do menu. Aqui o
+                  atalho ainda diz quantas unidades estão livres. */}
+              {estatisticas.disponiveis > 0 && (
+                <Link href="/empreendimentos?disponiveis=1" className={estilos.ctaLivre}>
+                  {estatisticas.disponiveis} unidades disponíveis agora →
+                </Link>
+              )}
+            </div>
           </div>
         </section>
 

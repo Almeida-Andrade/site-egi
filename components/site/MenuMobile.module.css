@@ -49,10 +49,14 @@
   z-index: 1;
   display: none;
   flex-direction: column;
-  /* Itens na metade de baixo: no celular é onde o polegar alcança. */
-  justify-content: flex-end;
-  gap: var(--gap-5);
-  padding: var(--gap-6) var(--gap-5) var(--gap-7);
+  /* Itens um pouco abaixo do centro: alcança o polegar sem deixar meia tela
+     vazia, que era o efeito de colá-los na base. */
+  justify-content: center;
+  gap: var(--gap-4);
+  padding: var(--gap-6) var(--gap-5) var(--gap-5);
+  /* Em tela baixa (celular deitado) o conteúdo rola em vez de ser cortado. */
+  overflow-y: auto;
+  overscroll-behavior: contain;
   background: var(--navy);
   color: #fff;
   opacity: 0;
@@ -76,22 +80,38 @@
   transition-delay: 0s;
 }
 
+/*
+ * Fora do fluxo para não empurrar o menu: ele fica no alto, alinhado ao logo do
+ * cabeçalho que o painel cobre.
+ *
+ * `align-self` seria obrigatório se estivesse no fluxo — num flex em coluna o
+ * padrão é esticar, e com `width: auto` o logo virava a largura inteira do
+ * painel com 32px de altura, ou seja, achatado.
+ */
 .logo {
+  position: absolute;
+  top: 18px;
+  left: var(--gap-5);
   width: auto;
-  height: 38px;
-  margin-bottom: auto;
+  height: 32px;
 }
 
 .lista {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-3);
+  align-items: flex-start;
+  gap: var(--gap-2);
+  /* Compensa a altura do logo, que saiu do fluxo, para o bloco não subir
+     demais e ficar centrado de fato. */
+  margin-top: var(--gap-4);
 }
 
 .item {
   font-family: var(--fonte-display);
-  font-size: 34px;
-  line-height: 1.15;
+  font-size: 27px;
+  line-height: 1.25;
+  /* Alvo de toque confortável sem inflar a tipografia. */
+  padding: 6px 0;
   opacity: 0.65;
 }
 .item[data-ativo='true'] {
@@ -100,18 +120,19 @@
 .item[data-ativo='true']::before {
   content: '';
   display: inline-block;
-  width: 22px;
+  width: 18px;
   height: 2px;
-  margin-right: 12px;
+  margin-right: 10px;
   vertical-align: middle;
   background: var(--pure);
 }
 
 .acao {
-  align-self: start;
-  border: 1px solid var(--branco-09);
-  padding: 14px 22px;
-  font-size: 13px;
+  align-self: flex-start;
+  margin-top: var(--gap-2);
+  border: 1px solid var(--branco-24);
+  padding: 13px 22px;
+  font-size: 12.5px;
   letter-spacing: 0.08em;
 }
 .acao:hover {

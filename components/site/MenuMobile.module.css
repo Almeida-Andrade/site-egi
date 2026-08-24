@@ -11,8 +11,6 @@
   cursor: pointer;
 }
 
-/* Dois riscos que viram X: com três, o do meio precisa sumir e a animação fica
-   com um passo a mais para desencontrar. */
 .risco {
   position: absolute;
   left: 11px;
@@ -37,8 +35,6 @@
   top: 21px;
   transform: rotate(-45deg);
 }
-/* Aberto, o botão fica sobre o painel navy: herdar a cor do cabeçalho claro
-   deixaria o X navy sobre navy, ou seja, invisível. */
 .risco[data-aberto='true'] {
   background: #fff;
 }
@@ -49,24 +45,15 @@
   z-index: 1;
   display: none;
   flex-direction: column;
-  /* Itens um pouco abaixo do centro: alcança o polegar sem deixar meia tela
-     vazia, que era o efeito de colá-los na base. */
   justify-content: center;
   gap: var(--gap-4);
   padding: var(--gap-6) var(--gap-5) var(--gap-5);
-  /* Em tela baixa (celular deitado) o conteúdo rola em vez de ser cortado. */
   overflow-y: auto;
   overscroll-behavior: contain;
   background: var(--navy);
   color: #fff;
   opacity: 0;
   transform: translateY(-8px);
-  /*
-   * `visibility` é discreta: numa transição comum ela viraria só na metade do
-   * caminho, e o foco que mandamos para o primeiro link no instante da abertura
-   * cairia em elemento ainda invisível — sem efeito. Com atraso zero ao abrir e
-   * atraso cheio ao fechar, ela vira na hora certa nos dois sentidos.
-   */
   transition:
     opacity 240ms ease,
     transform 240ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -80,14 +67,6 @@
   transition-delay: 0s;
 }
 
-/*
- * Fora do fluxo para não empurrar o menu: ele fica no alto, alinhado ao logo do
- * cabeçalho que o painel cobre.
- *
- * `align-self` seria obrigatório se estivesse no fluxo — num flex em coluna o
- * padrão é esticar, e com `width: auto` o logo virava a largura inteira do
- * painel com 32px de altura, ou seja, achatado.
- */
 .logo {
   position: absolute;
   top: 18px;
@@ -101,8 +80,6 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--gap-2);
-  /* Compensa a altura do logo, que saiu do fluxo, para o bloco não subir
-     demais e ficar centrado de fato. */
   margin-top: var(--gap-4);
 }
 
@@ -110,7 +87,6 @@
   font-family: var(--fonte-display);
   font-size: 27px;
   line-height: 1.25;
-  /* Alvo de toque confortável sem inflar a tipografia. */
   padding: 6px 0;
   opacity: 0.65;
 }

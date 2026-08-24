@@ -24,10 +24,41 @@
   font-size: 12.5px;
 }
 
+.abas {
+  display: flex;
+  gap: var(--gap-4);
+  margin-bottom: var(--gap-3);
+  border-bottom: 1px solid var(--navy-12);
+}
+.aba,
+.abaAtiva {
+  padding: var(--gap-2) 0;
+  font-size: 13px;
+  color: var(--navy-45);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+}
+.abaAtiva {
+  color: var(--navy);
+  font-weight: 600;
+  border-bottom-color: var(--navy);
+}
+.aba:hover {
+  color: var(--navy);
+}
+
+.vazio {
+  padding: var(--gap-5) 0;
+  font-size: 13.5px;
+  color: var(--navy-45);
+}
+
 .tabela {
+  width: 100%;
   background: #fff;
   border: 1px solid var(--navy-12);
   font-size: 13.5px;
+  border-collapse: collapse;
 }
 .tabela th {
   text-align: left;
@@ -43,14 +74,47 @@
   padding: var(--gap-2) var(--gap-3);
   border-bottom: 1px solid var(--navy-08);
 }
+.tabela tbody tr:hover {
+  background: var(--navy-04, #f7f8fa);
+}
 
 .link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   font-weight: 600;
 }
 .link:hover {
   color: var(--pure);
 }
 
+.iconeEditar {
+  width: 13px;
+  height: 13px;
+  opacity: 0.35;
+  flex-shrink: 0;
+}
+.link:hover .iconeEditar {
+  opacity: 1;
+}
+
 .num {
   font-variant-numeric: tabular-nums;
+}
+
+.badgePublicado,
+.badgeRascunho {
+  display: inline-block;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.badgePublicado {
+  background: #0a7a3d14;
+  color: #0a7a3d;
+}
+.badgeRascunho {
+  background: var(--navy-08);
+  color: var(--navy-45);
 }

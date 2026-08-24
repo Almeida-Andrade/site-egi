@@ -21,9 +21,18 @@
 
 .navegacao {
   display: flex;
-  gap: var(--gap-4);
-  font-size: 13px;
+  gap: var(--gap-2);
+  font-size: 12px;
   margin-left: var(--gap-4);
+}
+.navegacao a {
+  padding: 5px 12px;
+  border: 1px solid var(--branco-24);
+  color: #fff;
+}
+.navegacao a:hover {
+  background: var(--pure);
+  border-color: var(--pure);
 }
 
 .usuario {

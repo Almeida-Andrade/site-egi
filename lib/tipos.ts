@@ -11,6 +11,8 @@ export type TipoUnidade =
 export interface Imagem {
   id: string
   storage_path: string
+  /** URL pública completa (vem pronta do banco do CRM) */
+  url: string
   alt: string | null
   capa: boolean
   ordem: number
@@ -72,14 +74,9 @@ export interface Estatisticas {
   empreendimentos: number
   unidades: number
   disponiveis: number
-  ocupacao: number // percentual inteiro, 0 a 100
+  ocupacao: number
 }
 
-/**
- * Formas usadas apenas no painel. `arquivado_em` fica fora dos tipos públicos
- * porque as consultas do site não trazem essa coluna — declarar lá seria o tipo
- * mentindo sobre o que chega do banco.
- */
 export interface EmpreendimentoAdmin extends Empreendimento {
   arquivado_em: string | null
 }

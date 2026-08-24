@@ -4,9 +4,6 @@ test('home mostra o hero e os números do portfólio', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Grandes empreendimentos')
 
-  // Sem números exatos: o portfólio muda conforme a EGI cadastra imóveis, e um
-  // teste preso ao total de hoje quebra a cada edição no painel sem que nada
-  // tenha se quebrado de fato. O que importa é que a consulta trouxe dados.
   const numeros = page.getByLabel('A EGI em números')
   await expect(numeros).toContainText(/[1-9]\d*\s*Empreendimentos/i)
   await expect(numeros).toContainText(/[1-9]\d*\s*Unidades/i)
@@ -27,9 +24,6 @@ test('listagem filtra por disponibilidade pela URL', async ({ page }) => {
   await page.goto('/empreendimentos?disponiveis=1')
   const filtrados = await page.locator(cartoes).count()
 
-  // O número exato muda a cada contrato assinado. O que o filtro promete é:
-  // sobra alguma coisa, sobra menos que o portfólio inteiro, e tudo que sobrou
-  // anuncia unidade livre.
   expect(filtrados).toBeGreaterThan(0)
   expect(filtrados).toBeLessThan(total)
   await expect(page.locator(cartoes, { hasText: /dispon[ií]ve/i })).toHaveCount(filtrados)
@@ -45,9 +39,6 @@ test('ficha lista unidades e a aba de disponíveis reduz a tabela', async ({ pag
 })
 
 test('empreendimento lotado não oferece contato por unidade', async ({ page }) => {
-  // Galeria A está 100% locada na relação de contratos atual. Se um dia vagar,
-  // este teste falha — e a correção é apontá-lo para outro imóvel cheio, não
-  // afrouxar a asserção.
   await page.goto('/empreendimentos/centro-comercial-empresarial-galeria-a')
   await expect(page.getByRole('button', { name: /^Disponíveis\s*0/ })).toBeVisible()
   await expect(page.getByText('Tenho interesse')).toHaveCount(0)
@@ -80,8 +71,6 @@ test.describe('navegação no celular', () => {
   }) => {
     await page.goto('/empreendimentos')
 
-    // O defeito que isto guarda: abaixo de 860px a barra some. Se o hambúrguer
-    // sumir junto, o site fica sem navegação no aparelho onde ele mais é aberto.
     await expect(page.locator('header nav[aria-label="Principal"]').first()).toBeHidden()
 
     const botao = page.getByRole('button', { name: 'Abrir menu' })
@@ -104,7 +93,6 @@ test.describe('navegação no celular', () => {
     await painel.getByRole('link', { name: 'Contato' }).click()
     await expect(page).toHaveURL(/\/contato$/)
 
-    // Fecha ao navegar: senão o painel cobriria a página nova.
     await expect(painel).toBeHidden()
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Vamos conversar')
   })
@@ -120,9 +108,6 @@ test.describe('navegação no celular', () => {
   })
 })
 
-// `header > nav` é a barra do desktop. O menu do celular também tem um nav com
-// aria-current, mas dentro de #menu-mobile — sem o filho direto, o seletor
-// pegaria os dois.
 const ITEM_ATIVO = 'header > nav a[aria-current="page"]'
 
 test('cabeçalho marca a página atual', async ({ page }) => {
@@ -135,7 +120,6 @@ test('cabeçalho marca a página atual', async ({ page }) => {
   await page.goto('/')
   await expect(page.locator(ITEM_ATIVO)).toHaveText('Início')
 
-  // No painel nenhum item do site representa a rota.
   await page.goto('/admin')
   await expect(page.locator(ITEM_ATIVO)).toHaveCount(0)
 })

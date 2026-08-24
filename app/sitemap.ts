@@ -7,8 +7,6 @@ export const revalidate = 3600
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const rotas = await listarRotasPublicadas()
 
-  // A home mostra os destaques e os números do portfólio, então muda sempre que
-  // uma unidade é locada. As institucionais são estáveis.
   const fixas: MetadataRoute.Sitemap = [
     { url: URL_SITE, priority: 1, changeFrequency: 'daily' },
     { url: `${URL_SITE}/empreendimentos`, priority: 0.9, changeFrequency: 'daily' },

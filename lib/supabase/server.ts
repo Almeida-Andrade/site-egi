@@ -17,9 +17,7 @@ export async function criarClienteServidor() {
             for (const { name, value, options } of lista) {
               armazem.set(name, value, options)
             }
-          } catch {
-            // Server Component não pode escrever cookie; o middleware cuida disso
-          }
+          } catch {}
         },
       },
     },

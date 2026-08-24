@@ -26,9 +26,6 @@ export const metadata: Metadata = {
   },
   description: DESCRICAO,
   applicationName: 'E.G.I Empreendimentos',
-  // Sem `alternates` aqui: uma canônica no layout seria herdada por toda página
-  // que não a sobrescreve, apontando o site inteiro para a home. Cada rota
-  // declara a sua.
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
@@ -44,7 +41,6 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      // O portfólio se vende pela foto: sem isto o Google corta a miniatura.
       'max-image-preview': 'large',
       'max-snippet': -1,
     },
@@ -53,11 +49,12 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR" className={`${display.variable} ${titulo.variable} ${corpo.variable}`}>
+    <html
+      lang="pt-BR"
+      className={`${display.variable} ${titulo.variable} ${corpo.variable}`}
+      suppressHydrationWarning
+    >
       <body>
-        {/* Marca que há JavaScript antes do corpo ser pintado. As animações de
-            entrada partem de opacidade zero: sem esta classe, um script que
-            falhasse deixaria a página em branco para sempre. */}
         <script
           dangerouslySetInnerHTML={{
             __html: `document.documentElement.classList.add('js')`,

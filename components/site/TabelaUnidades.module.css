@@ -79,7 +79,6 @@
   font-size: 13.5px;
 }
 
-/* Em telas estreitas a tabela vira lista: cabecalho some, cada linha empilha */
 @media (max-width: 720px) {
   .tabela thead {
     display: none;

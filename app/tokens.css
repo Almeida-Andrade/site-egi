@@ -1,11 +1,9 @@
 :root {
-  /* Marca — amostrados por pixel de EGI_LOGO.png */
   --navy: #070E31;
   --steel: #3B58A5;
   --pure: #0000FE;
   --off: #F7FAFA;
 
-  /* Derivados */
   --navy-70: rgba(7, 14, 49, 0.7);
   --navy-45: rgba(7, 14, 49, 0.45);
   --navy-12: rgba(7, 14, 49, 0.12);
@@ -13,7 +11,6 @@
   --branco-24: rgba(255, 255, 255, 0.24);
   --branco-09: rgba(255, 255, 255, 0.09);
 
-  /* Ritmo vertical e horizontal */
   --gap-1: 4px;
   --gap-2: 8px;
   --gap-3: 16px;
@@ -23,7 +20,6 @@
   --gap-7: 96px;
   --largura-max: 1280px;
 
-  /* Tipografia — famílias injetadas por next/font em app/layout.tsx */
   --escala-display: clamp(2.5rem, 6vw, 4.25rem);
   --escala-titulo: clamp(1.75rem, 3.5vw, 2.75rem);
   --escala-secao: 0.75rem;

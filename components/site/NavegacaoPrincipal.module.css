@@ -23,7 +23,6 @@
   height: 2px;
   background: var(--pure);
   transform-origin: left;
-  /* Sem transição no primeiro quadro: ver o comentário em NavegacaoPrincipal. */
   transition: none;
 }
 .marca[data-anima='true'] {
@@ -32,12 +31,10 @@
     width 300ms cubic-bezier(0.4, 0, 0.2, 1),
     opacity 180ms ease;
 }
-/* Na home nenhum item está ativo: o traço some em vez de encostar no primeiro. */
 .marca[data-visivel='false'] {
   opacity: 0;
 }
 
-/* Cabeçalho escuro: o azul da marca some sobre o navy. */
 :global(.cabecalho-escuro) .marca {
   background: #fff;
 }

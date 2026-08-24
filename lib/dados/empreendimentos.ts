@@ -15,9 +15,15 @@ const CAMPOS_UNIDADES = `
   descricao, caracteristicas, ordem
 `
 
+// O banco do CRM guarda a URL pública completa (fotos antigas ainda servidas
+// do bucket do projeto antigo; novas sobem no bucket do CRM)
 const CAMPOS_IMAGENS = `
-  id, storage_path, alt, capa, ordem
+  id, storage_path, url, alt, capa, ordem
 `
+
+// No banco do CRM a tabela chama empreendimento_imagens; o alias mantém o
+// nome "imagens" no restante do código
+const REL_IMAGENS = `imagens:empreendimento_imagens(${CAMPOS_IMAGENS})`
 
 type LinhaComRelacoes = Empreendimento & {
   unidades: Unidade[]
@@ -34,11 +40,6 @@ function resumir(linha: LinhaComRelacoes): EmpreendimentoResumo {
   }
 }
 
-/**
- * Portfólio inteiro, inclusive os built to suit. Eles também aparecem numa
- * seção própria da home, mas ficar de fora daqui os tornava inalcançáveis pela
- * navegação e fazia a contagem da home não bater com a da listagem.
- */
 export async function listarEmpreendimentos(
   filtros: FiltrosEmpreendimento = {},
 ): Promise<EmpreendimentoResumo[]> {
@@ -46,7 +47,7 @@ export async function listarEmpreendimentos(
 
   let consulta = supabase
     .from('empreendimentos')
-    .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), imagens(${CAMPOS_IMAGENS})`)
+    .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), ${REL_IMAGENS}`)
     .order('ordem', { ascending: true })
     .order('nome', { ascending: true })
 
@@ -67,7 +68,7 @@ export async function listarBuiltToSuit(): Promise<EmpreendimentoResumo[]> {
   const supabase = criarClientePublico()
   const { data, error } = await supabase
     .from('empreendimentos')
-    .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), imagens(${CAMPOS_IMAGENS})`)
+    .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), ${REL_IMAGENS}`)
     .eq('built_to_suit', true)
     .order('ordem', { ascending: true })
 
@@ -81,7 +82,7 @@ export async function obterEmpreendimentoPorSlug(
   const supabase = criarClientePublico()
   const { data, error } = await supabase
     .from('empreendimentos')
-    .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), imagens(${CAMPOS_IMAGENS})`)
+    .select(`${CAMPOS}, unidades(${CAMPOS_UNIDADES}), ${REL_IMAGENS}`)
     .eq('slug', slug)
     .maybeSingle()
 
@@ -103,7 +104,6 @@ export async function listarSlugsPublicados(): Promise<string[]> {
   return (data ?? []).map((l) => l.slug as string)
 }
 
-/** Slug e data da última edição, para o `lastModified` do sitemap. */
 export async function listarRotasPublicadas(): Promise<
   { slug: string; atualizadoEm: string }[]
 > {

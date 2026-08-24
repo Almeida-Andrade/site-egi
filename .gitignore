@@ -25,3 +25,7 @@ next-env.d.ts
 Thumbs.db
 test-results/
 playwright-report/
+
+# contexto interno (estrategia/infra) — fica local
+CLAUDE.md
+AGENTS.md

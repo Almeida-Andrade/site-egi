@@ -1,5 +1,3 @@
-/* Escondida por padrão: sem JavaScript nada a removeria, e a página ficaria
-   coberta para sempre. A classe `js` é posta pelo script do layout. */
 .cortina {
   display: none;
 }
@@ -17,9 +15,10 @@
   opacity: 0;
   pointer-events: none;
 }
+:global(html.js) .cortina[data-oculta='true'] {
+  display: none;
+}
 
-/* O símbolo da marca desenhado em CSS: um quadrado azul com o recorte navy no
-   canto. Assim a cortina não depende de nenhum arquivo carregar. */
 .marca {
   position: relative;
   width: 54px;

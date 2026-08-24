@@ -1,11 +1,5 @@
 import type { TipoEmpreendimento } from '@/lib/tipos'
 
-/**
- * Conteúdo editorial da home. Fica fora do banco porque não é portfólio: são
- * textos institucionais que mudam por decisão de marketing, não por contrato
- * assinado. O painel administra imóveis, não copy.
- */
-
 export interface Categoria {
   tipo: TipoEmpreendimento
   rotulo: string
@@ -35,25 +29,9 @@ export const CATEGORIAS: Categoria[] = [
   },
 ]
 
-/**
- * Marcas que ocupam imóveis da EGI, como a própria empresa divulga no slide
- * "Nossos clientes e parceiros" do portfólio comercial.
- *
- * Os arquivos vieram do site oficial de cada marca, exceto Caixa, Governo do
- * Maranhão e Shineray, que saíram do Wikimedia Commons. Os do PPTX não serviam:
- * estão em 24×24 px, tamanho de ícone de lista.
- *
- * A parede é monocromática. Além de unificar nove identidades de cores
- * diferentes, resolve o logo do Grupo Mateus, que só existe em versão branca —
- * o filtro o transforma em silhueta escura como todos os outros.
- *
- * Ficaram de fora, por não terem arquivo utilizável: Skyfit, Vetor Móveis,
- * Clínica Performe, ODT Beach Tênis e Instituto Viver.
- */
 export interface Marca {
   nome: string
   arquivo: string
-  /** Proporção largura/altura, para o navegador reservar o espaço certo. */
   proporcao: number
 }
 
@@ -69,7 +47,6 @@ export const MARCAS: Marca[] = [
   { nome: 'Nefroclínicas', arquivo: '/marcas/nefroclinicas.svg', proporcao: 4.4 },
 ]
 
-/** Números do Center Valley conforme o portfólio de obras do grupo. */
 export const CENTER_VALLEY = {
   cidade: 'Pedreiras — MA',
   entrega: 'Novembro de 2021',

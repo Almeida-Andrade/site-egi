@@ -7,7 +7,7 @@ import estilos from './page.module.css'
 
 const DESCRICAO =
   'Fale com a E.G.I Empreendimentos por WhatsApp, telefone ou e-mail. ' +
-  'Sede na Av. dos Sambaquis, 34 — Ed. Galeria A, Calhau, São Luís (MA).'
+  'Sede na Av. dos Sambaquis, 33 — Ed. Galeria A, Calhau, São Luís (MA).'
 
 export const metadata: Metadata = {
   title: 'Contato',
@@ -37,12 +37,6 @@ export default function Contato() {
               <span className={estilos.dica}>Resposta mais rápida</span>
             </a>
 
-            <a className={estilos.canal} href="tel:+559832355008">
-              <span className={estilos.rotulo}>Telefone</span>
-              <b>(98) 3235-5008</b>
-              <span className={estilos.dica}>Horário comercial</span>
-            </a>
-
             <a
               className={estilos.canal}
               href="https://www.instagram.com/egi.empreendimentos/"
@@ -54,9 +48,9 @@ export default function Contato() {
               <span className={estilos.dica}>Novidades e lançamentos</span>
             </a>
 
-            <a className={estilos.canal} href="mailto:egiempreendimentos@grupoalmeidaandrade.com.br">
+            <a className={estilos.canal} href="mailto:egiempreendimentos@grupoaandrade.com.br">
               <span className={estilos.rotulo}>E-mail</span>
-              <b>egiempreendimentos@grupoalmeidaandrade.com.br</b>
+              <b className={estilos.valorLongo}>egiempreendimentos@grupoaandrade.com.br</b>
               <span className={estilos.dica}>Para propostas e documentos</span>
             </a>
           </div>
@@ -64,7 +58,7 @@ export default function Contato() {
           <div className={estilos.sede}>
             <span className={estilos.rotulo}>Sede</span>
             <address>
-              Av. dos Sambaquis, 34 — Ed. Galeria A
+              Av. dos Sambaquis, 33 — Ed. Galeria A
               <br />
               Calhau, São Luís — MA
             </address>

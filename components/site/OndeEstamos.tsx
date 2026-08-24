@@ -1,13 +1,8 @@
 import estilos from './OndeEstamos.module.css'
 
-/**
- * Coordenadas da ficha da EGI no Google Maps. O embed por consulta não pede
- * chave de API — diferente do Maps Embed API, que pediria — então o mapa
- * funciona sem nada configurado no servidor.
- */
-const COORDENADAS = '-2.491993,-44.2708699'
-const MAPA = `https://maps.google.com/maps?q=${COORDENADAS}&z=16&hl=pt-BR&output=embed`
-const FICHA = 'https://maps.app.goo.gl/7V8apakRoyCCdc1w5'
+const MAPA =
+  'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3986.04582848978!2d-44.27923842384083!3d-2.4917785974868836!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x7f68d78e02c3513%3A0xc3cf49f3fcb35794!2sEGI%20Empreedimentos!5e0!3m2!1spt-BR!2sbr!4v1786971662830!5m2!1spt-BR!2sbr'
+const FICHA = 'https://maps.app.goo.gl/eQFgEmat3vfh1Wz97'
 
 export function OndeEstamos() {
   return (
@@ -18,7 +13,7 @@ export function OndeEstamos() {
           Calhau, São Luís
         </h2>
         <address className={estilos.endereco}>
-          Av. dos Sambaquis, 34 — Ed. Galeria A
+          Av. dos Sambaquis, 33 — Ed. Galeria A
           <br />
           Calhau, São Luís — MA
         </address>
@@ -36,8 +31,13 @@ export function OndeEstamos() {
           >
             Abrir no Google Maps →
           </a>
-          <a className={estilos.secundaria} href="tel:+559832355008">
-            (98) 3235-5008
+          <a
+            className={estilos.secundaria}
+            href="https://wa.me/5598984812793"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            WhatsApp (98) 98481-2793
           </a>
         </div>
       </div>

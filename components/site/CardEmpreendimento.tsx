@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { EmpreendimentoResumo } from '@/lib/tipos'
-import { rotuloTipoEmpreendimento, urlImagem } from '@/lib/utils/rotulos'
+import { rotuloTipoEmpreendimento } from '@/lib/utils/rotulos'
 import estilos from './CardEmpreendimento.module.css'
 
 export function CardEmpreendimento({ empreendimento: e }: { empreendimento: EmpreendimentoResumo }) {
@@ -10,7 +10,7 @@ export function CardEmpreendimento({ empreendimento: e }: { empreendimento: Empr
       <div className={estilos.foto}>
         {e.capa ? (
           <Image
-            src={urlImagem(e.capa.storage_path)}
+            src={e.capa.url}
             alt={e.capa.alt ?? e.nome}
             fill
             sizes="(max-width: 860px) 100vw, 33vw"

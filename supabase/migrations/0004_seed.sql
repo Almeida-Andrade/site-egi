@@ -23,10 +23,8 @@ insert into empreendimentos (id, slug, nome, tipo, built_to_suit, cidade,
   (md5('sala-603-jaracaty')::uuid,'sala-603-jaracaty','Sala 603 — Jaracaty','sala_avulsa',false,'São Luís',true,true,false,32),
   (md5('casa-calhau')::uuid,'casa-calhau','Casa Calhau','casa',false,'São Luís',true,true,false,33),
   (md5('casa-maiobao')::uuid,'casa-maiobao','Casa Maiobão','casa',false,'São Luís',true,true,false,34),
-  (md5('apto-est-mar-134')::uuid,'apto-est-mar-134','Apto Est. Mar 134','apartamento',false,'São Luís',true,true,false,35),
-  (md5('galpao-maracana-rascunho')::uuid,'galpao-maracana-rascunho','Galpão Maracanã (rascunho)','galpao',false,'São Luís',true,false,false,99);
+  (md5('apto-est-mar-134')::uuid,'apto-est-mar-134','Apto Est. Mar 134','apartamento',false,'São Luís',true,true,false,35);
 
--- Built to suit e avulsos: uma unidade cada, todas ocupadas
 insert into unidades (empreendimento_id, identificacao, tipo, status, ordem)
 select e.id, u.ident, u.tipo::text, 'ocupado', 1
 from empreendimentos e
@@ -41,14 +39,12 @@ join (values
   ('apto-est-mar-134','Apartamento 134','apartamento')
 ) as u(slug, ident, tipo) on u.slug = e.slug;
 
--- Century: duas salas
 insert into unidades (empreendimento_id, identificacao, tipo, status, ordem)
 select e.id, x.ident, 'sala', 'ocupado', x.ordem
 from empreendimentos e
 join (values ('Sala 1105',1),('Sala 1106',2)) as x(ident, ordem) on true
 where e.slug = 'salas-1105-1106-century';
 
--- Ana Dina: 21 unidades, 9 disponíveis
 insert into unidades (empreendimento_id, identificacao, tipo, status, piso, ordem)
 select e.id, 'Térreo ' || n, 'loja', 'ocupado', 'Térreo', n
 from empreendimentos e, generate_series(1,2) n
@@ -71,7 +67,6 @@ join (values
 ) as x(ident, tipo, status, ordem) on true
 where e.slug = 'centro-comercial-ana-dina';
 
--- Galeria A: 13 unidades, todas ocupadas
 insert into unidades (empreendimento_id, identificacao, tipo, status, ordem)
 select e.id, x.ident, x.tipo, 'ocupado', x.ordem
 from empreendimentos e
@@ -85,7 +80,6 @@ join (values
 ) as x(ident, tipo, ordem) on true
 where e.slug = 'centro-comercial-empresarial-galeria-a';
 
--- Olgamérica: 12 unidades, todas ocupadas
 insert into unidades (empreendimento_id, identificacao, tipo, status, ordem)
 select e.id, 'Loja ' || n, 'loja', 'ocupado', n
 from empreendimentos e, generate_series(1,11) n
@@ -95,20 +89,17 @@ insert into unidades (empreendimento_id, identificacao, tipo, status, ordem)
 select e.id, 'Agência térreo', 'loja', 'ocupado', 0
 from empreendimentos e where e.slug = 'centro-comercial-olgamerica';
 
--- Pátio Aririzal: 20 lojas, loja 4 disponível
 insert into unidades (empreendimento_id, identificacao, tipo, status, ordem)
 select e.id, 'Loja ' || n, 'loja',
        case when n = 4 then 'disponivel' else 'ocupado' end, n
 from empreendimentos e, generate_series(1,20) n
 where e.slug = 'centro-comercial-patio-aririzal';
 
--- Pátio Brasil: 11 lojas, todas ocupadas
 insert into unidades (empreendimento_id, identificacao, tipo, status, ordem)
 select e.id, 'Loja ' || n, 'loja', 'ocupado', n
 from empreendimentos e, generate_series(1,11) n
 where e.slug = 'centro-comercial-patio-brasil';
 
--- Residenciais
 insert into unidades (empreendimento_id, identificacao, tipo, status, ordem)
 select e.id, 'Apartamento ' || n, 'apartamento', 'ocupado', n
 from empreendimentos e, generate_series(1,16) n

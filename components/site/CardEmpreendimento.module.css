@@ -14,7 +14,6 @@
   overflow: hidden;
 }
 
-/* Estado vazio: nome em tipografia grande sobre navy, nunca icone quebrado */
 .semFoto {
   position: absolute;
   inset: 0;

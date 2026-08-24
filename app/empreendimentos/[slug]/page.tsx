@@ -8,7 +8,7 @@ import { MapaEmbed } from '@/components/site/MapaEmbed'
 import { TabelaUnidades } from '@/components/site/TabelaUnidades'
 import { contarPorStatus } from '@/components/site/logicaUnidades'
 import { listarSlugsPublicados, obterEmpreendimentoPorSlug } from '@/lib/dados/empreendimentos'
-import { rotuloTipoEmpreendimento, urlImagem } from '@/lib/utils/rotulos'
+import { rotuloTipoEmpreendimento } from '@/lib/utils/rotulos'
 import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
 import { linkBuscaMaps } from '@/lib/utils/maps'
 import { URL_SITE } from '@/lib/site'
@@ -50,10 +50,8 @@ export async function generateMetadata({
       url: caminho,
       title: e.nome,
       description: descricao,
-      // A foto do imóvel manda no card do WhatsApp. Sem capa, cai no og.jpg da
-      // marca herdado do layout.
       ...(capa && {
-        images: [{ url: urlImagem(capa.storage_path), alt: capa.alt ?? e.nome }],
+        images: [{ url: capa.url, alt: capa.alt ?? e.nome }],
       }),
     },
   }
@@ -70,8 +68,6 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
     ? [e.bairro, e.cidade].filter(Boolean).join(' · ')
     : [e.endereco, e.bairro, `${e.cidade} — ${e.uf}`].filter(Boolean).join(', ')
 
-  // O link salvo no painel manda; sem ele, uma busca pelo endereço já leva o
-  // visitante ao lugar certo sem depender de cadastro manual.
   const comoChegar = e.maps_link ?? linkBuscaMaps(e)
 
   return (
@@ -142,7 +138,7 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
               name: e.nome,
               description: e.descricao ?? undefined,
               url: `${URL_SITE}/empreendimentos/${e.slug}`,
-              photo: e.imagens.map((i) => urlImagem(i.storage_path)),
+              photo: e.imagens.map((i) => i.url),
               address: {
                 '@type': 'PostalAddress',
                 streetAddress: e.localizacao_aproximada ? undefined : e.endereco,

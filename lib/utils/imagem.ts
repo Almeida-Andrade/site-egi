@@ -13,11 +13,6 @@ export function calcularDimensoes(
   }
 }
 
-/**
- * Redimensiona e converte para WebP no navegador. Uma foto de celular de 8 MB
- * costuma sair com cerca de 300 KB. Roda antes do upload para que a cota de
- * 1 GB do plano free não seja consumida por original de câmera.
- */
 export async function comprimirImagem(arquivo: File, ladoMax = 1600): Promise<Blob> {
   const bitmap = await createImageBitmap(arquivo)
   const { largura, altura } = calcularDimensoes(bitmap.width, bitmap.height, ladoMax)

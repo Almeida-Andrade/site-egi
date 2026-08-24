@@ -19,12 +19,7 @@ Crie um `.env.local` na raiz:
 NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=<chave anon>
 NEXT_PUBLIC_WHATSAPP=5598984812793
-NEXT_PUBLIC_TELEFONE=559832355008
 ```
-
-Os testes de RLS e o script de upload de fotos também leem `ADMIN_EMAIL` e `ADMIN_PASSWORD` desse arquivo, com as credenciais de um usuário criado à mão no Supabase Auth.
-
-**A chave `service_role` não entra neste projeto.** Nem no código, nem no `.env.local`, nem nas variáveis da Vercel. Ela ignora RLS, e RLS é a única barreira entre o banco e a internet.
 
 ## Como os dados são organizados
 
@@ -42,7 +37,7 @@ Unidade em carência aparece como ocupada. Carência é estado de contrato, não
 
 ## Segurança
 
-Todo acesso público usa a chave anon com RLS ligada. As políticas expõem apenas empreendimentos publicados e não arquivados; rascunho devolve 404 mesmo com a URL certa, e há um empreendimento despublicado no banco justamente para o teste provar isso.
+Todo acesso público usa a chave anon com RLS ligada. As políticas expõem apenas empreendimentos publicados e não arquivados; rascunho devolve 404 mesmo com a URL certa.
 
 O painel exige sessão do Supabase Auth. Contas são criadas à mão — não há cadastro aberto.
 
@@ -60,20 +55,9 @@ Migrações em `supabase/migrations/`, aplicadas em ordem.
 | `0004_seed.sql` | Carga inicial do portfólio |
 | `0005_enderecos.sql` | Endereços, áreas e datas de entrega |
 | `0006_situacao_unidades.sql` | Disponibilidade conforme a relação de contratos |
+| `0007_corrige_numero_sede.sql` | Corrige o número do prédio da sede (34 → 33) |
 
-⚠️ **`0004_seed.sql` começa com `delete from empreendimentos`.** Reexecutá-lo apaga, por cascade, as linhas de `imagens` das fotos reais e deixa os arquivos órfãos no Storage. Se precisar mesmo rodar de novo, rode `npx tsx scripts/upload-fotos-reais.ts` logo depois. Foi por isso que endereços e disponibilidade entraram como migrações novas em vez de edição do seed.
-
-## Fotos
-
-As fotos reais ficam em `seed/fotos-reais/`, com `manifesto.json` dizendo a qual empreendimento cada uma pertence, em que ordem e qual é a capa.
-
-```bash
-npx tsx scripts/upload-fotos-reais.ts
-```
-
-O script é idempotente: sobe os arquivos, reaproveita as linhas que já existem em `imagens` e remove apenas os nomes de placeholder conhecidos. Foto enviada pelo painel nunca casa com essa lista e por isso sobrevive.
-
-Quatro fotos no manifesto (Center Valley, Selfit Anjo da Guarda, Selfit Anil e Skyfit Turu) esperam o cadastro dos respectivos empreendimentos. O script avisa quais ficaram de fora.
+⚠️ **`0004_seed.sql` começa com `delete from empreendimentos`.** Reexecutá-lo apaga, por cascade, as linhas de `imagens` de cada empreendimento. As fotos reais só existem no Storage do Supabase — o script que as enviava (`scripts/upload-fotos-reais.ts`) e a pasta local (`seed/fotos-reais/`) foram removidos depois que todo o portfólio ficou com foto real cadastrada. Sem eles, reexecutar o seed exige reenviar cada foto à mão pelo painel. Foi por isso que endereços e disponibilidade entraram como migrações novas em vez de edição do seed.
 
 ## Testes
 

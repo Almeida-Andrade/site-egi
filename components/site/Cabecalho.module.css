@@ -48,7 +48,6 @@
   .logo {
     height: 38px;
   }
-  /* No celular o WhatsApp mora dentro do menu, com alvo de toque maior. */
   .acao {
     display: none;
   }

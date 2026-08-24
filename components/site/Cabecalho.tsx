@@ -11,8 +11,6 @@ const variantesEstilos: Record<'claro' | 'escuro', string> = {
   escuro: estilos.escuro,
 }
 
-// O letreiro da logo é navy; sobre o cabeçalho escuro ele sumiria, por isso a
-// variante clara traz o mesmo lockup com o texto em off-white.
 const variantesLogo: Record<'claro' | 'escuro', string> = {
   claro: '/logo-egi.png',
   escuro: '/logo-egi-clara.png',
@@ -28,15 +26,14 @@ export function Cabecalho({ variante = 'claro' }: { variante?: 'claro' | 'escuro
       ]
         .filter(Boolean)
         .join(' ')}
-      // Âncora da transição entre páginas: o conteúdo se move, o cabeçalho não.
       style={{ viewTransitionName: 'site-header' }}
     >
       <Link href="/" className={estilos.marca}>
         <Image
           src={variantesLogo[variante]}
           alt="E.G.I Empreendimentos"
-          width={1608}
-          height={549}
+          width={270}
+          height={92}
           className={estilos.logo}
           priority
         />

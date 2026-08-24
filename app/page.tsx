@@ -31,11 +31,8 @@ export default async function Home() {
     listarBuiltToSuit(),
   ])
 
-  // Os built to suit têm seção própria logo abaixo; repeti-los aqui encheria a
-  // home com os mesmos três cartões duas vezes.
   const emDestaque = portfolio.filter((e) => e.destaque && !e.built_to_suit).slice(0, 3)
 
-  // Categoria sem imóvel nenhum não vira porta de entrada para uma lista vazia.
   const categorias = CATEGORIAS.map((c) => ({
     ...c,
     quantidade: portfolio.filter((e) => e.tipo === c.tipo).length,
@@ -47,8 +44,6 @@ export default async function Home() {
         <Cabecalho variante="escuro" />
 
         <section className={estilos.hero}>
-          {/* Imagem fixa, não a capa de um empreendimento: a primeira dobra não
-              deve mudar de cara quando o portfólio for reordenado no painel. */}
           <Image
             src="/hero-corporativo.jpg"
             alt=""
@@ -70,8 +65,6 @@ export default async function Home() {
               <Link href="/empreendimentos" className={estilos.cta}>
                 Ver empreendimentos
               </Link>
-              {/* Ocupou o lugar do item "Disponíveis", que saiu do menu. Aqui o
-                  atalho ainda diz quantas unidades estão livres. */}
               {estatisticas.disponiveis > 0 && (
                 <Link href="/empreendimentos?disponiveis=1" className={estilos.ctaLivre}>
                   {estatisticas.disponiveis} unidades disponíveis agora →
@@ -169,13 +162,10 @@ export default async function Home() {
           </section>
         </div>
 
-      {/* Mesma fotografia do hero, em recorte fechado no letreiro e na entrada.
-          O hero mostra o conjunto sob véu escuro; aqui o prédio aparece limpo,
-          e os dois enquadramentos não se leem como repetição. */}
       <section className={estilos.valley} aria-labelledby="titulo-valley">
         <div className={estilos.valleyFoto}>
           <Image
-            src="/center-valley-entrada.jpg"
+            src="/center-valley-entrada.png"
             alt="Entrada do Center Valley Shopping, em Pedreiras"
             fill
             sizes="(max-width: 900px) 100vw, 45vw"
@@ -238,12 +228,12 @@ export default async function Home() {
           '@context': 'https://schema.org',
           '@type': 'RealEstateAgent',
           name: 'E.G.I Empreendimentos',
-          telephone: '+55-98-3235-5008',
-          email: 'egiempreendimentos@grupoalmeidaandrade.com.br',
+          telephone: '+55-98-98481-2793',
+          email: 'egiempreendimentos@grupoaandrade.com.br',
           areaServed: ['São Luís', 'São José de Ribamar', 'Pedreiras'],
           address: {
             '@type': 'PostalAddress',
-            streetAddress: 'Av. dos Sambaquis, 34 — Ed. Galeria A',
+            streetAddress: 'Av. dos Sambaquis, 33 — Ed. Galeria A',
             addressLocality: 'São Luís',
             addressRegion: 'MA',
             addressCountry: 'BR',

@@ -14,11 +14,6 @@ export function contarPorStatus(unidades: Unidade[]): Contagem {
   return base
 }
 
-/**
- * O relatório de contratos que originou o portfólio não trazia áreas, então a
- * coluna some da tabela em vez de exibir uma coluna inteira de traços. Volta
- * sozinha assim que a primeira área for cadastrada.
- */
 export function temAlgumaArea(unidades: Unidade[]): boolean {
   return unidades.some((u) => u.area_m2 !== null)
 }

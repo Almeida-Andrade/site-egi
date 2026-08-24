@@ -1,7 +1,25 @@
 .pagina {
-  max-width: 940px;
+  max-width: var(--largura-max);
   margin: 0 auto;
-  padding: var(--gap-7) var(--gap-5) 0;
+  padding: var(--gap-6) var(--gap-5) 0;
+}
+
+.topo {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.62fr);
+  gap: var(--gap-6);
+  align-items: center;
+}
+
+.ladoLogo {
+  display: flex;
+  flex-direction: column;
+}
+
+.logo {
+  width: 100%;
+  height: auto;
+  align-self: flex-end;
 }
 
 .kicker {
@@ -33,19 +51,23 @@
 }
 
 .numeros {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  margin-top: var(--gap-6);
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--gap-5);
   border-top: 1px solid var(--navy-12);
 }
 .numeros > div {
-  padding: var(--gap-4) var(--gap-4) var(--gap-4) 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gap-3);
+  padding: var(--gap-3) 0;
+  border-bottom: 1px solid var(--navy-12);
 }
 .numeros b {
-  display: block;
   font-family: var(--fonte-display);
   font-weight: 400;
-  font-size: 38px;
+  font-size: 32px;
   font-variant-numeric: tabular-nums;
 }
 .numeros small {
@@ -53,10 +75,16 @@
   letter-spacing: var(--trilha-larga);
   text-transform: uppercase;
   color: var(--navy-45);
+  text-align: right;
 }
 
-@media (max-width: 720px) {
-  .numeros {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 860px) {
+  .topo {
+    grid-template-columns: 1fr;
+    gap: var(--gap-4);
+  }
+  .logo {
+    max-width: 260px;
+    align-self: flex-start;
   }
 }

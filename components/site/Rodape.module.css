@@ -21,7 +21,33 @@
 .coluna a { overflow-wrap: anywhere; }
 .coluna a:hover { color: #93a6d8; }
 
-.sede { opacity: 0.6; line-height: 1.6; margin-top: var(--gap-1); }
+.sede { opacity: 0.6; line-height: 1.6; margin-top: var(--gap-2); }
+
+.redes {
+  display: flex;
+  gap: var(--gap-2);
+  margin-top: var(--gap-1);
+}
+
+.rede {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--branco-09);
+  opacity: 0.75;
+  transition: opacity 160ms ease, border-color 160ms ease;
+}
+.rede:hover {
+  opacity: 1;
+  border-color: #93a6d8;
+  color: #93a6d8;
+}
+
+.icone {
+  width: 20px;
+  height: 20px;
+}
 
 .rotulo {
   font-size: var(--escala-secao);
@@ -33,7 +59,7 @@
 
 .base {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   max-width: var(--largura-max);
   margin: 0 auto;
   padding: var(--gap-3) var(--gap-5) var(--gap-4);

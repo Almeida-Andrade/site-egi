@@ -1,18 +1,3 @@
--- Sincroniza unidades e disponibilidade com a planilha de gestão de contratos,
--- aba JUNHO-26, que é a fonte operacional mais recente da empresa.
---
--- Dela sai apenas a estrutura de unidades e a situação de cada uma. Locatário,
--- valor da locação, datas de contrato, dia de vencimento, e-mail e telefone
--- ficam fora do banco e fora do site, como combinado desde o início.
---
--- "Carência" não vira uma situação própria: é estado de contrato, não de
--- disponibilidade. Uma unidade em carência está locada, então entra como
--- ocupada.
---
--- Isto reverte duas mudanças do 0005, que seguiram o portfólio de obras: lá
--- Paraty tinha 14 unidades e Guarujá 21. A planilha, mais recente e
--- operacional, registra 13 e 20.
-
 delete from unidades u
 using empreendimentos e
 where e.id = u.empreendimento_id
@@ -31,9 +16,6 @@ update empreendimentos set
   updated_at = now()
 where slug = 'residencial-guaruja';
 
--- A planilha é a fonte da verdade sobre disponibilidade: tudo volta a ocupado
--- e só o que ela lista como disponível é reaberto. Assim a migração pode rodar
--- de novo sem deixar resíduo de um estado anterior.
 update unidades u set status = 'ocupado', updated_at = now()
 from empreendimentos e
 where e.id = u.empreendimento_id

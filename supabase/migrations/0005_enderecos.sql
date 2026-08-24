@@ -1,13 +1,3 @@
--- Endereços, áreas e datas vindos do portfólio de obras do Grupo Almeida Andrade.
---
--- Quando os dois portfólios da empresa divergem, vale o de obras. É o que
--- corrige aqui a cidade de Ana Diná, Olgamérica e Mateus Maiobão, e a contagem
--- de unidades de Paraty e Guarujá.
---
--- Escrito como UPDATE em vez de alteração do 0004_seed.sql porque aquele
--- arquivo começa com `delete from empreendimentos`, e reexecutá-lo levaria
--- junto, por cascade, as linhas de `imagens` das fotos reais.
-
 update empreendimentos as e set
   endereco               = d.endereco,
   bairro                 = d.bairro,
@@ -58,13 +48,11 @@ from (values
 ) as d(slug, endereco, bairro, cidade, descricao)
 where e.slug = d.slug;
 
--- Pedreiras: o portfólio não traz o endereço, só a cidade e os números.
 update empreendimentos set
   descricao  = 'Salão de vendas e depósito com 12.000 m², em terreno de 23.000 m². Entregue em abril de 2018.',
   updated_at = now()
 where slug = 'mateus-pedreiras';
 
--- Áreas por unidade, onde o portfólio de obras informa
 update unidades u set area_m2 = 40, updated_at = now()
 from empreendimentos e
 where e.id = u.empreendimento_id and e.slug = 'centro-comercial-patio-brasil'
@@ -80,9 +68,6 @@ from empreendimentos e
 where e.id = u.empreendimento_id and e.slug = 'residencial-guaruja'
   and u.area_m2 is null;
 
--- Paraty tem 14 unidades, não 13. Guarujá tem 21, não 20.
--- A situação das novas entra como ocupada: o portfólio não informa, e anunciar
--- como livre um imóvel que não está seria pior do que o inverso.
 insert into unidades (empreendimento_id, identificacao, tipo, status, area_m2, ordem)
 select e.id, d.identificacao, 'apartamento', 'ocupado', d.area_m2, d.ordem
 from empreendimentos e

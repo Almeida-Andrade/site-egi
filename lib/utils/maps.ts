@@ -1,9 +1,5 @@
 const HOSTS_PERMITIDOS = ['www.google.com', 'google.com', 'maps.google.com']
 
-/**
- * Aceita tanto a URL de embed quanto o <iframe> inteiro copiado do Google Maps.
- * Retorna null para qualquer coisa que não seja um embed do Google.
- */
 export function extrairUrlMaps(entrada: string): string | null {
   const texto = entrada.trim()
   if (!texto) return null
@@ -26,12 +22,6 @@ export function extrairUrlMaps(entrada: string): string | null {
   return url.toString()
 }
 
-/**
- * Link de busca no Google Maps montado a partir do endereço. Serve de "como
- * chegar" enquanto o empreendimento não tem um maps_link próprio salvo pelo
- * painel. Devolve null quando o endereço é aproximado ou não existe — nesse
- * caso a busca cairia no centro do bairro e passaria precisão que não temos.
- */
 export function linkBuscaMaps(dados: {
   endereco: string | null
   bairro: string | null

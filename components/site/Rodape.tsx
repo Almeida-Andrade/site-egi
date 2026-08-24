@@ -1,6 +1,31 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { ITENS_NAVEGACAO } from '@/lib/navegacao'
+import {
+  IconeEmail,
+  IconeFacebook,
+  IconeInstagram,
+  IconeWhatsApp, } from './Icones'
 import estilos from './Rodape.module.css'
+
+const REDES = [
+  { nome: 'WhatsApp', href: 'https://wa.me/5598984812793', Icone: IconeWhatsApp },
+  {
+    nome: 'Instagram',
+    href: 'https://www.instagram.com/egi.empreendimentos/',
+    Icone: IconeInstagram,
+  },
+  {
+    nome: 'Facebook',
+    href: 'https://www.facebook.com/egiempreendimentos/',
+    Icone: IconeFacebook,
+  },
+  {
+    nome: 'E-mail',
+    href: 'mailto:egiempreendimentos@grupoaandrade.com.br',
+    Icone: IconeEmail,
+  },
+]
 
 export function Rodape() {
   return (
@@ -10,8 +35,8 @@ export function Rodape() {
           <Image
             src="/logo-egi-clara.png"
             alt="E.G.I Empreendimentos"
-            width={1608}
-            height={549}
+            width={246}
+            height={84}
             className={estilos.logo}
           />
           <p className={estilos.lema}>Grandes empreendimentos começam com grandes sonhos.</p>
@@ -19,15 +44,26 @@ export function Rodape() {
 
         <div className={estilos.coluna}>
           <span className={estilos.rotulo}>Contato</span>
-          <a href="tel:+559832355008">(98) 3235-5008</a>
-          <a href="https://wa.me/5598984812793" target="_blank" rel="noopener noreferrer">
-            WhatsApp (98) 98481-2793
-          </a>
-          <a href="mailto:egiempreendimentos@grupoalmeidaandrade.com.br">
-            egiempreendimentos@grupoalmeidaandrade.com.br
-          </a>
+
+          <div className={estilos.redes}>
+            {REDES.map((rede) => (
+              <a
+                key={rede.nome}
+                className={estilos.rede}
+                href={rede.href}
+                aria-label={rede.nome}
+                title={rede.nome}
+                {...(rede.href.startsWith('http')
+                  ? { target: '_blank', rel: 'noopener noreferrer' }
+                  : {})}
+              >
+                <rede.Icone className={estilos.icone} />
+              </a>
+            ))}
+          </div>
+
           <span className={estilos.sede}>
-            Av. dos Sambaquis, 34 — Ed. Galeria A
+            Av. dos Sambaquis, 33 — Ed. Galeria A
             <br />
             Calhau, São Luís — MA
           </span>
@@ -35,15 +71,18 @@ export function Rodape() {
 
         <div className={estilos.coluna}>
           <span className={estilos.rotulo}>Navegação</span>
-          <Link href="/empreendimentos">Empreendimentos</Link>
-          <Link href="/sobre">A EGI</Link>
-          <Link href="/contato">Contato</Link>
+          {/* Mesma lista do cabeçalho: escrita à mão aqui, o rodapé já ficou
+              sem "Início" quando o menu mudou. */}
+          {ITENS_NAVEGACAO.map((item) => (
+            <Link key={item.href} href={item.href}>
+              {item.rotulo}
+            </Link>
+          ))}
         </div>
       </div>
 
       <div className={estilos.base}>
         <span>© {new Date().getFullYear()} E.G.I Empreendimentos</span>
-        <span>São Luís · Maranhão</span>
       </div>
     </footer>
   )

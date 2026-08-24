@@ -1,7 +1,7 @@
 .pagina {
-  max-width: 940px;
+  max-width: var(--largura-max);
   margin: 0 auto;
-  padding: var(--gap-7) var(--gap-5) 0;
+  padding: var(--gap-6) var(--gap-5) 0;
 }
 
 .kicker {
@@ -21,7 +21,7 @@
 
 .canais {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: var(--gap-3);
   margin-top: var(--gap-6);
 }
@@ -40,8 +40,11 @@
   font-family: var(--fonte-titulo);
   font-size: 19px;
   font-weight: 600;
-  /* O e-mail é uma palavra só e mais longa que a caixa no celular */
   overflow-wrap: anywhere;
+}
+
+.canal b.valorLongo {
+  font-size: 15px;
 }
 
 .rotulo {
@@ -85,5 +88,8 @@
 @media (max-width: 860px) {
   .canais {
     grid-template-columns: 1fr;
+  }
+  .canal b.valorLongo {
+    font-size: 19px;
   }
 }

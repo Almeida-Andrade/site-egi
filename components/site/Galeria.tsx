@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import type { Imagem } from '@/lib/tipos'
-import { urlImagem } from '@/lib/utils/rotulos'
 import estilos from './Galeria.module.css'
 
 export function Galeria({ imagens, nome }: { imagens: Imagem[]; nome: string }) {
@@ -17,7 +16,7 @@ export function Galeria({ imagens, nome }: { imagens: Imagem[]; nome: string }) 
     <div>
       <div className={estilos.principal}>
         <Image
-          src={urlImagem(imagens[atual].storage_path)}
+          src={imagens[atual].url}
           alt={imagens[atual].alt ?? nome}
           fill
           priority
@@ -37,7 +36,7 @@ export function Galeria({ imagens, nome }: { imagens: Imagem[]; nome: string }) 
               aria-label={`Foto ${i + 1} de ${imagens.length}`}
             >
               <Image
-                src={urlImagem(img.storage_path)}
+                src={img.url}
                 alt=""
                 fill
                 sizes="120px"

@@ -119,7 +119,7 @@
   font-size: 10.5px;
   letter-spacing: var(--trilha-larga);
   text-transform: uppercase;
-  opacity: 0.45;
+  opacity: 0.55;
 }
 
 .conteudo {
@@ -161,8 +161,6 @@
   gap: var(--gap-4);
   margin-top: var(--gap-4);
 }
-
-/* ---------- Categorias ---------- */
 
 .categorias {
   display: grid;
@@ -214,8 +212,6 @@
 .categoria:hover .categoriaSeta {
   transform: translateX(5px);
 }
-
-/* ---------- Center Valley ---------- */
 
 .valley {
   display: grid;
@@ -302,8 +298,6 @@
   background: var(--pure);
 }
 
-/* Sangra até as bordas da coluna de leitura: a fita precisa entrar e sair da
-   tela, não parar dentro de uma caixa. */
 .marcas {
   margin-top: var(--gap-5);
 }

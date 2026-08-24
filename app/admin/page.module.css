@@ -15,21 +15,6 @@
   gap: var(--gap-3);
 }
 
-.logo {
-  font-family: var(--fonte-titulo);
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  font-size: 15px;
-}
-.logo span {
-  display: block;
-  font-weight: 400;
-  font-size: 9.5px;
-  letter-spacing: 0.3em;
-  opacity: 0.55;
-  margin-top: 3px;
-}
-
 .titulo {
   font-family: var(--fonte-titulo);
   font-size: 21px;

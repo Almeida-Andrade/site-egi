@@ -15,10 +15,6 @@ export function MenuMobile({ whatsapp }: { whatsapp: string }) {
   const botao = useRef<HTMLButtonElement>(null)
   const painel = useRef<HTMLDivElement>(null)
 
-  // Fecha ao navegar — sem isto o painel fica por cima da página nova. O ajuste
-  // acontece durante a renderização, não num efeito: assim o painel nunca chega
-  // a ser pintado aberto sobre a rota nova. Vale também para o botão voltar,
-  // que um `onClick` nos links não pegaria.
   const [caminhoAnterior, setCaminhoAnterior] = useState(caminho)
   if (caminho !== caminhoAnterior) {
     setCaminhoAnterior(caminho)
@@ -35,7 +31,6 @@ export function MenuMobile({ whatsapp }: { whatsapp: string }) {
     }
     document.addEventListener('keydown', aoTeclar)
 
-    // Trava a rolagem do fundo enquanto o painel cobre a tela.
     const overflowAnterior = document.body.style.overflow
     document.body.style.overflow = 'hidden'
 
@@ -68,17 +63,13 @@ export function MenuMobile({ whatsapp }: { whatsapp: string }) {
         ref={painel}
         className={estilos.painel}
         data-aberto={aberto}
-        // `inert` tira do foco e da árvore de acessibilidade quando fechado,
-        // então o painel não é alcançável por Tab atrás da página.
         inert={!aberto}
       >
-        {/* O painel cobre o cabeçalho inteiro; sem isto o visitante perde a
-            marca de vista enquanto o menu está aberto. */}
         <Image
           src="/logo-egi-clara.png"
           alt=""
-          width={1608}
-          height={549}
+          width={187}
+          height={64}
           className={estilos.logo}
           aria-hidden
         />

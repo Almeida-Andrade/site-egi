@@ -3,7 +3,6 @@
   transform: none;
 }
 
-/* Devolve ao filho o esticamento que ele tinha quando era o item da grade. */
 .esticar {
   display: flex;
 }
@@ -12,11 +11,6 @@
   min-width: 0;
 }
 
-/*
- * O estado escondido só existe quando há JavaScript. Se o script falhar, o
- * conteúdo permanece visível em vez de sumir para sempre — por isso a regra
- * fica sob `.js`, classe que o próprio script põe no <html>.
- */
 :global(html.js) .revelar {
   opacity: 0;
   transform: translateY(16px);

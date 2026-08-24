@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest'
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync } from 'node:fs'
 
-// .env.local não é carregado automaticamente pelo Vitest
 for (const linha of readFileSync('.env.local', 'utf8').split('\n')) {
   const m = linha.match(/^([A-Z_]+)=(.*)$/)
   if (m) process.env[m[1]] ??= m[2].trim()
@@ -33,7 +32,6 @@ describe('RLS', () => {
     const { data: alvo } = await anon
       .from('unidades').select('id, status').eq('status', 'ocupado').limit(1)
 
-    // Banco vazio não prova nada sobre RLS, mas também não é falha deste teste.
     if (!alvo?.length) return
 
     const { data: afetadas } = await anon

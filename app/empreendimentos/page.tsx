@@ -19,8 +19,6 @@ const DESCRICAO =
 export const metadata: Metadata = {
   title: 'Empreendimentos',
   description: DESCRICAO,
-  // Canônica sem query: os filtros de tipo, cidade e disponibilidade geram
-  // dezenas de URLs com o mesmo conteúdo recortado.
   alternates: { canonical: '/empreendimentos' },
   openGraph: {
     url: '/empreendimentos',

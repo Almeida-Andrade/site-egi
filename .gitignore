@@ -29,3 +29,4 @@ playwright-report/
 # contexto interno (estrategia/infra) — fica local
 CLAUDE.md
 AGENTS.md
+.env*

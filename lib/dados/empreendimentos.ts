@@ -3,27 +3,9 @@ import type {
   Empreendimento, EmpreendimentoComUnidades, EmpreendimentoResumo,
   Estatisticas, FiltrosEmpreendimento, Imagem, Unidade,
 } from '@/lib/tipos'
+import { capaDe } from '@/lib/imagens'
 import { ordenarUnidades } from './ordenacao'
-
-const CAMPOS = `
-  id, slug, nome, descricao, tipo, built_to_suit, endereco, bairro, cidade, uf,
-  cep, localizacao_aproximada, maps_embed_url, maps_link, publicado, destaque, ordem
-`
-
-const CAMPOS_UNIDADES = `
-  id, empreendimento_id, identificacao, tipo, area_m2, piso, status, disponivel_em,
-  descricao, caracteristicas, ordem
-`
-
-// O banco do CRM guarda a URL pública completa (fotos antigas ainda servidas
-// do bucket do projeto antigo; novas sobem no bucket do CRM)
-const CAMPOS_IMAGENS = `
-  id, storage_path, url, alt, capa, ordem
-`
-
-// No banco do CRM a tabela chama empreendimento_imagens; o alias mantém o
-// nome "imagens" no restante do código
-const REL_IMAGENS = `imagens:empreendimento_imagens(${CAMPOS_IMAGENS})`
+import { CAMPOS, CAMPOS_UNIDADES, REL_IMAGENS } from './campos'
 
 type LinhaComRelacoes = Empreendimento & {
   unidades: Unidade[]
@@ -31,10 +13,9 @@ type LinhaComRelacoes = Empreendimento & {
 }
 
 function resumir(linha: LinhaComRelacoes): EmpreendimentoResumo {
-  const imagens = [...linha.imagens].sort((a, b) => a.ordem - b.ordem)
   return {
     ...linha,
-    capa: imagens.find((i) => i.capa) ?? imagens[0] ?? null,
+    capa: capaDe(linha.imagens),
     total_unidades: linha.unidades.length,
     disponiveis: linha.unidades.filter((u) => u.status === 'disponivel').length,
   }
@@ -54,6 +35,7 @@ export async function listarEmpreendimentos(
   if (filtros.tipo) consulta = consulta.eq('tipo', filtros.tipo)
   if (filtros.cidade) consulta = consulta.eq('cidade', filtros.cidade)
   if (filtros.busca) consulta = consulta.ilike('nome', `%${filtros.busca}%`)
+  if (filtros.finalidade) consulta = consulta.eq('finalidade', filtros.finalidade)
 
   const { data, error } = await consulta
   if (error) throw new Error(`Falha ao listar empreendimentos: ${error.message}`)
@@ -123,12 +105,23 @@ export async function listarCidades(): Promise<string[]> {
   return [...new Set((data ?? []).map((l) => l.cidade as string))].sort()
 }
 
+/**
+ * Os números da home são do PORTFÓLIO DE LOCAÇÃO: imóvel à venda tem as casas
+ * como "disponível" no banco e, contado aqui, viraria "unidades disponíveis
+ * para alugar" no hero. A vitrine tem os números dela.
+ */
 export async function obterEstatisticas(): Promise<Estatisticas> {
   const supabase = criarClientePublico()
 
   const [{ count: empreendimentos, error: erroContagem }, { data: unidades, error: erroUnidades }] = await Promise.all([
-    supabase.from('empreendimentos').select('id', { count: 'exact', head: true }),
-    supabase.from('unidades').select('status'),
+    supabase
+      .from('empreendimentos')
+      .select('id', { count: 'exact', head: true })
+      .eq('finalidade', 'locacao'),
+    supabase
+      .from('unidades')
+      .select('status, empreendimentos!inner(finalidade)')
+      .eq('empreendimentos.finalidade', 'locacao'),
   ])
 
   if (erroContagem) throw new Error(`Falha ao contar empreendimentos: ${erroContagem.message}`)

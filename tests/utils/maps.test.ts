@@ -17,6 +17,12 @@ describe('extrairUrlMaps', () => {
     expect(extrairUrlMaps(`<iframe src='${EMBED}'></iframe>`)).toBe(EMBED)
   })
 
+  it('não corta a URL no apóstrofo de dentro dela', () => {
+    const comApostrofo = `${EMBED}!2sCondom%C3%ADnio%20Ville%20D'or!5e0`
+    const esperado = new URL(comApostrofo).toString()
+    expect(extrairUrlMaps(`<iframe src="${comApostrofo}" width="600"></iframe>`)).toBe(esperado)
+  })
+
   it('rejeita URL que não é do Google Maps', () => {
     expect(extrairUrlMaps('https://exemplo.com/mapa')).toBeNull()
   })

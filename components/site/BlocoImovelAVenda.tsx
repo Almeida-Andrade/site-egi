@@ -3,7 +3,7 @@ import type { ImovelAVenda } from '@/lib/tipos'
 import { formatarArea, situacaoDe } from '@/lib/vendas'
 import { CONDICOES_VENDA, CHAMADA_VENDA } from '@/lib/conteudo-venda'
 import { linkConsultarValor, montarLinkWhatsApp } from '@/lib/utils/whatsapp'
-import { linkBuscaMaps } from '@/lib/utils/maps'
+import { extrairUrlMaps, linkBuscaMaps } from '@/lib/utils/maps'
 import { URL_SITE } from '@/lib/site'
 import { CardCasaAVenda } from './CardCasaAVenda'
 import { VideoVertical } from './VideoVertical'
@@ -35,6 +35,9 @@ export function BlocoImovelAVenda({
     ? [e.bairro, e.cidade].filter(Boolean).join(' · ')
     : [e.endereco, e.bairro, `${e.cidade} — ${e.uf}`].filter(Boolean).join(', ')
   const comoChegar = e.maps_link ?? linkBuscaMaps(e)
+  // Só URL de embed do Google entra no iframe: o código <iframe> colado no
+  // CRM viraria endereço relativo do site (404 dentro do quadro).
+  const mapa = e.maps_embed_url ? extrairUrlMaps(e.maps_embed_url) : null
 
   return (
     <article className={estilos.bloco} aria-labelledby={`titulo-${e.slug}`}>
@@ -165,12 +168,8 @@ export function BlocoImovelAVenda({
           </div>
           <aside className={estilos.lateral}>
             <Sub className={estilos.secaoTitulo}>Localização</Sub>
-            {e.maps_embed_url ? (
-              <MapaEmbed url={e.maps_embed_url} titulo={e.nome} />
-            ) : (
-              <p className={estilos.endereco}>{local}</p>
-            )}
-            {e.maps_embed_url && <p className={estilos.endereco}>{local}</p>}
+            {mapa ? <MapaEmbed url={mapa} titulo={e.nome} /> : null}
+            <p className={estilos.endereco}>{local}</p>
             <a className={estilos.whatsapp} href={contato} target="_blank" rel="noopener noreferrer">
               Falar no WhatsApp
             </a>

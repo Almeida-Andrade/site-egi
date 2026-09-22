@@ -12,7 +12,7 @@ import { obterImovelAVendaPorSlug } from '@/lib/dados/vendas'
 import { BlocoImovelAVenda } from '@/components/site/BlocoImovelAVenda'
 import { rotuloTipoEmpreendimento } from '@/lib/utils/rotulos'
 import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
-import { linkBuscaMaps } from '@/lib/utils/maps'
+import { extrairUrlMaps, linkBuscaMaps } from '@/lib/utils/maps'
 import { URL_SITE } from '@/lib/site'
 import { DadosEstruturados } from '@/components/site/DadosEstruturados'
 import estilos from './page.module.css'
@@ -107,6 +107,9 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
     : [e.endereco, e.bairro, `${e.cidade} — ${e.uf}`].filter(Boolean).join(', ')
 
   const comoChegar = e.maps_link ?? linkBuscaMaps(e)
+  // Só URL de embed do Google entra no iframe: o código <iframe> colado no
+  // CRM viraria endereço relativo do site (404 dentro do quadro).
+  const mapa = e.maps_embed_url ? extrairUrlMaps(e.maps_embed_url) : null
 
   return (
     <>
@@ -141,8 +144,8 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
 
             <aside className={estilos.lateral}>
               <h2 className={estilos.subtitulo}>Localização</h2>
-              {e.maps_embed_url ? (
-                <MapaEmbed url={e.maps_embed_url} titulo={e.nome} />
+              {mapa ? (
+                <MapaEmbed url={mapa} titulo={e.nome} />
               ) : (
                 <p className={estilos.semMapa}>{local}</p>
               )}

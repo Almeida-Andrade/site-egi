@@ -165,7 +165,7 @@ export default async function Home() {
       <section className={estilos.valley} aria-labelledby="titulo-valley">
         <div className={estilos.valleyFoto}>
           <Image
-            src="/center-valley-entrada.png"
+            src="/center-valley-entrada.jpg"
             alt="Entrada do Center Valley Shopping, em Pedreiras"
             fill
             sizes="(max-width: 900px) 100vw, 45vw"

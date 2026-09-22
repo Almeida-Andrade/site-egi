@@ -1,0 +1,289 @@
+.bloco {
+  display: block;
+}
+
+.abertura {
+  background: var(--navy);
+  color: #fff;
+}
+
+.aberturaGrade {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: var(--gap-6);
+  max-width: var(--largura-max);
+  margin: 0 auto;
+  padding: var(--gap-7) var(--gap-5);
+}
+
+.aberturaTexto {
+  max-width: 56ch;
+}
+
+.logoCaixa {
+  display: inline-block;
+  background: #fff;
+  padding: 14px 22px;
+  border-radius: 6px;
+  margin-bottom: var(--gap-4);
+}
+.logo {
+  width: 200px;
+  height: auto;
+}
+
+.kicker {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #93a6d8;
+}
+
+.titulo {
+  font-family: var(--fonte-display);
+  font-weight: 400;
+  font-size: var(--escala-display);
+  line-height: 1.02;
+  margin-top: var(--gap-2);
+}
+
+.linha {
+  margin-top: var(--gap-3);
+  max-width: 52ch;
+  opacity: 0.78;
+}
+
+.numeros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-5);
+  margin-top: var(--gap-5);
+  padding-top: var(--gap-4);
+  border-top: 1px solid var(--branco-09);
+}
+.numeros b {
+  display: block;
+  font-family: var(--fonte-display);
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.numeros small {
+  display: block;
+  margin-top: 6px;
+  font-size: 10.5px;
+  letter-spacing: var(--trilha-larga);
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap-4);
+  margin-top: var(--gap-5);
+}
+
+.cta {
+  display: inline-block;
+  border: 1px solid var(--branco-24);
+  padding: 13px 26px;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+.cta:hover {
+  background: var(--pure);
+  border-color: var(--pure);
+}
+
+.ctaLivre {
+  font-size: 13px;
+  color: #93a6d8;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition:
+    color 200ms ease,
+    border-color 200ms ease;
+}
+.ctaLivre:hover {
+  color: #fff;
+  border-bottom-color: var(--pure);
+}
+
+.aberturaVideo {
+  display: flex;
+  justify-content: center;
+}
+
+.capaSemVideo {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 640px;
+  border-radius: 24px;
+  overflow: hidden;
+}
+
+.conteudo {
+  max-width: var(--largura-max);
+  margin: 0 auto;
+  padding: var(--gap-7) var(--gap-5) 0;
+}
+
+.secao {
+  margin-bottom: var(--gap-7);
+}
+
+.secaoTitulo {
+  font-family: var(--fonte-titulo);
+  font-size: var(--escala-titulo);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.secaoTexto {
+  margin-top: var(--gap-2);
+  max-width: 56ch;
+  color: var(--navy-70);
+}
+
+.gradeCasas {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gap-3);
+  margin-top: var(--gap-4);
+}
+
+.planta {
+  margin: var(--gap-4) 0 0;
+  border: 1px solid var(--navy-12);
+  background: #fff;
+}
+.plantaImagem {
+  width: 100%;
+  height: auto;
+}
+.planta figcaption {
+  padding: var(--gap-2) var(--gap-3);
+  font-size: 12.5px;
+  color: var(--navy-45);
+  border-top: 1px solid var(--navy-12);
+}
+
+.rodapeGrade {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: var(--gap-6);
+  padding-bottom: var(--gap-7);
+}
+
+.condicoes {
+  margin: var(--gap-4) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--gap-2);
+  max-width: 62ch;
+  font-size: 14px;
+  color: var(--navy-70);
+}
+.condicoes li {
+  padding-left: 18px;
+  position: relative;
+}
+.condicoes li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  background: var(--pure);
+}
+
+.lateral {
+  align-self: start;
+}
+.lateral .secaoTitulo {
+  margin-bottom: var(--gap-3);
+}
+
+.endereco {
+  margin-top: var(--gap-3);
+  font-size: 13.5px;
+  color: var(--navy-70);
+}
+
+.whatsapp {
+  display: block;
+  margin-top: var(--gap-4);
+  padding: 14px 20px;
+  background: var(--navy);
+  color: #fff;
+  text-align: center;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color 200ms ease;
+}
+.whatsapp:hover {
+  background: var(--pure);
+}
+
+.comoChegar {
+  display: inline-block;
+  margin-top: var(--gap-3);
+  font-size: 13px;
+  color: var(--steel);
+}
+.comoChegar:hover {
+  color: var(--pure);
+}
+
+@media (max-width: 1100px) {
+  .gradeCasas {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .aberturaGrade {
+    grid-template-columns: 1fr;
+    gap: var(--gap-5);
+    padding: var(--gap-6) var(--gap-4);
+  }
+  .aberturaTexto {
+    max-width: none;
+  }
+  .conteudo {
+    padding: var(--gap-6) var(--gap-4) 0;
+  }
+  .rodapeGrade {
+    grid-template-columns: 1fr;
+    gap: var(--gap-5);
+  }
+  .numeros b {
+    font-size: 30px;
+  }
+}
+
+@media (max-width: 560px) {
+  .gradeCasas {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta,
+  .ctaLivre,
+  .whatsapp {
+    transition: none;
+  }
+}

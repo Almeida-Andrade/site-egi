@@ -11,6 +11,8 @@ import {
   listarEmpreendimentos,
   obterEstatisticas,
 } from '@/lib/dados/empreendimentos'
+import { listarImoveisAVenda } from '@/lib/dados/vendas'
+import { DestaqueVenda } from '@/components/site/DestaqueVenda'
 import { CarrosselMarcas } from '@/components/site/CarrosselMarcas'
 import { OndeEstamos } from '@/components/site/OndeEstamos'
 import { CATEGORIAS, CENTER_VALLEY } from '@/lib/conteudo'
@@ -25,10 +27,12 @@ export const metadata: Metadata = {
 }
 
 export default async function Home() {
-  const [estatisticas, portfolio, cases] = await Promise.all([
+  // O portfólio da home é o de LOCAÇÃO; o imóvel à venda tem a seção dele.
+  const [estatisticas, portfolio, cases, aVenda] = await Promise.all([
     obterEstatisticas(),
-    listarEmpreendimentos(),
+    listarEmpreendimentos({ finalidade: 'locacao' }),
     listarBuiltToSuit(),
+    listarImoveisAVenda(),
   ])
 
   const emDestaque = portfolio.filter((e) => e.destaque && !e.built_to_suit).slice(0, 3)
@@ -92,6 +96,8 @@ export default async function Home() {
             <small>Disponíveis agora</small>
           </div>
         </section>
+
+        <DestaqueVenda imoveis={aVenda} />
       </div>
 
       <main>

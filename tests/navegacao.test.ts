@@ -10,6 +10,13 @@ describe('itemAtivo', () => {
     expect(itemAtivo('/empreendimentos/residencial-buzios')).toBe('/empreendimentos')
   })
 
+  it('acende À venda na vitrine, e ela fica entre Empreendimentos e A EGI', () => {
+    expect(itemAtivo('/a-venda')).toBe('/a-venda')
+    const hrefs = ITENS_NAVEGACAO.map((i) => i.href)
+    expect(hrefs.indexOf('/a-venda')).toBe(hrefs.indexOf('/empreendimentos') + 1)
+    expect(hrefs.indexOf('/sobre')).toBe(hrefs.indexOf('/a-venda') + 1)
+  })
+
   it('acende as páginas institucionais', () => {
     expect(itemAtivo('/sobre')).toBe('/sobre')
     expect(itemAtivo('/contato')).toBe('/contato')

@@ -4,7 +4,16 @@ import type { EmpreendimentoResumo } from '@/lib/tipos'
 import { rotuloTipoEmpreendimento } from '@/lib/utils/rotulos'
 import estilos from './CardEmpreendimento.module.css'
 
-export function CardEmpreendimento({ empreendimento: e }: { empreendimento: EmpreendimentoResumo }) {
+export function CardEmpreendimento({
+  empreendimento: e,
+  preco,
+}: {
+  empreendimento: EmpreendimentoResumo
+  /** "a partir de …" do imóvel à venda; sem ele o cartão mostra as unidades */
+  preco?: string
+}) {
+  const venda = e.finalidade === 'venda'
+
   return (
     <Link href={`/empreendimentos/${e.slug}`} className={estilos.card}>
       <div className={estilos.foto}>
@@ -19,10 +28,14 @@ export function CardEmpreendimento({ empreendimento: e }: { empreendimento: Empr
         ) : (
           <div className={estilos.semFoto}>{e.nome}</div>
         )}
-        {e.disponiveis > 0 && (
-          <span className={estilos.selo}>
-            {e.disponiveis} {e.disponiveis === 1 ? 'disponível' : 'disponíveis'}
-          </span>
+        {venda ? (
+          <span className={`${estilos.selo} ${estilos.seloVenda}`}>À venda</span>
+        ) : (
+          e.disponiveis > 0 && (
+            <span className={estilos.selo}>
+              {e.disponiveis} {e.disponiveis === 1 ? 'disponível' : 'disponíveis'}
+            </span>
+          )
         )}
       </div>
 
@@ -37,7 +50,9 @@ export function CardEmpreendimento({ empreendimento: e }: { empreendimento: Empr
           {e.cidade}
         </p>
         <p className={estilos.contagem}>
-          {e.total_unidades} {e.total_unidades === 1 ? 'unidade' : 'unidades'}
+          {venda
+            ? `${e.disponiveis} ${e.disponiveis === 1 ? 'casa à venda' : 'casas à venda'}${preco ? ` · a partir de ${preco}` : ''}`
+            : `${e.total_unidades} ${e.total_unidades === 1 ? 'unidade' : 'unidades'}`}
         </p>
       </div>
     </Link>

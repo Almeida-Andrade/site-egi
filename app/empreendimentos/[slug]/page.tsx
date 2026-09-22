@@ -8,6 +8,9 @@ import { MapaEmbed } from '@/components/site/MapaEmbed'
 import { TabelaUnidades } from '@/components/site/TabelaUnidades'
 import { contarPorStatus } from '@/components/site/logicaUnidades'
 import { listarSlugsPublicados, obterEmpreendimentoPorSlug } from '@/lib/dados/empreendimentos'
+import { obterImovelAVendaPorSlug } from '@/lib/dados/vendas'
+import { BlocoImovelAVenda } from '@/components/site/BlocoImovelAVenda'
+import { formatarPreco } from '@/lib/vendas'
 import { rotuloTipoEmpreendimento } from '@/lib/utils/rotulos'
 import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
 import { linkBuscaMaps } from '@/lib/utils/maps'
@@ -31,13 +34,15 @@ export async function generateMetadata({
   const e = await obterEmpreendimentoPorSlug(slug)
   if (!e) return { title: 'Empreendimento não encontrado' }
 
-  const capa = e.imagens[0]
+  const capa = e.imagens.find((i) => i.tipo !== 'logo' && i.tipo !== 'planta') ?? e.imagens[0]
   const livres = e.unidades.filter((u) => u.status === 'disponivel').length
 
   const descricao =
     e.descricao ??
-    `${rotuloTipoEmpreendimento(e.tipo)} em ${e.cidade}. ` +
-      `${e.unidades.length} unidades, ${livres} disponíveis para locação.`
+    (e.finalidade === 'venda'
+      ? `Casas à venda em ${e.cidade}.`
+      : `${rotuloTipoEmpreendimento(e.tipo)} em ${e.cidade}. ` +
+        `${e.unidades.length} unidades, ${livres} disponíveis para locação.`)
 
   const caminho = `/empreendimentos/${e.slug}`
 
@@ -61,6 +66,39 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
   const { slug } = await params
   const e = await obterEmpreendimentoPorSlug(slug)
   if (!e) notFound()
+
+  // Imóvel à venda: a ficha é a vitrine dele, com preço à vista por casa —
+  // a tabela de unidades e o "avise-me quando vagar" são coisa de aluguel.
+  if (e.finalidade === 'venda') {
+    const venda = await obterImovelAVendaPorSlug(slug)
+    if (!venda) notFound()
+    return (
+      <>
+        <Cabecalho variante="escuro" />
+        <Transicao>
+          <main>
+            <BlocoImovelAVenda imovel={venda} nivelTitulo={1} />
+            <DadosEstruturados
+              dados={{
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                  { '@type': 'ListItem', position: 1, name: 'Início', item: URL_SITE },
+                  { '@type': 'ListItem', position: 2, name: 'À venda', item: `${URL_SITE}/a-venda` },
+                  {
+                    '@type': 'ListItem',
+                    position: 3,
+                    name: venda.menorPreco !== null ? `${venda.nome} · a partir de ${formatarPreco(venda.menorPreco)}` : venda.nome,
+                  },
+                ],
+              }}
+            />
+          </main>
+        </Transicao>
+        <Rodape />
+      </>
+    )
+  }
 
   const contagem = contarPorStatus(e.unidades)
 

@@ -1,0 +1,133 @@
+.secao {
+  background: var(--navy);
+  color: #fff;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  align-items: center;
+  gap: var(--gap-6);
+  max-width: var(--largura-max);
+  margin: 0 auto;
+  padding: var(--gap-7) var(--gap-5);
+  border-top: 1px solid var(--branco-09);
+}
+
+.video {
+  display: flex;
+  justify-content: center;
+}
+
+.capa {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 520px;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.texto {
+  max-width: 60ch;
+}
+
+.kicker {
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #93a6d8;
+}
+
+.titulo {
+  font-family: var(--fonte-display);
+  font-weight: 400;
+  font-size: var(--escala-display);
+  line-height: 1.05;
+  margin-top: var(--gap-2);
+}
+
+.linha {
+  margin-top: var(--gap-3);
+  max-width: 50ch;
+  opacity: 0.75;
+}
+
+.casas {
+  margin: var(--gap-5) 0 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--branco-09);
+}
+.casas li {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr auto;
+  align-items: baseline;
+  gap: var(--gap-3);
+  padding: 14px 0;
+  border-bottom: 1px solid var(--branco-09);
+}
+.indisponivel {
+  opacity: 0.45;
+}
+
+.casaNome {
+  font-family: var(--fonte-display);
+  font-size: 26px;
+  line-height: 1;
+}
+.casaSol {
+  font-size: 12.5px;
+  opacity: 0.7;
+}
+.casaPreco {
+  font-family: var(--fonte-titulo);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.nota {
+  margin-top: var(--gap-2);
+  font-size: 10.5px;
+  letter-spacing: var(--trilha-larga);
+  text-transform: uppercase;
+  opacity: 0.5;
+}
+
+.cta {
+  display: inline-block;
+  margin-top: var(--gap-5);
+  border: 1px solid var(--branco-24);
+  padding: 13px 26px;
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease;
+}
+.cta:hover {
+  background: var(--pure);
+  border-color: var(--pure);
+}
+
+@media (max-width: 860px) {
+  .grade {
+    grid-template-columns: 1fr;
+    gap: var(--gap-5);
+    padding: var(--gap-6) var(--gap-4);
+  }
+  .casas li {
+    grid-template-columns: 5.5rem 1fr;
+  }
+  .casaPreco {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta {
+    transition: none;
+  }
+}

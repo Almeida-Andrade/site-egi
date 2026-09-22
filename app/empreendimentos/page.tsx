@@ -1,6 +1,5 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { Cabecalho } from '@/components/site/Cabecalho'
 import { Rodape } from '@/components/site/Rodape'
 import { Transicao } from '@/components/site/Transicao'
@@ -44,11 +43,6 @@ export default async function Pagina({
     listarCidades(),
   ])
 
-  // O imóvel à venda abre a lista, num grupo próprio; o resto é o portfólio
-  // de locação, como sempre foi.
-  const aVenda = lista.filter((e) => e.finalidade === 'venda')
-  const locacao = lista.filter((e) => e.finalidade !== 'venda')
-
   return (
     <>
       <Cabecalho />
@@ -66,48 +60,21 @@ export default async function Pagina({
             <Filtros cidades={cidades} />
           </Suspense>
 
-          {aVenda.length > 0 && (
-            <section className={estilos.grupo} aria-labelledby="titulo-a-venda">
-              <div className={estilos.grupoTopo}>
-                <h2 id="titulo-a-venda" className={estilos.grupoTitulo}>
-                  À venda
-                </h2>
-                <Link href="/a-venda" className={estilos.verTodos}>
-                  Ver a vitrine →
-                </Link>
-              </div>
-              <div className={estilos.grade}>
-                {aVenda.map((e, i) => (
-                  <Revelar key={e.id} indice={i} esticar>
-                    <CardEmpreendimento empreendimento={e} />
-                  </Revelar>
-                ))}
-              </div>
-            </section>
-          )}
-
+          {/* Locação e venda na mesma grade: o que distingue o imóvel à venda
+              é o selo do cartão, não um grupo à parte. */}
           {lista.length === 0 ? (
             <p className={estilos.vazio}>
               Nenhum empreendimento com esses filtros. Limpe os filtros para ver o portfólio
               completo.
             </p>
           ) : (
-            locacao.length > 0 && (
-              <section className={estilos.grupo} aria-labelledby="titulo-locacao">
-                {aVenda.length > 0 && (
-                  <h2 id="titulo-locacao" className={estilos.grupoTitulo}>
-                    Para alugar
-                  </h2>
-                )}
-                <div className={estilos.grade}>
-                  {locacao.map((e, i) => (
-                    <Revelar key={e.id} indice={i} esticar>
-                      <CardEmpreendimento empreendimento={e} />
-                    </Revelar>
-                  ))}
-                </div>
-              </section>
-            )
+            <div className={estilos.grade}>
+              {lista.map((e, i) => (
+                <Revelar key={e.id} indice={i} esticar>
+                  <CardEmpreendimento empreendimento={e} />
+                </Revelar>
+              ))}
+            </div>
           )}
         </main>
       </Transicao>

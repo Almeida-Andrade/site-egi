@@ -49,33 +49,3 @@
     grid-template-columns: 1fr;
   }
 }
-
-.grupo {
-  margin-top: var(--gap-5);
-}
-.grupo .grade {
-  margin-top: var(--gap-3);
-}
-
-.grupoTopo {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-}
-
-.grupoTitulo {
-  font-family: var(--fonte-titulo);
-  font-size: var(--escala-secao);
-  letter-spacing: var(--trilha-larga);
-  text-transform: uppercase;
-  color: var(--navy-45);
-  font-weight: 500;
-}
-
-.verTodos {
-  font-size: 13px;
-  color: var(--steel);
-}
-.verTodos:hover {
-  color: var(--pure);
-}

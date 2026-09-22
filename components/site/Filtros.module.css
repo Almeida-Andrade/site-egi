@@ -2,7 +2,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--gap-2);
+  gap: 6px var(--gap-3);
   padding: var(--gap-3) 0 var(--gap-4);
   border-bottom: 1px solid var(--navy-12);
 }
@@ -11,8 +11,7 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--gap-2);
-  margin-right: var(--gap-4);
+  gap: 6px;
 }
 
 .rotulo {
@@ -20,18 +19,20 @@
   letter-spacing: var(--trilha-larga);
   text-transform: uppercase;
   color: var(--navy-45);
-  margin-right: var(--gap-1);
+  margin-right: 4px;
+  white-space: nowrap;
 }
 
 .botao,
 .ativo {
   font: inherit;
-  font-size: 12.5px;
+  font-size: 12px;
   cursor: pointer;
-  padding: 7px 13px;
+  padding: 6px 10px;
   border: 1px solid var(--navy-12);
   background: transparent;
   color: var(--navy);
+  white-space: nowrap;
 }
 .botao:hover {
   border-color: var(--steel);
@@ -40,4 +41,12 @@
   background: var(--navy);
   border-color: var(--navy);
   color: #fff;
+}
+
+/* No desktop largo a barra é uma linha só; abaixo disso quebra em grupos. */
+@media (min-width: 1200px) {
+  .barra,
+  .grupo {
+    flex-wrap: nowrap;
+  }
 }

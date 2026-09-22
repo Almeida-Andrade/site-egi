@@ -43,6 +43,13 @@ export default async function Pagina({
     listarCidades(),
   ])
 
+  // Venda antes de locação, mantendo a ordem do cadastro dentro de cada
+  // grupo: o imóvel à venda abre a grade, sem cabeçalho à parte.
+  const ordenada = [
+    ...lista.filter((e) => e.finalidade === 'venda'),
+    ...lista.filter((e) => e.finalidade !== 'venda'),
+  ]
+
   return (
     <>
       <Cabecalho />
@@ -69,7 +76,7 @@ export default async function Pagina({
             </p>
           ) : (
             <div className={estilos.grade}>
-              {lista.map((e, i) => (
+              {ordenada.map((e, i) => (
                 <Revelar key={e.id} indice={i} esticar>
                   <CardEmpreendimento empreendimento={e} />
                 </Revelar>

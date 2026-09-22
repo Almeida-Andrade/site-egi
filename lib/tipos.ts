@@ -64,10 +64,12 @@ export interface Empreendimento {
   video_url: string | null
 }
 
-/** Preço e situação de uma unidade à venda — vem da view pública v_site_vendas */
+/**
+ * Situação de uma unidade à venda — vem da view pública v_site_vendas. O
+ * valor NÃO chega ao site: a vitrine diz "a consultar" e leva ao WhatsApp.
+ */
 export interface VendaUnidade {
   unidade_id: string
-  valor_venda: number
   situacao: SituacaoVenda
 }
 
@@ -81,8 +83,6 @@ export interface ImovelAVenda extends Empreendimento {
   capa: Imagem | null
   planta: Imagem | null
   logo: Imagem | null
-  /** menor preço entre as unidades ainda à venda, ou nulo se nenhuma */
-  menorPreco: number | null
   aVenda: number
   reservadas: number
   vendidas: number

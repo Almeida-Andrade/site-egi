@@ -1,8 +1,8 @@
 import Image from 'next/image'
 import type { ImovelAVenda } from '@/lib/tipos'
-import { formatarArea, formatarPreco } from '@/lib/vendas'
+import { formatarArea, situacaoDe } from '@/lib/vendas'
 import { CONDICOES_VENDA, CHAMADA_VENDA } from '@/lib/conteudo-venda'
-import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
+import { linkConsultarValor, montarLinkWhatsApp } from '@/lib/utils/whatsapp'
 import { linkBuscaMaps } from '@/lib/utils/maps'
 import { URL_SITE } from '@/lib/site'
 import { CardCasaAVenda } from './CardCasaAVenda'
@@ -15,7 +15,7 @@ import estilos from './BlocoImovelAVenda.module.css'
 
 /**
  * A vitrine de um imóvel à venda: abertura escura com logo, vídeo em pé e os
- * números; as casas com preço à vista; implantação; fotos; condições e
+ * números; as casas com o valor a consultar; implantação; fotos; condições e
  * localização. É o mesmo bloco em /a-venda e na ficha do imóvel.
  */
 export function BlocoImovelAVenda({
@@ -30,6 +30,7 @@ export function BlocoImovelAVenda({
   const idCasas = `casas-${e.slug}`
   const area = e.unidades.find((u) => u.area_m2 !== null)?.area_m2 ?? null
   const contato = montarLinkWhatsApp({ empreendimento: e.nome })
+  const consultar = linkConsultarValor({ empreendimento: e.nome })
   const local = e.localizacao_aproximada
     ? [e.bairro, e.cidade].filter(Boolean).join(' · ')
     : [e.endereco, e.bairro, `${e.cidade} — ${e.uf}`].filter(Boolean).join(', ')
@@ -70,17 +71,15 @@ export function BlocoImovelAVenda({
                   <small>Área construída</small>
                 </div>
               )}
-              {e.menorPreco !== null && (
-                <div>
-                  <b>{formatarPreco(e.menorPreco)}</b>
-                  <small>A partir de, à vista</small>
-                </div>
-              )}
+              <div>
+                <b>A consultar</b>
+                <small>Valor de cada casa</small>
+              </div>
             </div>
 
             <div className={estilos.acoes}>
-              <a className={estilos.cta} href={contato} target="_blank" rel="noopener noreferrer">
-                Formule sua proposta
+              <a className={estilos.cta} href={consultar} target="_blank" rel="noopener noreferrer">
+                Consultar valores no WhatsApp
               </a>
               <a className={estilos.ctaLivre} href={`#${idCasas}`}>
                 Ver as casas ↓
@@ -113,7 +112,7 @@ export function BlocoImovelAVenda({
           <Revelar>
             <Sub className={estilos.secaoTitulo}>As casas</Sub>
             <p className={estilos.secaoTexto}>
-              Preço à vista de cada unidade. {CHAMADA_VENDA}
+              O valor de cada casa é informado no WhatsApp. {CHAMADA_VENDA}
             </p>
           </Revelar>
           <div className={estilos.gradeCasas}>
@@ -199,13 +198,12 @@ export function BlocoImovelAVenda({
             addressRegion: e.uf,
             addressCountry: 'BR',
           },
+          // Sem preço de propósito: o valor é conversa no WhatsApp.
           offers: e.unidades
-            .filter((u) => u.venda?.situacao === 'a_venda')
+            .filter((u) => situacaoDe(u) === 'a_venda')
             .map((u) => ({
               '@type': 'Offer',
               name: u.identificacao,
-              price: u.venda!.valor_venda,
-              priceCurrency: 'BRL',
               availability: 'https://schema.org/InStock',
             })),
         }}

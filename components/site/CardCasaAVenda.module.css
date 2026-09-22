@@ -14,20 +14,12 @@
   transform: translateY(-3px);
 }
 
-.escuro {
-  background: var(--branco-09);
-  border-color: var(--branco-24);
-  color: #fff;
-}
-.escuro:hover {
-  border-color: #93a6d8;
-}
-
 .indisponivel {
   opacity: 0.6;
 }
 .indisponivel:hover {
   transform: none;
+  border-color: var(--navy-12);
 }
 
 .topo {
@@ -51,9 +43,6 @@
   text-transform: uppercase;
   color: var(--steel);
   white-space: nowrap;
-}
-.escuro .situacao {
-  color: #93a6d8;
 }
 .indisponivel .situacao {
   color: inherit;
@@ -93,64 +82,40 @@
   border-radius: 999px;
   color: var(--navy-70);
 }
-.escuro .detalhes li {
-  border-color: var(--branco-24);
-  color: #fff;
-  opacity: 0.8;
-}
 
-.preco {
+.rodape {
   margin-top: auto;
   padding-top: var(--gap-3);
   border-top: 1px solid var(--navy-12);
-  display: flex;
-  align-items: baseline;
-  gap: var(--gap-2);
-  flex-wrap: wrap;
-}
-.escuro .preco {
-  border-top-color: var(--branco-09);
-}
-.preco b {
-  font-family: var(--fonte-titulo);
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-}
-.preco small {
-  font-size: 11px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  opacity: 0.55;
-}
-.consulta {
-  font-size: 18px;
 }
 
-.contato {
-  align-self: flex-start;
-  font-size: 13px;
-  color: var(--steel);
-  border-bottom: 1px solid transparent;
-  transition:
-    color 200ms ease,
-    border-color 200ms ease;
-}
-.contato:hover {
-  color: var(--pure);
-  border-bottom-color: var(--pure);
-}
-.escuro .contato {
-  color: #93a6d8;
-}
-.escuro .contato:hover {
+.cta {
+  display: block;
+  padding: 12px 16px;
+  background: var(--navy);
   color: #fff;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color 200ms ease;
+}
+.cta:hover {
+  background: var(--pure);
+}
+
+.encerrada {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy-45);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .card,
-  .contato {
+  .cta {
     transition: none;
   }
 }

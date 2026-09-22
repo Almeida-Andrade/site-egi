@@ -1,14 +1,16 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { ImovelAVenda } from '@/lib/tipos'
-import { formatarPreco, orientacaoSolar, rotuloSituacaoVenda } from '@/lib/vendas'
+import { orientacaoSolar, rotuloSituacaoVenda, situacaoDe } from '@/lib/vendas'
+import { linkConsultarValor } from '@/lib/utils/whatsapp'
 import { VideoVertical } from './VideoVertical'
 import { Revelar } from './Revelar'
 import estilos from './DestaqueVenda.module.css'
 
 /**
- * A seção de venda da home: o vídeo em pé de um lado, as casas com preço do
- * outro, e o caminho para a vitrine. Um bloco por imóvel à venda.
+ * A seção de venda da home: o vídeo em pé de um lado, as casas do outro,
+ * cada uma com o caminho para consultar o valor, e o link para a vitrine.
+ * Um bloco por imóvel à venda.
  */
 export function DestaqueVenda({ imoveis }: { imoveis: ImovelAVenda[] }) {
   if (imoveis.length === 0) return null
@@ -42,25 +44,42 @@ export function DestaqueVenda({ imoveis }: { imoveis: ImovelAVenda[] }) {
               <ul className={estilos.casas}>
                 {e.unidades.map((u) => {
                   const sol = orientacaoSolar(u.caracteristicas)
-                  const situacao = u.venda?.situacao ?? 'a_venda'
+                  const situacao = situacaoDe(u)
+                  const disponivel = situacao === 'a_venda'
                   return (
-                    <li key={u.id} className={situacao !== 'a_venda' ? estilos.indisponivel : undefined}>
+                    <li key={u.id} className={disponivel ? undefined : estilos.indisponivel}>
                       <span className={estilos.casaNome}>{u.identificacao}</span>
                       <span className={estilos.casaSol}>
-                        {situacao === 'a_venda' ? (sol ?? '') : rotuloSituacaoVenda(situacao)}
+                        {disponivel ? (sol ?? '') : rotuloSituacaoVenda(situacao)}
                       </span>
-                      <span className={estilos.casaPreco}>
-                        {u.venda ? formatarPreco(u.venda.valor_venda) : 'Sob consulta'}
-                      </span>
+                      {disponivel && (
+                        <a
+                          className={estilos.consultar}
+                          href={linkConsultarValor({ empreendimento: e.nome, unidade: u.identificacao })}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Consultar valor →
+                        </a>
+                      )}
                     </li>
                   )
                 })}
               </ul>
-              <p className={estilos.nota}>Preço à vista.</p>
 
-              <Link href="/a-venda" className={estilos.cta}>
-                Conhecer as casas →
-              </Link>
+              <div className={estilos.acoes}>
+                <Link href="/a-venda" className={estilos.cta}>
+                  Conhecer as casas
+                </Link>
+                <a
+                  className={estilos.ctaLivre}
+                  href={linkConsultarValor({ empreendimento: e.nome })}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Falar no WhatsApp →
+                </a>
+              </div>
             </Revelar>
           </div>
         </section>

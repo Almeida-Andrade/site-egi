@@ -8,8 +8,6 @@ import { Revelar } from '@/components/site/Revelar'
 import { CardEmpreendimento } from '@/components/site/CardEmpreendimento'
 import { Filtros } from '@/components/site/Filtros'
 import { listarCidades, listarEmpreendimentos } from '@/lib/dados/empreendimentos'
-import { listarImoveisAVenda } from '@/lib/dados/vendas'
-import { precoCurto } from '@/lib/vendas'
 import type { TipoEmpreendimento } from '@/lib/tipos'
 import estilos from './page.module.css'
 
@@ -37,23 +35,19 @@ export default async function Pagina({
 }) {
   const params = await searchParams
 
-  const [lista, cidades, vendas] = await Promise.all([
+  const [lista, cidades] = await Promise.all([
     listarEmpreendimentos({
       tipo: params.tipo as TipoEmpreendimento | undefined,
       cidade: params.cidade,
       apenasDisponiveis: params.disponiveis === '1',
     }),
     listarCidades(),
-    listarImoveisAVenda(),
   ])
 
-  // O imóvel à venda abre a lista, num grupo próprio, com o menor preço no
-  // cartão; o resto é o portfólio de locação, como sempre foi.
+  // O imóvel à venda abre a lista, num grupo próprio; o resto é o portfólio
+  // de locação, como sempre foi.
   const aVenda = lista.filter((e) => e.finalidade === 'venda')
   const locacao = lista.filter((e) => e.finalidade !== 'venda')
-  const precoDe = new Map(
-    vendas.flatMap((v) => (v.menorPreco !== null ? [[v.id, precoCurto(v.menorPreco)] as const] : [])),
-  )
 
   return (
     <>
@@ -85,7 +79,7 @@ export default async function Pagina({
               <div className={estilos.grade}>
                 {aVenda.map((e, i) => (
                   <Revelar key={e.id} indice={i} esticar>
-                    <CardEmpreendimento empreendimento={e} preco={precoDe.get(e.id)} />
+                    <CardEmpreendimento empreendimento={e} />
                   </Revelar>
                 ))}
               </div>

@@ -1,29 +1,23 @@
 import type { UnidadeAVenda } from '@/lib/tipos'
-import { formatarArea, formatarPreco, orientacaoSolar, rotuloSituacaoVenda } from '@/lib/vendas'
-import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
+import { formatarArea, orientacaoSolar, rotuloSituacaoVenda, situacaoDe } from '@/lib/vendas'
+import { linkConsultarValor } from '@/lib/utils/whatsapp'
 import estilos from './CardCasaAVenda.module.css'
 
-/** Uma casa da vitrine: número, sol, área, o que tem, preço à vista e o contato. */
+/** Uma casa da vitrine: número, sol, área, o que tem, e a chamada para consultar o valor. */
 export function CardCasaAVenda({
   unidade: u,
   empreendimento,
-  escuro = false,
 }: {
   unidade: UnidadeAVenda
   empreendimento: string
-  escuro?: boolean
 }) {
   const sol = orientacaoSolar(u.caracteristicas)
   const detalhes = u.caracteristicas.filter((c) => c !== sol)
-  const situacao = u.venda?.situacao ?? 'a_venda'
+  const situacao = situacaoDe(u)
   const disponivel = situacao === 'a_venda'
 
   return (
-    <article
-      className={[estilos.card, escuro && estilos.escuro, !disponivel && estilos.indisponivel]
-        .filter(Boolean)
-        .join(' ')}
-    >
+    <article className={[estilos.card, !disponivel && estilos.indisponivel].filter(Boolean).join(' ')}>
       <header className={estilos.topo}>
         <h3 className={estilos.numero}>{u.identificacao}</h3>
         <span className={estilos.situacao}>{rotuloSituacaoVenda(situacao)}</span>
@@ -52,27 +46,20 @@ export function CardCasaAVenda({
         </ul>
       )}
 
-      <p className={estilos.preco}>
-        {u.venda ? (
-          <>
-            <b>{formatarPreco(u.venda.valor_venda)}</b>
-            <small>à vista</small>
-          </>
+      <div className={estilos.rodape}>
+        {disponivel ? (
+          <a
+            className={estilos.cta}
+            href={linkConsultarValor({ empreendimento, unidade: u.identificacao })}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Consultar valor
+          </a>
         ) : (
-          <b className={estilos.consulta}>Sob consulta</b>
+          <span className={estilos.encerrada}>{rotuloSituacaoVenda(situacao)}</span>
         )}
-      </p>
-
-      {disponivel && (
-        <a
-          className={estilos.contato}
-          href={montarLinkWhatsApp({ empreendimento, unidade: u.identificacao })}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Tenho interesse →
-        </a>
-      )}
+      </div>
     </article>
   )
 }

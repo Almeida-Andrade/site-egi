@@ -4,18 +4,18 @@ import type {
 import { capaDe, fotosDe, pecaDe } from './imagens'
 import { ordenarUnidades } from './dados/ordenacao'
 
-// Regras puras da vitrine à venda. O preço vem da view v_site_vendas, que só
-// devolve unidade de imóvel publicado à venda — unidade sem linha lá é
-// unidade sem preço, e a tela diz "sob consulta" em vez de inventar número.
+// Regras puras da vitrine à venda. A situação vem da view v_site_vendas, que
+// só devolve unidade de imóvel publicado à venda; o valor não vem — o site
+// diz "a consultar" e leva ao WhatsApp (decisão do dono, 22/09/2026).
 
 export function lerSituacao(v: unknown): SituacaoVenda {
   return v === 'reservada' || v === 'vendida' ? v : 'a_venda'
 }
 
 /**
- * Junta o imóvel, as unidades e os preços num objeto só, já com as imagens
- * separadas por tipo. `vendas` pode trazer linhas de outros imóveis: casa por
- * `unidade_id`.
+ * Junta o imóvel, as unidades e as situações num objeto só, já com as
+ * imagens separadas por tipo. `vendas` pode trazer linhas de outros imóveis:
+ * casa por `unidade_id`; unidade sem linha conta como à venda.
  */
 export function montarImovelAVenda(
   linha: Empreendimento & { unidades: Unidade[]; imagens: Imagem[] },
@@ -24,14 +24,11 @@ export function montarImovelAVenda(
   const vendaDa = new Map(vendas.map((v) => [v.unidade_id, v]))
   const unidades: UnidadeAVenda[] = ordenarUnidades(linha.unidades).map((u) => {
     const v = vendaDa.get(u.id)
-    return {
-      ...u,
-      venda: v ? { ...v, valor_venda: Number(v.valor_venda), situacao: lerSituacao(v.situacao) } : null,
-    }
+    return { ...u, venda: v ? { ...v, situacao: lerSituacao(v.situacao) } : null }
   })
   const { unidades: _u, imagens, ...imovel } = linha
   void _u
-  const conta = (s: SituacaoVenda) => unidades.filter((u) => u.venda?.situacao === s).length
+  const conta = (s: SituacaoVenda) => unidades.filter((u) => situacaoDe(u) === s).length
   return {
     ...imovel,
     unidades,
@@ -39,38 +36,14 @@ export function montarImovelAVenda(
     capa: capaDe(imagens),
     planta: pecaDe(imagens, 'planta'),
     logo: pecaDe(imagens, 'logo'),
-    menorPreco: menorPreco(unidades),
     aVenda: conta('a_venda'),
     reservadas: conta('reservada'),
     vendidas: conta('vendida'),
   }
 }
 
-/** Menor preço entre as unidades ainda à venda (reservada e vendida ficam fora). */
-export function menorPreco(unidades: UnidadeAVenda[]): number | null {
-  const precos = unidades
-    .filter((u) => u.venda?.situacao === 'a_venda')
-    .map((u) => u.venda!.valor_venda)
-  return precos.length ? Math.min(...precos) : null
-}
-
-/** "R$ 1.408.734,80" — sempre com centavos, como na tabela de vendas. */
-export function formatarPreco(valor: number): string {
-  return valor.toLocaleString('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })
-}
-
-/** "R$ 1,41 mi" para o cartão da listagem; abaixo de um milhão, "R$ 850 mil". */
-export function precoCurto(valor: number): string {
-  if (valor >= 1_000_000) {
-    return `R$ ${(valor / 1_000_000).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} mi`
-  }
-  if (valor >= 1_000) return `R$ ${Math.round(valor / 1_000).toLocaleString('pt-BR')} mil`
-  return formatarPreco(valor)
+export function situacaoDe(u: UnidadeAVenda): SituacaoVenda {
+  return u.venda?.situacao ?? 'a_venda'
 }
 
 /** "132,75 m²" — vírgula decimal, sem zeros à toa. */

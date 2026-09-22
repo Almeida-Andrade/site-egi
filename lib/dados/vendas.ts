@@ -5,16 +5,16 @@ import { CAMPOS, CAMPOS_UNIDADES, REL_IMAGENS } from './campos'
 
 type Linha = Empreendimento & { unidades: Unidade[]; imagens: Imagem[] }
 
-// O preço mora na view v_site_vendas, que a RLS do CRM já restringe a imóvel
-// publicado à venda; aqui só se casa por unidade_id.
-async function precosDe(unidadeIds: string[]): Promise<VendaUnidade[]> {
+// A situação mora na view v_site_vendas, que só devolve unidade de imóvel
+// publicado à venda e não tem coluna de valor; aqui só se casa por unidade_id.
+async function situacoesDe(unidadeIds: string[]): Promise<VendaUnidade[]> {
   if (unidadeIds.length === 0) return []
   const supabase = criarClientePublico()
   const { data, error } = await supabase
     .from('v_site_vendas')
-    .select('unidade_id, valor_venda, situacao')
+    .select('unidade_id, situacao')
     .in('unidade_id', unidadeIds)
-  if (error) throw new Error(`Falha ao buscar preços: ${error.message}`)
+  if (error) throw new Error(`Falha ao buscar situações: ${error.message}`)
   return (data ?? []) as VendaUnidade[]
 }
 
@@ -29,7 +29,7 @@ export async function listarImoveisAVenda(): Promise<ImovelAVenda[]> {
   if (error) throw new Error(`Falha ao listar imóveis à venda: ${error.message}`)
 
   const linhas = (data ?? []) as Linha[]
-  const vendas = await precosDe(linhas.flatMap((l) => l.unidades.map((u) => u.id)))
+  const vendas = await situacoesDe(linhas.flatMap((l) => l.unidades.map((u) => u.id)))
   return linhas.map((l) => montarImovelAVenda(l, vendas))
 }
 
@@ -45,6 +45,6 @@ export async function obterImovelAVendaPorSlug(slug: string): Promise<ImovelAVen
   if (!data) return null
 
   const linha = data as Linha
-  const vendas = await precosDe(linha.unidades.map((u) => u.id))
+  const vendas = await situacoesDe(linha.unidades.map((u) => u.id))
   return montarImovelAVenda(linha, vendas)
 }

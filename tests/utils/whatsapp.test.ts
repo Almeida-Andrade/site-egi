@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
+import { linkConsultarValor, montarLinkWhatsApp } from '@/lib/utils/whatsapp'
 
 describe('montarLinkWhatsApp', () => {
   it('cita o empreendimento', () => {
@@ -20,5 +20,17 @@ describe('montarLinkWhatsApp', () => {
     const url = montarLinkWhatsApp({ empreendimento: 'Olgamérica & Cia' })
     expect(url).not.toContain(' ')
     expect(url).not.toContain('&text')
+  })
+})
+
+describe('linkConsultarValor', () => {
+  it('pede o valor da unidade, ou do imóvel inteiro', () => {
+    expect(decodeURIComponent(linkConsultarValor({ empreendimento: "Ville D'Or", unidade: 'Casa 01' }))).toContain(
+      "consultar o valor de Casa 01 do Ville D'Or",
+    )
+    expect(decodeURIComponent(linkConsultarValor({ empreendimento: "Ville D'Or" }))).toContain(
+      "consultar o valor de Ville D'Or",
+    )
+    expect(linkConsultarValor({ empreendimento: 'x' })).toContain('https://wa.me/5598984812793?text=')
   })
 })

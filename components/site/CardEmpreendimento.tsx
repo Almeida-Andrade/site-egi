@@ -4,14 +4,7 @@ import type { EmpreendimentoResumo } from '@/lib/tipos'
 import { rotuloTipoEmpreendimento } from '@/lib/utils/rotulos'
 import estilos from './CardEmpreendimento.module.css'
 
-export function CardEmpreendimento({
-  empreendimento: e,
-  preco,
-}: {
-  empreendimento: EmpreendimentoResumo
-  /** "a partir de …" do imóvel à venda; sem ele o cartão mostra as unidades */
-  preco?: string
-}) {
+export function CardEmpreendimento({ empreendimento: e }: { empreendimento: EmpreendimentoResumo }) {
   const venda = e.finalidade === 'venda'
 
   return (
@@ -51,7 +44,7 @@ export function CardEmpreendimento({
         </p>
         <p className={estilos.contagem}>
           {venda
-            ? `${e.disponiveis} ${e.disponiveis === 1 ? 'casa à venda' : 'casas à venda'}${preco ? ` · a partir de ${preco}` : ''}`
+            ? `${e.disponiveis} ${e.disponiveis === 1 ? 'casa à venda' : 'casas à venda'} · valor a consultar`
             : `${e.total_unidades} ${e.total_unidades === 1 ? 'unidade' : 'unidades'}`}
         </p>
       </div>

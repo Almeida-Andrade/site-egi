@@ -1,7 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import {
-  formatarArea, formatarPreco, menorPreco, montarImovelAVenda, orientacaoSolar, precoCurto,
-} from '@/lib/vendas'
+import { formatarArea, montarImovelAVenda, orientacaoSolar, situacaoDe } from '@/lib/vendas'
 import type { Empreendimento, Imagem, Unidade } from '@/lib/tipos'
 
 const imovel: Empreendimento = {
@@ -29,16 +27,15 @@ describe('montarImovelAVenda', () => {
     imagens: [img('logo', 'logo', 21), img('f1', 'foto', 1, true), img('planta', 'planta', 20), img('f2', 'foto', 2)],
   }
   const vendas = [
-    { unidade_id: 'u1', valor_venda: 1408734.8, situacao: 'a_venda' as const },
-    { unidade_id: 'u17', valor_venda: 1447054, situacao: 'a_venda' as const },
-    { unidade_id: 'u4', valor_venda: 1408734.8, situacao: 'reservada' as const },
-    { unidade_id: 'de-outro-imovel', valor_venda: 1, situacao: 'a_venda' as const },
+    { unidade_id: 'u1', situacao: 'a_venda' as const },
+    { unidade_id: 'u17', situacao: 'a_venda' as const },
+    { unidade_id: 'u4', situacao: 'reservada' as const },
+    { unidade_id: 'de-outro-imovel', situacao: 'vendida' as const },
   ]
 
-  it('casa o preço por unidade, ordena as casas e separa as imagens por tipo', () => {
+  it('casa a situação por unidade, ordena as casas e separa as imagens por tipo', () => {
     const r = montarImovelAVenda(linha, vendas)
     expect(r.unidades.map((u) => u.identificacao)).toEqual(['Casa 01', 'Casa 04', 'Casa 17'])
-    expect(r.unidades[0].venda?.valor_venda).toBe(1408734.8)
     expect(r.unidades[1].venda?.situacao).toBe('reservada')
     expect(r.fotos.map((i) => i.id)).toEqual(['f1', 'f2'])
     expect(r.capa?.id).toBe('f1')
@@ -47,46 +44,22 @@ describe('montarImovelAVenda', () => {
     expect(r.aVenda).toBe(2)
     expect(r.reservadas).toBe(1)
     expect(r.vendidas).toBe(0)
-    expect(r.menorPreco).toBe(1408734.8)
   })
 
-  it('unidade sem linha na view fica sem preço (sob consulta), nunca zero', () => {
+  it('unidade sem linha na view conta como à venda', () => {
     const r = montarImovelAVenda(linha, [])
     expect(r.unidades.every((u) => u.venda === null)).toBe(true)
-    expect(r.menorPreco).toBeNull()
-    expect(r.aVenda).toBe(0)
+    expect(r.unidades.every((u) => situacaoDe(u) === 'a_venda')).toBe(true)
+    expect(r.aVenda).toBe(3)
   })
 
-  it('valor vindo como texto do PostgREST vira número', () => {
-    const r = montarImovelAVenda(linha, [
-      { unidade_id: 'u1', valor_venda: '1408734.80' as unknown as number, situacao: 'a_venda' },
-    ])
-    expect(r.unidades[0].venda?.valor_venda).toBe(1408734.8)
+  it('nunca carrega valor: o objeto montado não tem preço em lugar nenhum', () => {
+    const r = montarImovelAVenda(linha, vendas)
+    expect(JSON.stringify(r)).not.toMatch(/valor|preco/i)
   })
 })
 
-describe('menorPreco', () => {
-  it('ignora reservada e vendida', () => {
-    const u = (id: string, situacao: 'a_venda' | 'reservada' | 'vendida', valor: number) => ({
-      ...casa(id, id, ''), venda: { unidade_id: id, valor_venda: valor, situacao },
-    })
-    expect(menorPreco([u('a', 'vendida', 1), u('b', 'a_venda', 3), u('c', 'a_venda', 2), u('d', 'reservada', 0.5)])).toBe(2)
-    expect(menorPreco([u('a', 'vendida', 1)])).toBeNull()
-  })
-})
-
-describe('formatação', () => {
-  it('preço sempre com centavos, em pt-BR', () => {
-    expect(formatarPreco(1408734.8).replace(/ /g, ' ')).toBe('R$ 1.408.734,80')
-    expect(formatarPreco(1447054).replace(/ /g, ' ')).toBe('R$ 1.447.054,00')
-  })
-
-  it('preço curto para o cartão', () => {
-    expect(precoCurto(1408734.8)).toBe('R$ 1,41 mi')
-    expect(precoCurto(850000)).toBe('R$ 850 mil')
-    expect(precoCurto(900).replace(/ /g, ' ')).toBe('R$ 900,00')
-  })
-
+describe('formatarArea', () => {
   it('área com vírgula', () => {
     expect(formatarArea(132.75)).toBe('132,75 m²')
     expect(formatarArea(150)).toBe('150 m²')

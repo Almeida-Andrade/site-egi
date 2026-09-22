@@ -10,7 +10,6 @@ import { contarPorStatus } from '@/components/site/logicaUnidades'
 import { listarSlugsPublicados, obterEmpreendimentoPorSlug } from '@/lib/dados/empreendimentos'
 import { obterImovelAVendaPorSlug } from '@/lib/dados/vendas'
 import { BlocoImovelAVenda } from '@/components/site/BlocoImovelAVenda'
-import { formatarPreco } from '@/lib/vendas'
 import { rotuloTipoEmpreendimento } from '@/lib/utils/rotulos'
 import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
 import { linkBuscaMaps } from '@/lib/utils/maps'
@@ -67,8 +66,9 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
   const e = await obterEmpreendimentoPorSlug(slug)
   if (!e) notFound()
 
-  // Imóvel à venda: a ficha é a vitrine dele, com preço à vista por casa —
-  // a tabela de unidades e o "avise-me quando vagar" são coisa de aluguel.
+  // Imóvel à venda: a ficha é a vitrine dele, com o valor a consultar no
+  // WhatsApp — a tabela de unidades e o "avise-me quando vagar" são coisa
+  // de aluguel.
   if (e.finalidade === 'venda') {
     const venda = await obterImovelAVendaPorSlug(slug)
     if (!venda) notFound()
@@ -88,7 +88,7 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
                   {
                     '@type': 'ListItem',
                     position: 3,
-                    name: venda.menorPreco !== null ? `${venda.nome} · a partir de ${formatarPreco(venda.menorPreco)}` : venda.nome,
+                    name: venda.nome,
                   },
                 ],
               }}

@@ -22,29 +22,6 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  cursor: pointer;
-}
-
-.som {
-  position: absolute;
-  left: 50%;
-  bottom: 18px;
-  transform: translateX(-50%);
-  padding: 8px 14px;
-  border: 1px solid var(--branco-24);
-  border-radius: 999px;
-  background: rgba(7, 14, 49, 0.62);
-  color: #fff;
-  font: inherit;
-  font-size: 11.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  backdrop-filter: blur(6px);
-}
-.som:hover {
-  background: var(--pure);
-  border-color: var(--pure);
 }
 
 @media (max-width: 860px) {

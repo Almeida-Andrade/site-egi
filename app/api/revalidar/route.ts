@@ -20,6 +20,7 @@ export async function POST(request: NextRequest) {
 
   revalidatePath('/')
   revalidatePath('/empreendimentos')
+  revalidatePath('/a-venda')
   if (slug) revalidatePath(`/empreendimentos/${slug}`)
   else revalidatePath('/empreendimentos/[slug]', 'page')
 

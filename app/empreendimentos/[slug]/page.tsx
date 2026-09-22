@@ -8,9 +8,11 @@ import { MapaEmbed } from '@/components/site/MapaEmbed'
 import { TabelaUnidades } from '@/components/site/TabelaUnidades'
 import { contarPorStatus } from '@/components/site/logicaUnidades'
 import { listarSlugsPublicados, obterEmpreendimentoPorSlug } from '@/lib/dados/empreendimentos'
+import { obterImovelAVendaPorSlug } from '@/lib/dados/vendas'
+import { BlocoImovelAVenda } from '@/components/site/BlocoImovelAVenda'
 import { rotuloTipoEmpreendimento } from '@/lib/utils/rotulos'
 import { montarLinkWhatsApp } from '@/lib/utils/whatsapp'
-import { linkBuscaMaps } from '@/lib/utils/maps'
+import { extrairUrlMaps, linkBuscaMaps } from '@/lib/utils/maps'
 import { URL_SITE } from '@/lib/site'
 import { DadosEstruturados } from '@/components/site/DadosEstruturados'
 import estilos from './page.module.css'
@@ -31,13 +33,15 @@ export async function generateMetadata({
   const e = await obterEmpreendimentoPorSlug(slug)
   if (!e) return { title: 'Empreendimento não encontrado' }
 
-  const capa = e.imagens[0]
+  const capa = e.imagens.find((i) => i.tipo !== 'logo' && i.tipo !== 'planta') ?? e.imagens[0]
   const livres = e.unidades.filter((u) => u.status === 'disponivel').length
 
   const descricao =
     e.descricao ??
-    `${rotuloTipoEmpreendimento(e.tipo)} em ${e.cidade}. ` +
-      `${e.unidades.length} unidades, ${livres} disponíveis para locação.`
+    (e.finalidade === 'venda'
+      ? `Casas à venda em ${e.cidade}.`
+      : `${rotuloTipoEmpreendimento(e.tipo)} em ${e.cidade}. ` +
+        `${e.unidades.length} unidades, ${livres} disponíveis para locação.`)
 
   const caminho = `/empreendimentos/${e.slug}`
 
@@ -62,6 +66,40 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
   const e = await obterEmpreendimentoPorSlug(slug)
   if (!e) notFound()
 
+  // Imóvel à venda: a ficha é a vitrine dele, com o valor a consultar no
+  // WhatsApp — a tabela de unidades e o "avise-me quando vagar" são coisa
+  // de aluguel.
+  if (e.finalidade === 'venda') {
+    const venda = await obterImovelAVendaPorSlug(slug)
+    if (!venda) notFound()
+    return (
+      <>
+        <Cabecalho variante="escuro" />
+        <Transicao>
+          <main>
+            <BlocoImovelAVenda imovel={venda} nivelTitulo={1} />
+            <DadosEstruturados
+              dados={{
+                '@context': 'https://schema.org',
+                '@type': 'BreadcrumbList',
+                itemListElement: [
+                  { '@type': 'ListItem', position: 1, name: 'Início', item: URL_SITE },
+                  { '@type': 'ListItem', position: 2, name: 'À venda', item: `${URL_SITE}/a-venda` },
+                  {
+                    '@type': 'ListItem',
+                    position: 3,
+                    name: venda.nome,
+                  },
+                ],
+              }}
+            />
+          </main>
+        </Transicao>
+        <Rodape />
+      </>
+    )
+  }
+
   const contagem = contarPorStatus(e.unidades)
 
   const local = e.localizacao_aproximada
@@ -69,6 +107,9 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
     : [e.endereco, e.bairro, `${e.cidade} — ${e.uf}`].filter(Boolean).join(', ')
 
   const comoChegar = e.maps_link ?? linkBuscaMaps(e)
+  // Só URL de embed do Google entra no iframe: o código <iframe> colado no
+  // CRM viraria endereço relativo do site (404 dentro do quadro).
+  const mapa = e.maps_embed_url ? extrairUrlMaps(e.maps_embed_url) : null
 
   return (
     <>
@@ -103,8 +144,8 @@ export default async function Ficha({ params }: { params: Promise<{ slug: string
 
             <aside className={estilos.lateral}>
               <h2 className={estilos.subtitulo}>Localização</h2>
-              {e.maps_embed_url ? (
-                <MapaEmbed url={e.maps_embed_url} titulo={e.nome} />
+              {mapa ? (
+                <MapaEmbed url={mapa} titulo={e.nome} />
               ) : (
                 <p className={estilos.semMapa}>{local}</p>
               )}

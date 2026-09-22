@@ -79,3 +79,8 @@
   color: var(--navy-45);
   margin-top: var(--gap-2);
 }
+
+.seloVenda {
+  background: var(--navy);
+  color: #fff;
+}

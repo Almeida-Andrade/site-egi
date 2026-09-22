@@ -4,8 +4,10 @@ export function extrairUrlMaps(entrada: string): string | null {
   const texto = entrada.trim()
   if (!texto) return null
 
-  const doIframe = texto.match(/<iframe\s[^>]*src=["']([^"']+)["']/i)
-  const bruta = doIframe ? doIframe[1] : texto
+  // Captura até a MESMA aspa que abriu: a URL do Google carrega apóstrofo
+  // ("Ville D'or"), e parar em qualquer aspa cortava o endereço no meio.
+  const doIframe = texto.match(/<iframe\s[^>]*src=(["'])(.*?)\1/i)
+  const bruta = doIframe ? doIframe[2] : texto
 
   let url: URL
   try {

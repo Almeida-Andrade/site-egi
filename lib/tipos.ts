@@ -8,6 +8,14 @@ export type TipoUnidade =
   | 'loja' | 'sala' | 'mezanino' | 'cobertura' | 'galpao'
   | 'apartamento' | 'casa' | 'vaga' | 'container' | 'area' | 'terreno'
 
+/** Para que serve o imóvel: locação é o portfólio; venda é a vitrine (/a-venda). */
+export type Finalidade = 'locacao' | 'venda'
+
+/** A galeria mostra só `foto`; planta e logo têm lugar próprio na vitrine. */
+export type TipoImagem = 'foto' | 'planta' | 'logo'
+
+export type SituacaoVenda = 'a_venda' | 'reservada' | 'vendida'
+
 export interface Imagem {
   id: string
   storage_path: string
@@ -16,6 +24,7 @@ export interface Imagem {
   alt: string | null
   capa: boolean
   ordem: number
+  tipo: TipoImagem
 }
 
 export interface Unidade {
@@ -50,6 +59,33 @@ export interface Empreendimento {
   publicado: boolean
   destaque: boolean
   ordem: number
+  finalidade: Finalidade
+  /** Vídeo do imóvel no bucket do CRM (um por imóvel), ou nulo */
+  video_url: string | null
+}
+
+/**
+ * Situação de uma unidade à venda — vem da view pública v_site_vendas. O
+ * valor NÃO chega ao site: a vitrine diz "a consultar" e leva ao WhatsApp.
+ */
+export interface VendaUnidade {
+  unidade_id: string
+  situacao: SituacaoVenda
+}
+
+export interface UnidadeAVenda extends Unidade {
+  venda: VendaUnidade | null
+}
+
+export interface ImovelAVenda extends Empreendimento {
+  unidades: UnidadeAVenda[]
+  fotos: Imagem[]
+  capa: Imagem | null
+  planta: Imagem | null
+  logo: Imagem | null
+  aVenda: number
+  reservadas: number
+  vendidas: number
 }
 
 export interface EmpreendimentoResumo extends Empreendimento {
@@ -68,6 +104,7 @@ export interface FiltrosEmpreendimento {
   cidade?: string
   apenasDisponiveis?: boolean
   busca?: string
+  finalidade?: Finalidade
 }
 
 export interface Estatisticas {

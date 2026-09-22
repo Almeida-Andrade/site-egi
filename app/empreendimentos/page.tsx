@@ -13,7 +13,7 @@ import estilos from './page.module.css'
 export const revalidate = 60
 
 const DESCRICAO =
-  'Galpões, centros comerciais, salas, lojas e apartamentos para locação em ' +
+  'Galpões, centros comerciais, salas, lojas e apartamentos para locação, e casas à venda, em ' +
   'São Luís, São José de Ribamar e Pedreiras.'
 
 export const metadata: Metadata = {
@@ -43,6 +43,13 @@ export default async function Pagina({
     listarCidades(),
   ])
 
+  // Venda antes de locação, mantendo a ordem do cadastro dentro de cada
+  // grupo: o imóvel à venda abre a grade, sem cabeçalho à parte.
+  const ordenada = [
+    ...lista.filter((e) => e.finalidade === 'venda'),
+    ...lista.filter((e) => e.finalidade !== 'venda'),
+  ]
+
   return (
     <>
       <Cabecalho />
@@ -60,6 +67,8 @@ export default async function Pagina({
             <Filtros cidades={cidades} />
           </Suspense>
 
+          {/* Locação e venda na mesma grade: o que distingue o imóvel à venda
+              é o selo do cartão, não um grupo à parte. */}
           {lista.length === 0 ? (
             <p className={estilos.vazio}>
               Nenhum empreendimento com esses filtros. Limpe os filtros para ver o portfólio
@@ -67,7 +76,7 @@ export default async function Pagina({
             </p>
           ) : (
             <div className={estilos.grade}>
-              {lista.map((e, i) => (
+              {ordenada.map((e, i) => (
                 <Revelar key={e.id} indice={i} esticar>
                   <CardEmpreendimento empreendimento={e} />
                 </Revelar>

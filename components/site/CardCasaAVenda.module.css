@@ -1,0 +1,121 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-3);
+  padding: var(--gap-4);
+  background: #fff;
+  border: 1px solid var(--navy-12);
+  transition:
+    border-color 200ms ease,
+    transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card:hover {
+  border-color: var(--steel);
+  transform: translateY(-3px);
+}
+
+.indisponivel {
+  opacity: 0.6;
+}
+.indisponivel:hover {
+  transform: none;
+  border-color: var(--navy-12);
+}
+
+.topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--gap-2);
+}
+
+.numero {
+  font-family: var(--fonte-display);
+  font-weight: 400;
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.situacao {
+  font-size: 10.5px;
+  letter-spacing: var(--trilha-larga);
+  text-transform: uppercase;
+  color: var(--steel);
+  white-space: nowrap;
+}
+.indisponivel .situacao {
+  color: inherit;
+  opacity: 0.7;
+}
+
+.dados {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-2) var(--gap-3);
+  margin: 0;
+}
+.dados dt {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+.dados dd {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.detalhes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.detalhes li {
+  font-size: 12px;
+  padding: 3px 9px;
+  border: 1px solid var(--navy-12);
+  border-radius: 999px;
+  color: var(--navy-70);
+}
+
+.rodape {
+  margin-top: auto;
+  padding-top: var(--gap-3);
+  border-top: 1px solid var(--navy-12);
+}
+
+.cta {
+  display: block;
+  padding: 12px 16px;
+  background: var(--navy);
+  color: #fff;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background-color 200ms ease;
+}
+.cta:hover {
+  background: var(--pure);
+}
+
+.encerrada {
+  display: block;
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy-45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .cta {
+    transition: none;
+  }
+}

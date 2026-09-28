@@ -24,7 +24,11 @@ export function montarImovelAVenda(
   const vendaDa = new Map(vendas.map((v) => [v.unidade_id, v]))
   const unidades: UnidadeAVenda[] = ordenarUnidades(linha.unidades).map((u) => {
     const v = vendaDa.get(u.id)
-    return { ...u, venda: v ? { ...v, situacao: lerSituacao(v.situacao) } : null }
+    return {
+      ...u,
+      caracteristicas: semOrientacaoSolar(u.caracteristicas),
+      venda: v ? { ...v, situacao: lerSituacao(v.situacao) } : null,
+    }
   })
   const { unidades: _u, imagens, ...imovel } = linha
   void _u
@@ -59,12 +63,13 @@ const SITUACAO: Record<SituacaoVenda, string> = {
 
 export const rotuloSituacaoVenda = (s: SituacaoVenda) => SITUACAO[s]
 
+const ORIENTACAO_SOLAR = /nascente|poente|sol da (manh[ãa]|tarde)/i
+
 /**
  * A orientação solar vem nas características da unidade ("Poente (sol da
- * tarde)"). É o dado que mais pesa na escolha de uma casa, então ganha lugar
- * próprio no cartão em vez de ficar perdido na lista.
+ * tarde)") e não aparece no site: afasta o comprador (decisão do dono,
+ * 28/09/2026). Sai aqui, na montagem, para nenhuma tela mostrar.
  */
-export function orientacaoSolar(caracteristicas: string[]): string | null {
-  const achada = caracteristicas.find((c) => /nascente|poente/i.test(c))
-  return achada ?? null
+export function semOrientacaoSolar(caracteristicas: string[]): string[] {
+  return caracteristicas.filter((c) => !ORIENTACAO_SOLAR.test(c))
 }

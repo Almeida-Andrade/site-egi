@@ -1,9 +1,9 @@
 import type { UnidadeAVenda } from '@/lib/tipos'
-import { formatarArea, orientacaoSolar, rotuloSituacaoVenda, situacaoDe } from '@/lib/vendas'
+import { formatarArea, rotuloSituacaoVenda, situacaoDe } from '@/lib/vendas'
 import { linkConsultarValor } from '@/lib/utils/whatsapp'
 import estilos from './CardCasaAVenda.module.css'
 
-/** Uma casa da vitrine: número, sol, área, o que tem, e a chamada para consultar o valor. */
+/** Uma casa da vitrine: número, área, o que tem, e a chamada para consultar o valor. */
 export function CardCasaAVenda({
   unidade: u,
   empreendimento,
@@ -11,8 +11,7 @@ export function CardCasaAVenda({
   unidade: UnidadeAVenda
   empreendimento: string
 }) {
-  const sol = orientacaoSolar(u.caracteristicas)
-  const detalhes = u.caracteristicas.filter((c) => c !== sol)
+  const detalhes = u.caracteristicas
   const situacao = situacaoDe(u)
   const disponivel = situacao === 'a_venda'
 
@@ -24,12 +23,6 @@ export function CardCasaAVenda({
       </header>
 
       <dl className={estilos.dados}>
-        {sol && (
-          <div>
-            <dt>Sol</dt>
-            <dd>{sol}</dd>
-          </div>
-        )}
         {u.area_m2 !== null && (
           <div>
             <dt>Área construída</dt>

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { formatarArea, montarImovelAVenda, orientacaoSolar, situacaoDe } from '@/lib/vendas'
+import { formatarArea, montarImovelAVenda, semOrientacaoSolar, situacaoDe } from '@/lib/vendas'
 import type { Empreendimento, Imagem, Unidade } from '@/lib/tipos'
 
 const imovel: Empreendimento = {
@@ -37,6 +37,7 @@ describe('montarImovelAVenda', () => {
     const r = montarImovelAVenda(linha, vendas)
     expect(r.unidades.map((u) => u.identificacao)).toEqual(['Casa 01', 'Casa 04', 'Casa 17'])
     expect(r.unidades[1].venda?.situacao).toBe('reservada')
+    expect(r.unidades.flatMap((u) => u.caracteristicas)).toEqual(['4 quartos', '4 quartos', '4 quartos'])
     expect(r.fotos.map((i) => i.id)).toEqual(['f1', 'f2'])
     expect(r.capa?.id).toBe('f1')
     expect(r.planta?.id).toBe('planta')
@@ -66,10 +67,10 @@ describe('formatarArea', () => {
   })
 })
 
-describe('orientacaoSolar', () => {
-  it('acha o sol nas características, sem diferenciar caixa', () => {
-    expect(orientacaoSolar(['4 quartos', 'Poente (sol da tarde)'])).toBe('Poente (sol da tarde)')
-    expect(orientacaoSolar(['NASCENTE'])).toBe('NASCENTE')
-    expect(orientacaoSolar(['4 quartos'])).toBeNull()
+describe('semOrientacaoSolar', () => {
+  it('tira nascente e poente das características, sem diferenciar caixa', () => {
+    expect(semOrientacaoSolar(['4 quartos', 'Poente (sol da tarde)'])).toEqual(['4 quartos'])
+    expect(semOrientacaoSolar(['NASCENTE', 'Sol da manhã', 'Piscina'])).toEqual(['Piscina'])
+    expect(semOrientacaoSolar(['4 quartos'])).toEqual(['4 quartos'])
   })
 })

@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import type { ImovelAVenda } from '@/lib/tipos'
-import { orientacaoSolar, rotuloSituacaoVenda, situacaoDe } from '@/lib/vendas'
+import { formatarArea, rotuloSituacaoVenda, situacaoDe } from '@/lib/vendas'
 import { linkConsultarValor } from '@/lib/utils/whatsapp'
 import { VideoVertical } from './VideoVertical'
 import { Revelar } from './Revelar'
@@ -43,14 +43,14 @@ export function DestaqueVenda({ imoveis }: { imoveis: ImovelAVenda[] }) {
 
               <ul className={estilos.casas}>
                 {e.unidades.map((u) => {
-                  const sol = orientacaoSolar(u.caracteristicas)
+                  const area = u.area_m2 !== null ? formatarArea(u.area_m2) : ''
                   const situacao = situacaoDe(u)
                   const disponivel = situacao === 'a_venda'
                   return (
                     <li key={u.id} className={disponivel ? undefined : estilos.indisponivel}>
                       <span className={estilos.casaNome}>{u.identificacao}</span>
-                      <span className={estilos.casaSol}>
-                        {disponivel ? (sol ?? '') : rotuloSituacaoVenda(situacao)}
+                      <span className={estilos.casaInfo}>
+                        {disponivel ? area : rotuloSituacaoVenda(situacao)}
                       </span>
                       {disponivel && (
                         <a

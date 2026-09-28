@@ -142,7 +142,9 @@ export function BlocoImovelAVenda({
                   sizes="(max-width: 1280px) 100vw, 1280px"
                   className={estilos.plantaImagem}
                 />
-                {e.planta.alt && <figcaption>{e.planta.alt}</figcaption>}
+                <figcaption>
+                  {e.planta.alt ? `${e.planta.alt} · Imagem meramente ilustrativa.` : 'Imagem meramente ilustrativa.'}
+                </figcaption>
               </figure>
             </Revelar>
           </section>

@@ -100,3 +100,22 @@
     margin-top: var(--gap-2);
   }
 }
+
+.acoes {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--gap-3);
+}
+
+.acaoFicha {
+  color: #fff;
+  background: var(--pure);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 7px 12px;
+  white-space: nowrap;
+}
+.acaoFicha:hover {
+  background: var(--navy);
+}

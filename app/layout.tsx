@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Instrument_Serif, Archivo, Inter } from 'next/font/google'
 import { Cortina } from '@/components/site/Cortina'
 import { URL_SITE } from '@/lib/site'
+import { SCRIPT_MARCA_JS } from '@/lib/scripts-iniciais'
 import './globals.css'
 
 const display = Instrument_Serif({
@@ -56,9 +57,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     >
       <body>
         <script
-          dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add('js')`,
-          }}
+          dangerouslySetInnerHTML={{ __html: SCRIPT_MARCA_JS }}
         />
         <Cortina />
         {children}

@@ -3,6 +3,8 @@
 export const AJUDAS = {
   finalidade:
     'Conte em poucas palavras o que vai funcionar no imóvel. Ex.: "loja de roupas", "consultório odontológico", "moradia da família".',
+  imovelDesejado:
+    'Se já sabe, diga qual imóvel ou sala quer (ex.: "Sala 12 do Ana Diná"). Se ainda não decidiu, conte o que procura (ex.: "loja de uns 40 m² perto da Cohama").',
   entradaDesejada: 'A data em que você gostaria de receber as chaves. Pode ser aproximada: a data certa é combinada com a EGI.',
   prazoMeses: 'Por quanto tempo você pensa em alugar, em meses. Ex.: 30 meses são 2 anos e meio. Pode deixar em branco se ainda não sabe.',
   tipo: 'Pessoa física é quando o contrato fica no seu nome (CPF). Empresa é quando fica no nome do CNPJ, assinado por um sócio.',

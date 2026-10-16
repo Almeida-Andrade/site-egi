@@ -111,7 +111,8 @@ export interface FiadorFicha {
 }
 
 export interface DadosFicha {
-  uso: { finalidade: string; entradaDesejada: string; prazoMeses: number | null };
+  /** imovelDesejado: o que o cliente procura, quando o link saiu sem unidade */
+  uso: { finalidade: string; imovelDesejado: string; entradaDesejada: string; prazoMeses: number | null };
   tipo: TipoPessoaFicha;
   /** pessoa física: quem aluga; null na empresa */
   pessoa: PessoaFicha | null;
@@ -383,6 +384,7 @@ export function validarFicha(entrada: unknown, hoje: string): ResultadoValidacao
   }
   const uso = {
     finalidade: l.texto(usoBruto, "finalidade", "uso", "para que vai usar o imóvel", true, LIMITE_ENDERECO),
+    imovelDesejado: l.texto(usoBruto, "imovelDesejado", "uso", "o imóvel que procura", false, LIMITE_ENDERECO),
     entradaDesejada: l.data(usoBruto, "entradaDesejada", "uso", "a data de entrada", false),
     prazoMeses,
   };

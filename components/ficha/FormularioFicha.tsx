@@ -231,6 +231,9 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
   const conteudo: Record<ChaveEtapa, () => ReactNode> = {
     imovel: () => (
       <div className={estilos.corpo}>
+        {!unidade && (
+          <Campo rotulo="Qual imóvel te interessa?" valor={rascunho.uso.imovelDesejado} aoMudar={(v) => mudar('uso', { ...rascunho.uso, imovelDesejado: v })} opcional ajuda="imovelDesejado" maximo={250} />
+        )}
         <Campo rotulo="Para que vai usar o imóvel?" valor={rascunho.uso.finalidade} aoMudar={(v) => mudar('uso', { ...rascunho.uso, finalidade: v })} ajuda="finalidade" erro={erros['uso.finalidade']} maximo={250} />
         <div className={estilos.grade}>
           <Campo rotulo="Quando quer entrar?" valor={rascunho.uso.entradaDesejada} aoMudar={(v) => mudar('uso', { ...rascunho.uso, entradaDesejada: v })} tipo="date" opcional ajuda="entradaDesejada" erro={erros['uso.entradaDesejada']} />
@@ -367,9 +370,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
   return (
     <main className={estilos.pagina}>
       <p className={estilos.kicker}>Ficha cadastral · E.G.I Empreendimentos</p>
-      <h1 className={estilos.titulo}>
-        {unidade.identificacao} · {unidade.imovel}
-      </h1>
+      <h1 className={estilos.titulo}>{unidade ? `${unidade.identificacao} · ${unidade.imovel}` : 'Alugar com a EGI'}</h1>
       <p className={estilos.subtitulo}>Leva uns 10 minutos. Tenha à mão os documentos ou o celular para fotografá-los. O que você preencher fica guardado neste aparelho até enviar.</p>
 
       <div className={estilos.progresso}>
@@ -421,7 +422,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
 function Resumo({ rascunho: r, etapas, arquivos, corrigir }: { rascunho: Rascunho; etapas: ChaveEtapa[]; arquivos: number; corrigir: (e: ChaveEtapa) => void }) {
   const estado = (e: string) => ESTADOS_CIVIS[e as keyof typeof ESTADOS_CIVIS] ?? ''
   const blocos: { chave: ChaveEtapa; titulo: string; linhas: string[] }[] = [
-    { chave: 'imovel', titulo: 'O imóvel', linhas: [r.uso.finalidade, r.uso.prazoMeses ? `${r.uso.prazoMeses} meses` : ''] },
+    { chave: 'imovel', titulo: 'O imóvel', linhas: [r.uso.imovelDesejado, r.uso.finalidade, r.uso.prazoMeses ? `${r.uso.prazoMeses} meses` : ''] },
     {
       chave: 'dados',
       titulo: r.tipo === 'juridica' ? 'Empresa' : 'Seus dados',

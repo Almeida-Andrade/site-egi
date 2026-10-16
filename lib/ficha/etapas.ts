@@ -56,7 +56,7 @@ export interface SocioR {
 }
 
 export interface Rascunho {
-  uso: { finalidade: string; entradaDesejada: string; prazoMeses: string }
+  uso: { finalidade: string; imovelDesejado: string; entradaDesejada: string; prazoMeses: string }
   tipo: TipoPessoaFicha | ''
   pessoa: PessoaR
   conjuge: ConjugeR
@@ -93,7 +93,7 @@ export const socioVazio = (assina: boolean): SocioR => ({ pessoa: pessoaVazia(),
 
 export function rascunhoVazio(): Rascunho {
   return {
-    uso: { finalidade: '', entradaDesejada: '', prazoMeses: '' },
+    uso: { finalidade: '', imovelDesejado: '', entradaDesejada: '', prazoMeses: '' },
     tipo: '',
     pessoa: pessoaVazia(),
     conjuge: conjugeVazio(),

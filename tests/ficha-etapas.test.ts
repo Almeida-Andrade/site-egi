@@ -17,7 +17,7 @@ const HOJE = '2026-10-16'
 
 function pfCompleta(): Rascunho {
   const r = rascunhoVazio()
-  r.uso = { finalidade: 'Morar com a família', entradaDesejada: '2026-11-01', prazoMeses: '30' }
+  r.uso = { finalidade: 'Morar com a família', imovelDesejado: '', entradaDesejada: '2026-11-01', prazoMeses: '30' }
   r.tipo = 'fisica'
   r.pessoa = {
     ...r.pessoa,

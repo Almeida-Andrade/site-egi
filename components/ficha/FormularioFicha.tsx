@@ -71,6 +71,8 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
   const [token, setToken] = useState<string | null>(null)
   const [tentativa, setTentativa] = useState(0)
   const [problemaTurnstile, setProblemaTurnstile] = useState<string | null>(null)
+  // A Cloudflare desconfiou e mostrou a caixa "Confirme que é humano": a pessoa precisa marcar.
+  const [pedeCaixa, setPedeCaixa] = useState(false)
   const [envio, setEnvio] = useState<{ situacao: 'parado' | 'enviando' | 'feito'; feitos: number; total: number; mensagem?: string }>({ situacao: 'parado', feitos: 0, total: 0 })
   const titulo = useRef<HTMLHeadingElement>(null)
   const cartao = useRef<HTMLDivElement>(null)
@@ -109,6 +111,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
 
   const aoReceberToken = useCallback((t: string | null) => setToken(t), [])
   const aoFalharTurnstile = useCallback((m: string) => setProblemaTurnstile(m), [])
+  const aoPedirCaixa = useCallback(() => setPedeCaixa(true), [])
 
   function irPara(i: number) {
     setMarcados([])
@@ -145,7 +148,14 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
   async function enviar() {
     if (!rascunho.aceite) return mostrarErros([{ campo: 'aceite', mensagem: 'Marque que concorda com o uso dos dados para enviar.' }])
     if (!token) {
-      setEnvio({ situacao: 'parado', feitos: 0, total: 0, mensagem: 'Espere a verificação de segurança terminar (alguns segundos) e toque de novo.' })
+      setEnvio({
+        situacao: 'parado',
+        feitos: 0,
+        total: 0,
+        mensagem: pedeCaixa
+          ? 'Marque a caixa “Confirme que é humano”, logo acima, e toque em Enviar ficha de novo.'
+          : 'Espere a verificação de segurança terminar (alguns segundos) e toque de novo.',
+      })
       return
     }
     const lista = metadados(arquivos, exigidos)
@@ -350,7 +360,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
           </span>
         </label>
         {erros.aceite && <span className={estilos.mensagemErro} role="alert">{erros.aceite}</span>}
-        <Turnstile key={tentativa} aoReceber={aoReceberToken} aoFalhar={aoFalharTurnstile} />
+        <Turnstile key={tentativa} aoReceber={aoReceberToken} aoFalhar={aoFalharTurnstile} aoPedirCaixa={aoPedirCaixa} />
         {problemaTurnstile && <p className={estilos.aviso}>{problemaTurnstile}</p>}
         {enviando && (
           <p className={estilos.avisoNeutro} role="status">

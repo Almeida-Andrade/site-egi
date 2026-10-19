@@ -182,7 +182,7 @@ export interface Etapa {
 /** As etapas mudam com as escolhas: cônjuge só para quem é casado, trabalho só para pessoa física. */
 export function etapasDoRascunho(r: Rascunho): Etapa[] {
   const lista: Etapa[] = [
-    { chave: 'imovel', titulo: 'O imóvel', pergunta: 'Para que você vai usar o imóvel?', campos: ['uso'] },
+    { chave: 'imovel', titulo: 'O imóvel', pergunta: 'Conte sobre o aluguel', campos: ['uso'] },
     { chave: 'quem', titulo: 'Quem vai alugar', pergunta: 'Quem vai assinar o contrato?', campos: ['tipo'] },
     {
       chave: 'dados',

@@ -242,12 +242,12 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
     imovel: () => (
       <div className={estilos.corpo}>
         {!unidade && (
-          <Campo rotulo="Qual imóvel te interessa?" valor={rascunho.uso.imovelDesejado} aoMudar={(v) => mudar('uso', { ...rascunho.uso, imovelDesejado: v })} opcional ajuda="imovelDesejado" maximo={250} />
+          <Campo rotulo="Qual imóvel te interessa?" valor={rascunho.uso.imovelDesejado} aoMudar={(v) => mudar('uso', { ...rascunho.uso, imovelDesejado: v })} opcional ajuda="imovelDesejado" exemplo="Ex.: Sala 12 do Ana Diná, ou uma loja perto da Cohama" maximo={250} />
         )}
-        <Campo rotulo="Para que vai usar o imóvel?" valor={rascunho.uso.finalidade} aoMudar={(v) => mudar('uso', { ...rascunho.uso, finalidade: v })} ajuda="finalidade" erro={erros['uso.finalidade']} maximo={250} />
+        <Campo rotulo="O que vai funcionar no imóvel" valor={rascunho.uso.finalidade} aoMudar={(v) => mudar('uso', { ...rascunho.uso, finalidade: v })} exemplo="Ex.: loja de roupas, consultório, moradia da família" erro={erros['uso.finalidade']} maximo={250} />
         <div className={estilos.grade}>
-          <Campo rotulo="Quando quer entrar?" valor={rascunho.uso.entradaDesejada} aoMudar={(v) => mudar('uso', { ...rascunho.uso, entradaDesejada: v })} tipo="date" opcional ajuda="entradaDesejada" erro={erros['uso.entradaDesejada']} />
-          <Campo rotulo="Por quantos meses?" valor={rascunho.uso.prazoMeses} aoMudar={(v) => mudar('uso', { ...rascunho.uso, prazoMeses: v.replace(/\D/g, '').slice(0, 3) })} modo="numeric" opcional ajuda="prazoMeses" erro={erros['uso.prazoMeses']} maximo={3} />
+          <Campo rotulo="Quando quer entrar?" valor={rascunho.uso.entradaDesejada} aoMudar={(v) => mudar('uso', { ...rascunho.uso, entradaDesejada: v })} tipo="date" opcional erro={erros['uso.entradaDesejada']} />
+          <Campo rotulo="Por quantos meses?" valor={rascunho.uso.prazoMeses} aoMudar={(v) => mudar('uso', { ...rascunho.uso, prazoMeses: v.replace(/\D/g, '').slice(0, 3) })} modo="numeric" opcional exemplo="Ex.: 30" erro={erros['uso.prazoMeses']} maximo={3} />
         </div>
       </div>
     ),
@@ -271,8 +271,8 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
       rascunho.tipo === 'juridica' ? (
         <div className={estilos.corpo}>
           <div className={estilos.grade}>
-            <Campo rotulo="Razão social" valor={rascunho.empresa.razaoSocial} aoMudar={(v) => mudar('empresa', { ...rascunho.empresa, razaoSocial: v })} ajuda="razaoSocial" erro={erros['empresa.razaoSocial']} inteiro maximo={160} />
-            <Campo rotulo="CNPJ" valor={rascunho.empresa.cnpj} aoMudar={(v) => mudar('empresa', { ...rascunho.empresa, cnpj: v })} mascara={mascaraCnpj} modo="numeric" maximo={18} ajuda="cnpj" erro={erros['empresa.cnpj']} />
+            <Campo rotulo="Razão social" valor={rascunho.empresa.razaoSocial} aoMudar={(v) => mudar('empresa', { ...rascunho.empresa, razaoSocial: v })} ajuda="razaoSocial" exemplo="Ex.: Maria Silva Comércio de Roupas Ltda" erro={erros['empresa.razaoSocial']} inteiro maximo={160} />
+            <Campo rotulo="CNPJ" valor={rascunho.empresa.cnpj} aoMudar={(v) => mudar('empresa', { ...rascunho.empresa, cnpj: v })} mascara={mascaraCnpj} modo="numeric" maximo={18} erro={erros['empresa.cnpj']} />
             <Campo rotulo="Telefone da empresa" valor={rascunho.empresa.telefone} aoMudar={(v) => mudar('empresa', { ...rascunho.empresa, telefone: v })} mascara={mascaraTelefone} tipo="tel" modo="tel" maximo={16} erro={erros['empresa.telefone']} />
             <Campo rotulo="E-mail da empresa" valor={rascunho.empresa.email} aoMudar={(v) => mudar('empresa', { ...rascunho.empresa, email: v })} tipo="email" modo="email" maximo={160} erro={erros['empresa.email']} inteiro />
           </div>
@@ -332,7 +332,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
             )}
             <Secao titulo="Trabalho e renda do fiador">
               <BlocoTrabalho valor={rascunho.fiador.trabalho} aoMudar={(trabalho) => mudar('fiador', { ...rascunho.fiador, trabalho })} prefixo="fiador.trabalho" erros={erros} />
-              <Campo rotulo="Imóvel ou veículo quitado" valor={rascunho.fiador.patrimonio} aoMudar={(patrimonio) => mudar('fiador', { ...rascunho.fiador, patrimonio })} multilinha opcional ajuda="patrimonio" maximo={250} />
+              <Campo rotulo="Imóvel ou veículo quitado" valor={rascunho.fiador.patrimonio} aoMudar={(patrimonio) => mudar('fiador', { ...rascunho.fiador, patrimonio })} multilinha opcional exemplo="Ex.: casa na Rua das Flores, 120, Cohama; ou carro placa ABC1D23" maximo={250} />
             </Secao>
           </>
         )}
@@ -340,8 +340,8 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
     ),
     referencias: () => (
       <div className={estilos.corpo}>
-        <Campo rotulo="Bancos e agências" valor={rascunho.referencias.bancos} aoMudar={(v) => mudar('referencias', { ...rascunho.referencias, bancos: v })} multilinha opcional ajuda="bancos" maximo={1000} />
-        <Campo rotulo="Aluguéis anteriores" valor={rascunho.referencias.locacoes} aoMudar={(v) => mudar('referencias', { ...rascunho.referencias, locacoes: v })} multilinha opcional ajuda="locacoes" maximo={1000} />
+        <Campo rotulo="Bancos e agências" valor={rascunho.referencias.bancos} aoMudar={(v) => mudar('referencias', { ...rascunho.referencias, bancos: v })} multilinha opcional exemplo="Ex.: Caixa, agência 0029; Banco do Brasil, agência 3846" maximo={1000} />
+        <Campo rotulo="Aluguéis anteriores" valor={rascunho.referencias.locacoes} aoMudar={(v) => mudar('referencias', { ...rascunho.referencias, locacoes: v })} multilinha opcional exemplo="Ex.: sala no Centro, com a Imobiliária Lar, de 2021 a 2024" maximo={1000} />
       </div>
     ),
     documentos: () => (

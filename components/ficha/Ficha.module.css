@@ -129,6 +129,10 @@
   padding: 12px 14px;
   min-height: 50px;
 }
+.entrada::placeholder {
+  color: rgba(7, 14, 49, 0.6);
+  opacity: 1;
+}
 .entrada:focus {
   outline: none;
   border-color: var(--pure);

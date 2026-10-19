@@ -46,6 +46,8 @@ interface PropsCampo {
   multilinha?: boolean
   inteiro?: boolean
   dica?: string
+  /** Exemplo de resposta dentro do campo, que some ao digitar: nunca instrução. */
+  exemplo?: string
 }
 
 export function Campo(p: PropsCampo) {
@@ -62,6 +64,7 @@ export function Campo(p: PropsCampo) {
     'aria-describedby': descritores,
     autoComplete: p.autocompletar ?? 'off',
     maxLength: p.maximo ?? 120,
+    placeholder: p.exemplo,
   }
   return (
     <div className={`${estilos.campo} ${p.inteiro ? estilos.inteiro : ''}`}>
@@ -201,11 +204,11 @@ export function BlocoEndereco({ valor, aoMudar, prefixo, erros }: { valor: Ender
   const e = (c: string) => erros[`${prefixo}.${c}`]
   return (
     <div className={estilos.grade}>
-      <Campo rotulo="CEP" valor={valor.cep} aoMudar={mudarCep} mascara={mascaraCep} modo="numeric" maximo={9} ajuda="cep" erro={e('cep')} autocompletar="postal-code" />
+      <Campo rotulo="CEP" valor={valor.cep} aoMudar={mudarCep} mascara={mascaraCep} modo="numeric" maximo={9} erro={e('cep')} autocompletar="postal-code" />
       <div />
       <Campo rotulo="Rua / avenida" valor={valor.logradouro} aoMudar={mudar('logradouro')} erro={e('logradouro')} inteiro maximo={250} autocompletar="address-line1" />
       <Campo rotulo="Número" valor={valor.numero} aoMudar={mudar('numero')} erro={e('numero')} maximo={20} dica="Sem número? Escreva S/N." />
-      <Campo rotulo="Complemento" valor={valor.complemento} aoMudar={mudar('complemento')} opcional autocompletar="address-line2" />
+      <Campo rotulo="Complemento" valor={valor.complemento} aoMudar={mudar('complemento')} opcional exemplo="Ex.: apto 302, bloco B" autocompletar="address-line2" />
       <Campo rotulo="Bairro" valor={valor.bairro} aoMudar={mudar('bairro')} erro={e('bairro')} />
       <Campo rotulo="Cidade" valor={valor.cidade} aoMudar={mudar('cidade')} erro={e('cidade')} autocompletar="address-level2" />
       <Lista rotulo="Estado" valor={valor.uf} aoMudar={mudar('uf')} opcoes={UFS_OPCOES} erro={e('uf')} />
@@ -236,16 +239,16 @@ export function BlocoPessoa({
     <div className={estilos.corpo}>
       <div className={estilos.grade}>
         <Campo rotulo="Nome completo" valor={valor.nome} aoMudar={mudar('nome')} erro={e('nome')} inteiro autocompletar="name" maximo={120} />
-        <Campo rotulo="CPF" valor={valor.cpf} aoMudar={mudar('cpf')} mascara={mascaraCpf} modo="numeric" maximo={14} ajuda="cpf" erro={e('cpf')} />
-        <Campo rotulo="Data de nascimento" valor={valor.nascimento} aoMudar={mudar('nascimento')} tipo="date" ajuda="nascimento" erro={e('nascimento')} autocompletar="bday" />
-        <Campo rotulo="RG" valor={valor.rg} aoMudar={mudar('rg')} maximo={30} ajuda="rg" erro={e('rg')} />
-        <Campo rotulo="Órgão que emitiu o RG" valor={valor.rgOrgao} aoMudar={mudar('rgOrgao')} maximo={30} ajuda="rgOrgao" erro={e('rgOrgao')} />
+        <Campo rotulo="CPF" valor={valor.cpf} aoMudar={mudar('cpf')} mascara={mascaraCpf} modo="numeric" maximo={14} erro={e('cpf')} />
+        <Campo rotulo="Data de nascimento" valor={valor.nascimento} aoMudar={mudar('nascimento')} tipo="date" erro={e('nascimento')} autocompletar="bday" />
+        <Campo rotulo="RG" valor={valor.rg} aoMudar={mudar('rg')} maximo={30} erro={e('rg')} />
+        <Campo rotulo="Órgão que emitiu o RG" valor={valor.rgOrgao} aoMudar={mudar('rgOrgao')} maximo={30} ajuda="rgOrgao" exemplo="Ex.: SSP/MA" erro={e('rgOrgao')} />
         <Lista rotulo="Estado civil" valor={valor.estadoCivil} aoMudar={mudar('estadoCivil')} opcoes={ESTADOS} ajuda="estadoCivil" erro={e('estadoCivil')} />
-        <Campo rotulo="Nacionalidade" valor={valor.nacionalidade} aoMudar={mudar('nacionalidade')} maximo={60} ajuda="nacionalidade" erro={e('nacionalidade')} />
-        <Campo rotulo="Profissão" valor={valor.profissao} aoMudar={mudar('profissao')} ajuda="profissao" erro={e('profissao')} />
+        <Campo rotulo="Nacionalidade" valor={valor.nacionalidade} aoMudar={mudar('nacionalidade')} maximo={60} exemplo="Ex.: brasileira" erro={e('nacionalidade')} />
+        <Campo rotulo="Profissão" valor={valor.profissao} aoMudar={mudar('profissao')} exemplo="Ex.: comerciante, enfermeira" erro={e('profissao')} />
         {comNaturalidade && <Campo rotulo="Cidade onde nasceu" valor={valor.naturalidade} aoMudar={mudar('naturalidade')} opcional />}
-        <Campo rotulo="Celular (WhatsApp)" valor={valor.celular} aoMudar={mudar('celular')} mascara={mascaraTelefone} tipo="tel" modo="tel" maximo={16} ajuda="celular" erro={e('celular')} opcional={contatoOpcional} autocompletar="tel" />
-        <Campo rotulo="E-mail" valor={valor.email} aoMudar={mudar('email')} tipo="email" modo="email" maximo={160} ajuda="email" erro={e('email')} opcional={contatoOpcional} autocompletar="email" />
+        <Campo rotulo="Celular (WhatsApp)" valor={valor.celular} aoMudar={mudar('celular')} mascara={mascaraTelefone} tipo="tel" modo="tel" maximo={16} erro={e('celular')} opcional={contatoOpcional} autocompletar="tel" />
+        <Campo rotulo="E-mail" valor={valor.email} aoMudar={mudar('email')} tipo="email" modo="email" maximo={160} exemplo="Ex.: maria@gmail.com" erro={e('email')} opcional={contatoOpcional} autocompletar="email" />
       </div>
       <Secao titulo="Endereço onde mora">
         <BlocoEndereco valor={valor.endereco} aoMudar={(endereco) => aoMudar({ ...valor, endereco })} prefixo={`${prefixo}.endereco`} erros={erros} />
@@ -260,10 +263,10 @@ export function BlocoConjuge({ valor, aoMudar, prefixo, erros }: { valor: Conjug
   return (
     <div className={estilos.grade}>
       <Campo rotulo="Nome completo" valor={valor.nome} aoMudar={mudar('nome')} erro={e('nome')} inteiro />
-      <Campo rotulo="CPF" valor={valor.cpf} aoMudar={mudar('cpf')} mascara={mascaraCpf} modo="numeric" maximo={14} ajuda="cpf" erro={e('cpf')} />
+      <Campo rotulo="CPF" valor={valor.cpf} aoMudar={mudar('cpf')} mascara={mascaraCpf} modo="numeric" maximo={14} erro={e('cpf')} />
       <Campo rotulo="Data de nascimento" valor={valor.nascimento} aoMudar={mudar('nascimento')} tipo="date" opcional erro={e('nascimento')} />
-      <Campo rotulo="RG" valor={valor.rg} aoMudar={mudar('rg')} maximo={30} ajuda="rg" erro={e('rg')} />
-      <Campo rotulo="Órgão que emitiu o RG" valor={valor.rgOrgao} aoMudar={mudar('rgOrgao')} maximo={30} ajuda="rgOrgao" opcional />
+      <Campo rotulo="RG" valor={valor.rg} aoMudar={mudar('rg')} maximo={30} erro={e('rg')} />
+      <Campo rotulo="Órgão que emitiu o RG" valor={valor.rgOrgao} aoMudar={mudar('rgOrgao')} maximo={30} ajuda="rgOrgao" exemplo="Ex.: SSP/MA" opcional />
       <Campo rotulo="Nacionalidade" valor={valor.nacionalidade} aoMudar={mudar('nacionalidade')} maximo={60} erro={e('nacionalidade')} />
       <Campo rotulo="Profissão" valor={valor.profissao} aoMudar={mudar('profissao')} erro={e('profissao')} />
     </div>
@@ -275,9 +278,9 @@ export function BlocoTrabalho({ valor, aoMudar, prefixo, erros, opcional }: { va
   const e = (c: string) => erros[`${prefixo}.${c}`]
   return (
     <div className={estilos.grade}>
-      <Campo rotulo="Onde trabalha" valor={valor.empresa} aoMudar={mudar('empresa')} ajuda="empresaTrabalho" erro={e('empresa')} opcional={opcional} />
-      <Campo rotulo="Função / cargo" valor={valor.funcao} aoMudar={mudar('funcao')} erro={e('funcao')} opcional={opcional} />
-      <Campo rotulo="Renda por mês (R$)" valor={valor.renda} aoMudar={mudar('renda')} mascara={mascaraDinheiro} modo="decimal" maximo={16} ajuda="renda" erro={e('renda')} opcional={opcional} dica="Ex.: 3.500,00" />
+      <Campo rotulo="Onde trabalha" valor={valor.empresa} aoMudar={mudar('empresa')} exemplo="Ex.: Supermercado Mateus, ou autônomo" erro={e('empresa')} opcional={opcional} />
+      <Campo rotulo="Função / cargo" valor={valor.funcao} aoMudar={mudar('funcao')} exemplo="Ex.: vendedora, gerente" erro={e('funcao')} opcional={opcional} />
+      <Campo rotulo="Renda por mês (R$)" valor={valor.renda} aoMudar={mudar('renda')} mascara={mascaraDinheiro} modo="decimal" maximo={16} ajuda="renda" erro={e('renda')} opcional={opcional} exemplo="Ex.: 3.500,00" />
       <Campo rotulo="Telefone do trabalho" valor={valor.telefone} aoMudar={mudar('telefone')} mascara={mascaraTelefone} tipo="tel" modo="tel" maximo={16} erro={e('telefone')} opcional />
       <Campo rotulo="Endereço do trabalho" valor={valor.endereco} aoMudar={mudar('endereco')} maximo={250} opcional inteiro />
     </div>

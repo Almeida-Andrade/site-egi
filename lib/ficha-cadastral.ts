@@ -203,10 +203,60 @@ export function dataValida(valor: string): boolean {
   return data.getUTCFullYear() === a && data.getUTCMonth() === m - 1 && data.getUTCDate() === d && a >= 1900;
 }
 
+/** A data ISO `anos` antes (negativo: depois) de `hoje`. 29/02 de ano não bissexto vira 28/02 na comparação de string. */
+function anosAntes(hoje: string, anos: number): string {
+  return `${String(Number(hoje.slice(0, 4)) - anos).padStart(4, "0")}${hoje.slice(4)}`;
+}
+
 /** Fez 18 anos até `hoje` (ISO de São Luís). Comparar strings ISO evita o fuso do servidor. */
 export function maiorDeIdade(nascimento: string, hoje: string): boolean {
-  const [a, resto] = [Number(hoje.slice(0, 4)) - 18, hoje.slice(4)];
-  return nascimento <= `${String(a).padStart(4, "0")}${resto}`;
+  return nascimento <= anosAntes(hoje, 18);
+}
+
+/** Nascimento possível: não depois de hoje e não mais de 120 anos atrás. */
+export function nascimentoPossivel(nascimento: string, hoje: string): boolean {
+  return nascimento <= hoje && nascimento >= anosAntes(hoje, 120);
+}
+
+/** A entrada no imóvel: de hoje a um ano à frente. */
+export function entradaPossivel(data: string, hoje: string): boolean {
+  return data >= hoje && data <= anosAntes(hoje, -1);
+}
+
+/** Todos os dígitos iguais ("00000000", "99999999999"): número inventado. */
+const tudoIgual = (d: string): boolean => /^(\d)\1+$/.test(d);
+
+/**
+ * RG: o número da carteira, com ou sem pontos; o "X" do dígito vale. De 5 a 14 caracteres (a carteira nova usa o
+ * próprio CPF, 11 dígitos) e nunca um número repetido.
+ */
+export function rgValido(valor: string): boolean {
+  const v = valor.replace(/[\s.\-/]/g, "").toUpperCase();
+  return /^\d{4,13}[\dX]$/.test(v) && !tudoIgual(v.replace(/X$/, ""));
+}
+
+/** O órgão que emitiu o RG: letras, com barra, hífen ou espaço (SSP/MA, DETRAN-MA, PC MA). */
+export function orgaoDoRgValido(valor: string): boolean {
+  return /^[A-Za-zÀ-ÿ][A-Za-zÀ-ÿ /.\-]{1,29}$/.test(valor) && (valor.match(/[A-Za-zÀ-ÿ]/g) ?? []).length >= 2;
+}
+
+/** Nome completo: ao menos nome e sobrenome, só letras (com acento, apóstrofo, hífen e ponto). */
+export function nomeCompletoValido(valor: string): boolean {
+  const partes = valor.split(" ").filter(Boolean);
+  return partes.length >= 2 && partes.every((p) => /^[A-Za-zÀ-ÿ'’.\-]+$/.test(p)) && partes.some((p) => p.replace(/[^A-Za-zÀ-ÿ]/g, "").length >= 2);
+}
+
+/** Texto que precisa de palavra (cidade, profissão, razão social): ao menos duas letras. */
+export const temLetras = (valor: string): boolean => (valor.match(/[A-Za-zÀ-ÿ]/g) ?? []).length >= 2;
+
+/** Número do endereço: tem algarismo (120, Qd 5 Lt 3, KM 7) ou é S/N. */
+export const numeroDeEnderecoValido = (valor: string): boolean => /\d/.test(valor) || /^s\s*\/?\s*n\.?$/i.test(valor);
+
+/** Celular: DDD + 9 + oito dígitos, sem o número todo repetido. */
+export function celularValido(valor: string): boolean {
+  let d = soDigitos(valor);
+  if (d.length === 13 && d.startsWith("55")) d = d.slice(2);
+  return d.length === 11 && /^[1-9]{2}9/.test(d) && !tudoIgual(d.slice(2));
 }
 
 // ---------------------------------------------------------------- leitura campo a campo
@@ -225,6 +275,12 @@ class Leitor {
 
   erro(campo: string, mensagem: string): void {
     this.erros.push({ campo, mensagem });
+  }
+
+  /** Valor preenchido que não passa na regra vira erro do campo; vazio fica com a obrigatoriedade. */
+  confere(campo: string, valor: string, ok: (v: string) => boolean, mensagem: string): string {
+    if (valor && !ok(valor) && !this.erros.some((e) => e.campo === campo)) this.erro(campo, mensagem);
+    return valor;
   }
 
   texto(o: Objeto, chave: string, campo: string, rotulo: string, obrigatorio: boolean, max = LIMITE_TEXTO): string {
@@ -247,13 +303,15 @@ class Leitor {
     return v.slice(0, 14);
   }
 
-  telefone(o: Objeto, chave: string, campo: string, obrigatorio: boolean): string {
+  telefone(o: Objeto, chave: string, campo: string, obrigatorio: boolean, celular = false): string {
     const v = soDigitos(o[chave]).slice(0, 13);
     if (!v) {
-      if (obrigatorio) this.erro(`${campo}.${chave}`, "Preencha o telefone com DDD.");
+      if (obrigatorio) this.erro(`${campo}.${chave}`, celular ? "Preencha o celular com DDD." : "Preencha o telefone com DDD.");
       return "";
     }
-    if (!telefoneValido(v)) this.erro(`${campo}.${chave}`, "Telefone com DDD, só números (ex.: 98 99999-9999).");
+    if (celular ? !celularValido(v) : !telefoneValido(v) || tudoIgual(v.slice(-8))) {
+      this.erro(`${campo}.${chave}`, celular ? "Celular com DDD e o 9 na frente (ex.: 98 99999-9999)." : "Telefone com DDD, só números (ex.: 98 3232-1234).");
+    }
     return v;
   }
 
@@ -267,14 +325,16 @@ class Leitor {
     return v;
   }
 
-  data(o: Objeto, chave: string, campo: string, rotulo: string, obrigatorio: boolean, adulto = false): string {
+  data(o: Objeto, chave: string, campo: string, rotulo: string, obrigatorio: boolean, regra: "adulto" | "nascimento" | "entrada" | null = null): string {
     const v = limparTexto(o[chave], 10);
     if (!v) {
       if (obrigatorio) this.erro(`${campo}.${chave}`, `Preencha ${rotulo}.`);
       return "";
     }
     if (!dataValida(v)) this.erro(`${campo}.${chave}`, `${rotulo[0].toUpperCase()}${rotulo.slice(1)} não é uma data válida.`);
-    else if (adulto && !maiorDeIdade(v, this.hoje)) this.erro(`${campo}.${chave}`, "Precisa ter 18 anos ou mais.");
+    else if ((regra === "adulto" || regra === "nascimento") && !nascimentoPossivel(v, this.hoje)) this.erro(`${campo}.${chave}`, "Confira a data de nascimento.");
+    else if (regra === "adulto" && !maiorDeIdade(v, this.hoje)) this.erro(`${campo}.${chave}`, "Precisa ter 18 anos ou mais.");
+    else if (regra === "entrada" && !entradaPossivel(v, this.hoje)) this.erro(`${campo}.${chave}`, "A data de entrada vai de hoje a um ano à frente.");
     return v;
   }
 
@@ -285,27 +345,30 @@ class Leitor {
       return null;
     }
     const n = typeof v === "number" ? v : Number.NaN;
-    if (!Number.isFinite(n) || n < 0 || n > 100_000_000) {
+    if (!Number.isFinite(n) || n < 0 || n > 10_000_000) {
       this.erro(`${campo}.${chave}`, `${rotulo[0].toUpperCase()}${rotulo.slice(1)} precisa ser um valor em reais.`);
       return null;
     }
-    if (obrigatorio && n === 0) this.erro(`${campo}.${chave}`, `Preencha ${rotulo}.`);
+    if (n === 0) {
+      if (obrigatorio) this.erro(`${campo}.${chave}`, `Preencha ${rotulo}.`);
+      return null;
+    }
     return Math.round(n * 100) / 100;
   }
 
   endereco(v: unknown, campo: string): EnderecoFicha {
     const o = objeto(v);
     const cep = soDigitos(o.cep).slice(0, 8);
-    if (cep.length !== 8) this.erro(`${campo}.cep`, "O CEP tem 8 números.");
+    if (cep.length !== 8 || tudoIgual(cep)) this.erro(`${campo}.cep`, "O CEP tem 8 números (ex.: 65071-380).");
     const uf = limparTexto(o.uf, 2).toUpperCase();
     if (!(UFS as readonly string[]).includes(uf)) this.erro(`${campo}.uf`, "Escolha o estado.");
     return {
       cep,
       logradouro: this.texto(o, "logradouro", campo, "a rua", true, LIMITE_ENDERECO),
-      numero: this.texto(o, "numero", campo, "o número (ou S/N)", true, 20),
+      numero: this.confere(`${campo}.numero`, this.texto(o, "numero", campo, "o número (ou S/N)", true, 20), numeroDeEnderecoValido, "Escreva o número da casa ou S/N."),
       complemento: this.texto(o, "complemento", campo, "o complemento", false),
-      bairro: this.texto(o, "bairro", campo, "o bairro", true),
-      cidade: this.texto(o, "cidade", campo, "a cidade", true),
+      bairro: this.confere(`${campo}.bairro`, this.texto(o, "bairro", campo, "o bairro", true), temLetras, "Escreva o nome do bairro."),
+      cidade: this.confere(`${campo}.cidade`, this.texto(o, "cidade", campo, "a cidade", true), temLetras, "Escreva o nome da cidade."),
       uf,
     };
   }
@@ -315,17 +378,17 @@ class Leitor {
     const estado = limparTexto(o.estadoCivil, 20);
     if (!(daLista(ESTADOS_CIVIS, estado))) this.erro(`${campo}.estadoCivil`, "Escolha o estado civil.");
     return {
-      nome: this.texto(o, "nome", campo, "o nome completo", true),
+      nome: this.confere(`${campo}.nome`, this.texto(o, "nome", campo, "o nome completo", true), nomeCompletoValido, "Escreva o nome completo, como no documento (nome e sobrenome)."),
       cpf: this.documento(o, "cpf", campo, "cpf", true),
-      rg: this.texto(o, "rg", campo, "o RG", true, 30),
-      rgOrgao: this.texto(o, "rgOrgao", campo, "o órgão que emitiu o RG", true, 30),
-      nascimento: this.data(o, "nascimento", campo, "a data de nascimento", true, true),
+      rg: this.confere(`${campo}.rg`, this.texto(o, "rg", campo, "o RG", true, 30), rgValido, "Confira o número do RG (de 5 a 14 números)."),
+      rgOrgao: this.confere(`${campo}.rgOrgao`, this.texto(o, "rgOrgao", campo, "o órgão que emitiu o RG", true, 30), orgaoDoRgValido, "Escreva o órgão como na carteira (ex.: SSP/MA)."),
+      nascimento: this.data(o, "nascimento", campo, "a data de nascimento", true, "adulto"),
       naturalidade: this.texto(o, "naturalidade", campo, "a cidade onde nasceu", false),
-      nacionalidade: this.texto(o, "nacionalidade", campo, "a nacionalidade", true, 60),
+      nacionalidade: this.confere(`${campo}.nacionalidade`, this.texto(o, "nacionalidade", campo, "a nacionalidade", true, 60), temLetras, "Escreva a nacionalidade (ex.: brasileira)."),
       estadoCivil: (daLista(ESTADOS_CIVIS, estado) ? estado : "solteiro") as EstadoCivil,
-      profissao: this.texto(o, "profissao", campo, "a profissão", true),
+      profissao: this.confere(`${campo}.profissao`, this.texto(o, "profissao", campo, "a profissão", true), temLetras, "Escreva a profissão (ex.: comerciante)."),
       endereco: this.endereco(o.endereco, `${campo}.endereco`),
-      celular: this.telefone(o, "celular", campo, contatoObrigatorio),
+      celular: this.telefone(o, "celular", campo, contatoObrigatorio, true),
       telefone: this.telefone(o, "telefone", campo, false),
       email: this.email(o, "email", campo, contatoObrigatorio),
     };
@@ -334,21 +397,21 @@ class Leitor {
   conjuge(v: unknown, campo: string): ConjugeFicha {
     const o = objeto(v);
     return {
-      nome: this.texto(o, "nome", campo, "o nome do cônjuge", true),
+      nome: this.confere(`${campo}.nome`, this.texto(o, "nome", campo, "o nome do cônjuge", true), nomeCompletoValido, "Escreva o nome completo do cônjuge (nome e sobrenome)."),
       cpf: this.documento(o, "cpf", campo, "cpf", true),
-      rg: this.texto(o, "rg", campo, "o RG do cônjuge", true, 30),
-      rgOrgao: this.texto(o, "rgOrgao", campo, "o órgão que emitiu o RG", false, 30),
-      nascimento: this.data(o, "nascimento", campo, "a data de nascimento", false),
-      nacionalidade: this.texto(o, "nacionalidade", campo, "a nacionalidade do cônjuge", true, 60),
-      profissao: this.texto(o, "profissao", campo, "a profissão do cônjuge", true),
+      rg: this.confere(`${campo}.rg`, this.texto(o, "rg", campo, "o RG do cônjuge", true, 30), rgValido, "Confira o número do RG (de 5 a 14 números)."),
+      rgOrgao: this.confere(`${campo}.rgOrgao`, this.texto(o, "rgOrgao", campo, "o órgão que emitiu o RG", false, 30), orgaoDoRgValido, "Escreva o órgão como na carteira (ex.: SSP/MA)."),
+      nascimento: this.data(o, "nascimento", campo, "a data de nascimento", false, "nascimento"),
+      nacionalidade: this.confere(`${campo}.nacionalidade`, this.texto(o, "nacionalidade", campo, "a nacionalidade do cônjuge", true, 60), temLetras, "Escreva a nacionalidade (ex.: brasileira)."),
+      profissao: this.confere(`${campo}.profissao`, this.texto(o, "profissao", campo, "a profissão do cônjuge", true), temLetras, "Escreva a profissão (ex.: professora)."),
     };
   }
 
   trabalho(v: unknown, campo: string, obrigatorio: boolean): TrabalhoFicha {
     const o = objeto(v);
     return {
-      empresa: this.texto(o, "empresa", campo, "onde trabalha", obrigatorio),
-      funcao: this.texto(o, "funcao", campo, "a função", obrigatorio),
+      empresa: this.confere(`${campo}.empresa`, this.texto(o, "empresa", campo, "onde trabalha", obrigatorio), temLetras, "Escreva o nome da empresa (ou autônomo)."),
+      funcao: this.confere(`${campo}.funcao`, this.texto(o, "funcao", campo, "a função", obrigatorio), temLetras, "Escreva a função (ex.: vendedora)."),
       endereco: this.texto(o, "endereco", campo, "o endereço do trabalho", false, LIMITE_ENDERECO),
       telefone: this.telefone(o, "telefone", campo, false),
       renda: this.dinheiro(o, "renda", campo, "a renda mensal", obrigatorio),
@@ -383,9 +446,9 @@ export function validarFicha(entrada: unknown, hoje: string): ResultadoValidacao
     else l.erro("uso.prazoMeses", "O prazo é em meses, de 1 a 120.");
   }
   const uso = {
-    finalidade: l.texto(usoBruto, "finalidade", "uso", "para que vai usar o imóvel", true, LIMITE_ENDERECO),
+    finalidade: l.confere("uso.finalidade", l.texto(usoBruto, "finalidade", "uso", "o que vai funcionar no imóvel", true, LIMITE_ENDERECO), temLetras, "Conte o que vai funcionar no imóvel (ex.: loja de roupas)."),
     imovelDesejado: l.texto(usoBruto, "imovelDesejado", "uso", "o imóvel que procura", false, LIMITE_ENDERECO),
-    entradaDesejada: l.data(usoBruto, "entradaDesejada", "uso", "a data de entrada", false),
+    entradaDesejada: l.data(usoBruto, "entradaDesejada", "uso", "a data de entrada", false, "entrada"),
     prazoMeses,
   };
 
@@ -405,7 +468,7 @@ export function validarFicha(entrada: unknown, hoje: string): ResultadoValidacao
   } else if (tipo === "juridica") {
     const eb = objeto(e.empresa);
     empresa = {
-      razaoSocial: l.texto(eb, "razaoSocial", "empresa", "a razão social", true, 160),
+      razaoSocial: l.confere("empresa.razaoSocial", l.texto(eb, "razaoSocial", "empresa", "a razão social", true, 160), temLetras, "Escreva a razão social, como no cartão do CNPJ."),
       cnpj: l.documento(eb, "cnpj", "empresa", "cnpj", true),
       endereco: l.endereco(eb.endereco, "empresa.endereco"),
       telefone: l.telefone(eb, "telefone", "empresa", true),
@@ -433,6 +496,21 @@ export function validarFicha(entrada: unknown, hoje: string): ResultadoValidacao
       trabalho: l.trabalho(f.trabalho, "fiador.trabalho", true),
       patrimonio: limparTextoLivre(f.patrimonio, LIMITE_ENDERECO),
     };
+  }
+
+  // A mesma pessoa não pode ser locatário, cônjuge e fiador ao mesmo tempo: CPF repetido é erro de digitação.
+  const vistos = new Set<string>();
+  const cpfs: [string, string | undefined][] = [
+    ["pessoa.cpf", pessoa?.cpf],
+    ["conjuge.cpf", conjuge?.cpf],
+    ...socios.map((s, i): [string, string] => [`socios.${i}.pessoa.cpf`, s.pessoa.cpf]),
+    ["fiador.pessoa.cpf", fiador?.pessoa.cpf],
+    ["fiador.conjuge.cpf", fiador?.conjuge?.cpf],
+  ];
+  for (const [campo, cpf] of cpfs) {
+    if (!cpf || cpf.length !== 11) continue;
+    if (vistos.has(cpf)) l.erro(campo, "Este CPF já está em outra pessoa da ficha. Confira.");
+    else vistos.add(cpf);
   }
 
   const r = objeto(e.referencias);

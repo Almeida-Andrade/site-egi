@@ -5,6 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } fro
 import { ESTADOS_CIVIS, GARANTIAS, documentosExigidos, validarArquivos, validarFicha, type DocumentoExigido, type GarantiaFicha } from '@/lib/ficha-cadastral'
 import { AJUDAS } from '@/lib/ficha/ajudas'
 import { enderecoDoImovel } from '@/lib/ficha/endereco-do-imovel'
+import { anosDepois, hojeEmSaoLuis } from '@/lib/ficha/datas'
 import { abrirFicha, enviarFicha, type Abertura, type ArquivoDaFicha } from '@/lib/ficha/envio'
 import {
   comPreenchido,
@@ -26,7 +27,6 @@ import estilos from './Ficha.module.css'
 
 type Alvo = { token: string } | { unidadeId: string }
 
-const hojeEmSaoLuis = () => new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Fortaleza' }).format(new Date())
 
 function lerRascunho(chave: string): Rascunho | null {
   try {
@@ -248,7 +248,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
         )}
         <Campo rotulo="O que vai funcionar no imóvel" valor={rascunho.uso.finalidade} aoMudar={(v) => mudar('uso', { ...rascunho.uso, finalidade: v })} exemplo="Ex.: loja de roupas, consultório, moradia da família" erro={erros['uso.finalidade']} maximo={250} />
         <div className={estilos.grade}>
-          <Campo rotulo="Quando quer entrar?" valor={rascunho.uso.entradaDesejada} aoMudar={(v) => mudar('uso', { ...rascunho.uso, entradaDesejada: v })} tipo="date" opcional erro={erros['uso.entradaDesejada']} />
+          <Campo rotulo="Quando quer entrar?" valor={rascunho.uso.entradaDesejada} aoMudar={(v) => mudar('uso', { ...rascunho.uso, entradaDesejada: v })} tipo="date" opcional dataMin={hoje} dataMax={anosDepois(hoje, 1)} erro={erros['uso.entradaDesejada']} />
           <Campo rotulo="Por quantos meses?" valor={rascunho.uso.prazoMeses} aoMudar={(v) => mudar('uso', { ...rascunho.uso, prazoMeses: v.replace(/\D/g, '').slice(0, 3) })} modo="numeric" opcional exemplo="Ex.: 30" erro={erros['uso.prazoMeses']} maximo={3} />
         </div>
       </div>

@@ -7,6 +7,8 @@ const OMNIS = ['../omnis/lib/ficha-cadastral.ts', '../omnis-extra/lib/ficha-cada
 
 describe('regra da ficha', () => {
   it.skipIf(!OMNIS)('lib/ficha-cadastral.ts é igual à do OMNIS', () => {
-    expect(readFileSync('lib/ficha-cadastral.ts', 'utf8')).toBe(readFileSync(OMNIS!, 'utf8'))
+    // A cópia de trabalho do git pode vir com CRLF de um lado e LF do outro: compara o texto.
+    const texto = (c: string) => readFileSync(c, 'utf8').replace(/\r\n/g, '\n')
+    expect(texto('lib/ficha-cadastral.ts')).toBe(texto(OMNIS!))
   })
 })

@@ -43,6 +43,16 @@ O painel exige sessão do Supabase Auth. Contas são criadas à mão — não h�
 
 O middleware protege `/admin`, e `robots.txt` o desindexa.
 
+## Ficha cadastral
+
+`/ficha?unidade=<id>` (botão "Quero alugar" nas unidades disponíveis) e `/ficha/<token>` (link personalizado que a equipe gera no OMNIS) abrem o formulário em etapas da locação.
+
+- **O site não toca tabela nenhuma da ficha.** O navegador fala só com a Edge Function `ficha-cadastral` do OMNIS (anon key), que confere o Turnstile, o link e cada campo, grava com a service role e devolve uma URL de envio por arquivo, no bucket privado `fichas`.
+- `lib/ficha-cadastral.ts` é **cópia byte a byte** do arquivo de mesmo nome no OMNIS (a mesma regra valida aqui e lá); `tests/ficha-espelho.test.ts` compara quando o clone do OMNIS está ao lado. Mudou lá, copiar aqui.
+- As páginas da ficha têm CSP própria com nonce (`middleware.ts`, `lib/ficha/seguranca.ts`), `noindex`, sem cache e sem referrer. Os scripts embutidos do layout moram em `lib/scripts-iniciais.ts` e entram na CSP pelo hash: script novo embutido no layout entra lá, senão a ficha o bloqueia.
+- O preenchido fica só no aparelho (`localStorage`) até o envio; nada vai ao servidor antes do "Enviar ficha".
+- Variável na Vercel: `NEXT_PUBLIC_TURNSTILE_FICHA_SITE_KEY` (a chave pública do widget do Turnstile). No `npm run dev`, `.env.development.local` usa a chave de teste da Cloudflare, que sempre passa.
+
 ## Banco
 
 Migrações em `supabase/migrations/`, aplicadas em ordem.

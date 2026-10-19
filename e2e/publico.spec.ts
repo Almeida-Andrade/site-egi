@@ -41,7 +41,8 @@ test('ficha lista unidades e a aba de disponíveis reduz a tabela', async ({ pag
 test('empreendimento lotado não oferece contato por unidade', async ({ page }) => {
   await page.goto('/empreendimentos/centro-comercial-empresarial-galeria-a')
   await expect(page.getByRole('button', { name: /^Disponíveis\s*0/ })).toBeVisible()
-  await expect(page.getByText('Tenho interesse')).toHaveCount(0)
+  await expect(page.getByText('Tenho dúvidas')).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Quero alugar' })).toHaveCount(0)
   await expect(page.getByRole('link', { name: 'Avise-me quando vagar' })).toBeVisible()
 })
 

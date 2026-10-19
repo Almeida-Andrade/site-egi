@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 import type { StatusUnidade, Unidade } from '@/lib/tipos'
 import { ChipStatus } from './ChipStatus'
@@ -80,14 +81,19 @@ export function TabelaUnidades({
               </td>
               <td className={estilos.acaoCelula}>
                 {u.status === 'disponivel' && (
-                  <a
-                    className={estilos.acao}
-                    href={montarLinkWhatsApp({ empreendimento, unidade: u.identificacao })}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Tenho interesse →
-                  </a>
+                  <span className={estilos.acoes}>
+                    <Link className={estilos.acaoFicha} href={`/ficha?unidade=${u.id}`}>
+                      Quero alugar
+                    </Link>
+                    <a
+                      className={estilos.acao}
+                      href={montarLinkWhatsApp({ empreendimento, unidade: u.identificacao })}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Tenho dúvidas →
+                    </a>
+                  </span>
                 )}
               </td>
             </tr>

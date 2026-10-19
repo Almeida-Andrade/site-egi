@@ -5,6 +5,7 @@ import { ESTADOS_CIVIS, UFS } from '@/lib/ficha-cadastral'
 import { AJUDAS, type ChaveAjuda } from '@/lib/ficha/ajudas'
 import type { ConjugeR, EnderecoR, PessoaR, TrabalhoR } from '@/lib/ficha/etapas'
 import { mascaraCep, mascaraCpf, mascaraDinheiro, mascaraTelefone } from '@/lib/ficha/mascaras'
+import { anosDepois, hojeEmSaoLuis } from '@/lib/ficha/datas'
 import estilos from './Ficha.module.css'
 
 export type Erros = Record<string, string>
@@ -48,6 +49,9 @@ interface PropsCampo {
   dica?: string
   /** Exemplo de resposta dentro do campo, que some ao digitar: nunca instrução. */
   exemplo?: string
+  /** Calendário: o primeiro e o último dia que dá para escolher (AAAA-MM-DD). */
+  dataMin?: string
+  dataMax?: string
 }
 
 /** O contador aparece perto do limite (75%), como o do GOV.UK: antes disso é ruído. */
@@ -104,6 +108,8 @@ export function Campo(p: PropsCampo) {
           {...comum}
           type={p.tipo ?? 'text'}
           inputMode={p.modo}
+          min={p.dataMin}
+          max={p.dataMax}
           onChange={(e) => p.aoMudar(p.mascara ? p.mascara(e.target.value) : e.target.value)}
         />
       )}
@@ -288,6 +294,7 @@ export function BlocoPessoa({
   enderecoDoImovel?: EnderecoR | null
 }) {
   const auto = (v: string) => (deOutraPessoa ? 'off' : v)
+  const [hoje] = useState(hojeEmSaoLuis)
   const mudar = (campo: keyof PessoaR) => (v: string) => aoMudar({ ...valor, [campo]: v })
   const e = (c: string) => erros[`${prefixo}.${c}`]
   return (
@@ -295,7 +302,7 @@ export function BlocoPessoa({
       <div className={estilos.grade}>
         <Campo rotulo="Nome completo" valor={valor.nome} aoMudar={mudar('nome')} erro={e('nome')} inteiro autocompletar={auto('name')} maximo={120} />
         <Campo rotulo="CPF" valor={valor.cpf} aoMudar={mudar('cpf')} mascara={mascaraCpf} modo="numeric" maximo={14} erro={e('cpf')} />
-        <Campo rotulo="Data de nascimento" valor={valor.nascimento} aoMudar={mudar('nascimento')} tipo="date" erro={e('nascimento')} autocompletar={auto('bday')} />
+        <Campo rotulo="Data de nascimento" valor={valor.nascimento} aoMudar={mudar('nascimento')} tipo="date" dataMin={anosDepois(hoje, -120)} dataMax={anosDepois(hoje, -18)} erro={e('nascimento')} autocompletar={auto('bday')} />
         <Campo rotulo="RG" valor={valor.rg} aoMudar={mudar('rg')} maximo={30} erro={e('rg')} />
         <Campo rotulo="Órgão que emitiu o RG" valor={valor.rgOrgao} aoMudar={mudar('rgOrgao')} maximo={30} ajuda="rgOrgao" exemplo="Ex.: SSP/MA" erro={e('rgOrgao')} />
         <Lista rotulo="Estado civil" valor={valor.estadoCivil} aoMudar={mudar('estadoCivil')} opcoes={ESTADOS} ajuda="estadoCivil" erro={e('estadoCivil')} />
@@ -313,13 +320,14 @@ export function BlocoPessoa({
 }
 
 export function BlocoConjuge({ valor, aoMudar, prefixo, erros }: { valor: ConjugeR; aoMudar: (v: ConjugeR) => void; prefixo: string; erros: Erros }) {
+  const [hoje] = useState(hojeEmSaoLuis)
   const mudar = (campo: keyof ConjugeR) => (v: string) => aoMudar({ ...valor, [campo]: v })
   const e = (c: string) => erros[`${prefixo}.${c}`]
   return (
     <div className={estilos.grade}>
       <Campo rotulo="Nome completo" valor={valor.nome} aoMudar={mudar('nome')} erro={e('nome')} inteiro />
       <Campo rotulo="CPF" valor={valor.cpf} aoMudar={mudar('cpf')} mascara={mascaraCpf} modo="numeric" maximo={14} erro={e('cpf')} />
-      <Campo rotulo="Data de nascimento" valor={valor.nascimento} aoMudar={mudar('nascimento')} tipo="date" opcional erro={e('nascimento')} />
+      <Campo rotulo="Data de nascimento" valor={valor.nascimento} aoMudar={mudar('nascimento')} tipo="date" opcional dataMin={anosDepois(hoje, -120)} dataMax={hoje} erro={e('nascimento')} />
       <Campo rotulo="RG" valor={valor.rg} aoMudar={mudar('rg')} maximo={30} erro={e('rg')} />
       <Campo rotulo="Órgão que emitiu o RG" valor={valor.rgOrgao} aoMudar={mudar('rgOrgao')} maximo={30} ajuda="rgOrgao" exemplo="Ex.: SSP/MA" opcional />
       <Campo rotulo="Nacionalidade" valor={valor.nacionalidade} aoMudar={mudar('nacionalidade')} maximo={60} erro={e('nacionalidade')} />

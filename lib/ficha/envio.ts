@@ -15,6 +15,8 @@ export interface UnidadeDaFicha {
   imovel: string
   slug: string
   tipoImovel: string
+  /** Ausente quando a function ainda é a versão de antes. */
+  endereco?: { rua: string | null; bairro: string | null; cidade: string | null; uf: string | null; cep: string | null }
 }
 
 export interface Preenchido {

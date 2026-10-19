@@ -196,7 +196,23 @@ async function buscarCep(cep: string): Promise<Partial<EnderecoR> | null> {
 const UFS_OPCOES: [string, string][] = UFS.map((u) => [u, u])
 
 /** `deOutraPessoa`: o celular não sugere o endereço do dono do aparelho (empresa, fiador, outro sócio). */
-export function BlocoEndereco({ valor, aoMudar, prefixo, erros, deOutraPessoa }: { valor: EnderecoR; aoMudar: (v: EnderecoR) => void; prefixo: string; erros: Erros; deOutraPessoa?: boolean }) {
+export function BlocoEndereco({
+  valor,
+  aoMudar,
+  prefixo,
+  erros,
+  deOutraPessoa,
+  doImovel,
+}: {
+  valor: EnderecoR
+  aoMudar: (v: EnderecoR) => void
+  prefixo: string
+  erros: Erros
+  deOutraPessoa?: boolean
+  /** O endereço do imóvel que a pessoa vai alugar: oferece "usar o endereço do imóvel". */
+  doImovel?: EnderecoR | null
+}) {
+  const [usouDoImovel, setUsouDoImovel] = useState(false)
   const auto = (v: string) => (deOutraPessoa ? 'off' : v)
   // A busca do CEP volta depois: aplica sobre o que está na tela AGORA, nunca sobre o de quando digitou.
   const atual = useRef({ valor, aoMudar })
@@ -222,6 +238,21 @@ export function BlocoEndereco({ valor, aoMudar, prefixo, erros, deOutraPessoa }:
   const e = (c: string) => erros[`${prefixo}.${c}`]
   return (
     <div className={estilos.grade}>
+      {doImovel && (
+        <div className={`${estilos.inteiro} ${estilos.corpo}`}>
+          <button
+            type="button"
+            className={estilos.botaoSecundario}
+            onClick={() => {
+              aoMudar({ ...doImovel, cep: doImovel.cep || valor.cep })
+              setUsouDoImovel(true)
+            }}
+          >
+            Usar o endereço do imóvel que vou alugar
+          </button>
+          {usouDoImovel && !valor.cep && <p className={estilos.opcional}>Preenchemos com o endereço do imóvel. Confira e digite o CEP.</p>}
+        </div>
+      )}
       <Campo rotulo="CEP" valor={valor.cep} aoMudar={mudarCep} mascara={mascaraCep} modo="numeric" maximo={9} erro={e('cep')} autocompletar={auto('postal-code')} />
       <div />
       <Campo rotulo="Rua / avenida" valor={valor.logradouro} aoMudar={mudar('logradouro')} erro={e('logradouro')} inteiro maximo={250} autocompletar={auto('address-line1')} />
@@ -244,6 +275,7 @@ export function BlocoPessoa({
   contatoOpcional,
   comNaturalidade,
   deOutraPessoa,
+  enderecoDoImovel,
 }: {
   valor: PessoaR
   aoMudar: (v: PessoaR) => void
@@ -253,6 +285,7 @@ export function BlocoPessoa({
   comNaturalidade?: boolean
   /** Fiador ou outro sócio: o celular não sugere nome, telefone e e-mail do dono do aparelho. */
   deOutraPessoa?: boolean
+  enderecoDoImovel?: EnderecoR | null
 }) {
   const auto = (v: string) => (deOutraPessoa ? 'off' : v)
   const mudar = (campo: keyof PessoaR) => (v: string) => aoMudar({ ...valor, [campo]: v })
@@ -273,7 +306,7 @@ export function BlocoPessoa({
         <Campo rotulo="E-mail" valor={valor.email} aoMudar={mudar('email')} tipo="email" modo="email" maximo={160} exemplo="Ex.: maria@gmail.com" erro={e('email')} opcional={contatoOpcional} autocompletar={auto('email')} />
       </div>
       <Secao titulo="Endereço onde mora">
-        <BlocoEndereco valor={valor.endereco} aoMudar={(endereco) => aoMudar({ ...valor, endereco })} prefixo={`${prefixo}.endereco`} erros={erros} deOutraPessoa={deOutraPessoa} />
+        <BlocoEndereco valor={valor.endereco} aoMudar={(endereco) => aoMudar({ ...valor, endereco })} prefixo={`${prefixo}.endereco`} erros={erros} deOutraPessoa={deOutraPessoa} doImovel={enderecoDoImovel} />
       </Secao>
     </div>
   )

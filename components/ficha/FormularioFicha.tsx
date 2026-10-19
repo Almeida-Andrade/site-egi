@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { ESTADOS_CIVIS, GARANTIAS, documentosExigidos, validarArquivos, validarFicha, type DocumentoExigido, type GarantiaFicha } from '@/lib/ficha-cadastral'
 import { AJUDAS } from '@/lib/ficha/ajudas'
+import { enderecoDoImovel } from '@/lib/ficha/endereco-do-imovel'
 import { abrirFicha, enviarFicha, type Abertura, type ArquivoDaFicha } from '@/lib/ficha/envio'
 import {
   comPreenchido,
@@ -232,6 +233,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
   }
 
   const unidade = abertura.unidade
+  const doImovel = enderecoDoImovel(unidade)
   const enviando = envio.situacao === 'enviando'
 
   // ---------------------------------------------------------------- etapas
@@ -277,7 +279,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
             <Campo rotulo="E-mail da empresa" valor={rascunho.empresa.email} aoMudar={(v) => mudar('empresa', { ...rascunho.empresa, email: v })} tipo="email" modo="email" maximo={160} erro={erros['empresa.email']} inteiro />
           </div>
           <Secao titulo="Endereço da empresa">
-            <BlocoEndereco valor={rascunho.empresa.endereco} aoMudar={(endereco) => mudar('empresa', { ...rascunho.empresa, endereco })} prefixo="empresa.endereco" deOutraPessoa erros={erros} />
+            <BlocoEndereco valor={rascunho.empresa.endereco} aoMudar={(endereco) => mudar('empresa', { ...rascunho.empresa, endereco })} prefixo="empresa.endereco" deOutraPessoa doImovel={doImovel} erros={erros} />
           </Secao>
           <Secao titulo="Sócios">
             <TituloComAjuda chave="assina" titulo="Quem assina pela empresa?" />
@@ -310,7 +312,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
           </Secao>
         </div>
       ) : (
-        <BlocoPessoa valor={rascunho.pessoa} aoMudar={(pessoa) => mudar('pessoa', pessoa)} prefixo="pessoa" erros={erros} />
+        <BlocoPessoa valor={rascunho.pessoa} aoMudar={(pessoa) => mudar('pessoa', pessoa)} prefixo="pessoa" erros={erros} enderecoDoImovel={doImovel} />
       ),
     conjuge: () => <BlocoConjuge valor={rascunho.conjuge} aoMudar={(conjuge) => mudar('conjuge', conjuge)} prefixo="conjuge" erros={erros} />,
     trabalho: () => <BlocoTrabalho valor={rascunho.trabalho} aoMudar={(trabalho) => mudar('trabalho', trabalho)} prefixo="trabalho" erros={erros} />,

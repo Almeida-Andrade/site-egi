@@ -277,7 +277,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
             <Campo rotulo="E-mail da empresa" valor={rascunho.empresa.email} aoMudar={(v) => mudar('empresa', { ...rascunho.empresa, email: v })} tipo="email" modo="email" maximo={160} erro={erros['empresa.email']} inteiro />
           </div>
           <Secao titulo="Endereço da empresa">
-            <BlocoEndereco valor={rascunho.empresa.endereco} aoMudar={(endereco) => mudar('empresa', { ...rascunho.empresa, endereco })} prefixo="empresa.endereco" erros={erros} />
+            <BlocoEndereco valor={rascunho.empresa.endereco} aoMudar={(endereco) => mudar('empresa', { ...rascunho.empresa, endereco })} prefixo="empresa.endereco" deOutraPessoa erros={erros} />
           </Secao>
           <Secao titulo="Sócios">
             <TituloComAjuda chave="assina" titulo="Quem assina pela empresa?" />
@@ -296,7 +296,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
                   <input type="radio" name="quem-assina" checked={s.assina} onChange={() => mudar('socios', rascunho.socios.map((x, j) => ({ ...x, assina: j === i })))} />
                   Este sócio assina o contrato
                 </label>
-                <BlocoPessoa valor={s.pessoa} aoMudar={(pessoa) => mudar('socios', rascunho.socios.map((x, j) => (j === i ? { ...x, pessoa } : x)))} prefixo={`socios.${i}.pessoa`} erros={erros} contatoOpcional={!s.assina} />
+                <BlocoPessoa valor={s.pessoa} aoMudar={(pessoa) => mudar('socios', rascunho.socios.map((x, j) => (j === i ? { ...x, pessoa } : x)))} prefixo={`socios.${i}.pessoa`} erros={erros} contatoOpcional={!s.assina} deOutraPessoa={i > 0} />
                 <Secao titulo="Trabalho e renda (opcional)">
                   <BlocoTrabalho valor={s.trabalho} aoMudar={(trabalho) => mudar('socios', rascunho.socios.map((x, j) => (j === i ? { ...x, trabalho } : x)))} prefixo={`socios.${i}.trabalho`} erros={erros} opcional />
                 </Secao>
@@ -323,7 +323,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
           <>
             <Secao titulo="Dados do fiador">
               <TituloComAjuda chave="fiador" titulo="Quem pode ser fiador" />
-              <BlocoPessoa valor={rascunho.fiador.pessoa} aoMudar={(pessoa) => mudar('fiador', { ...rascunho.fiador, pessoa })} prefixo="fiador.pessoa" erros={erros} comNaturalidade />
+              <BlocoPessoa valor={rascunho.fiador.pessoa} aoMudar={(pessoa) => mudar('fiador', { ...rascunho.fiador, pessoa })} prefixo="fiador.pessoa" erros={erros} deOutraPessoa comNaturalidade />
             </Secao>
             {(rascunho.fiador.pessoa.estadoCivil === 'casado' || rascunho.fiador.pessoa.estadoCivil === 'uniao_estavel') && (
               <Secao titulo="Cônjuge do fiador">

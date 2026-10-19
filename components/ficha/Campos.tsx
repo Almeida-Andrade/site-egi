@@ -50,11 +50,21 @@ interface PropsCampo {
   exemplo?: string
 }
 
+/** O contador aparece perto do limite (75%), como o do GOV.UK: antes disso é ruído. */
+function textoDoContador(usados: number, limite: number): string | null {
+  if (limite < 100 || usados < limite * 0.75) return null
+  const restam = limite - usados
+  return restam > 0 ? `Restam ${restam} ${restam === 1 ? 'caractere' : 'caracteres'}` : `Você chegou ao limite de ${limite} caracteres`
+}
+
 export function Campo(p: PropsCampo) {
   const id = useId()
   const [ajudaAberta, setAjudaAberta] = useState(false)
   const idAjuda = `${id}-ajuda`
   const idErro = `${id}-erro`
+  const limite = p.maximo ?? 120
+  const contador = p.mascara ? null : textoDoContador(p.valor.length, limite)
+  const ehEmail = p.tipo === 'email'
   const descritores = [p.ajuda && ajudaAberta ? idAjuda : '', p.erro ? idErro : ''].filter(Boolean).join(' ') || undefined
   const comum = {
     id,
@@ -65,6 +75,9 @@ export function Campo(p: PropsCampo) {
     autoComplete: p.autocompletar ?? 'off',
     maxLength: p.maximo ?? 120,
     placeholder: p.exemplo,
+    autoCapitalize: ehEmail ? 'none' : undefined,
+    autoCorrect: ehEmail ? 'off' : undefined,
+    spellCheck: ehEmail ? false : undefined,
   }
   return (
     <div className={`${estilos.campo} ${p.inteiro ? estilos.inteiro : ''}`}>
@@ -95,6 +108,9 @@ export function Campo(p: PropsCampo) {
         />
       )}
       {p.dica && !p.erro && <span className={estilos.opcional}>{p.dica}</span>}
+      <span className={estilos.contador} aria-live="polite">
+        {contador}
+      </span>
       {p.erro && (
         <span id={idErro} className={estilos.mensagemErro} role="alert">
           {p.erro}
@@ -179,7 +195,9 @@ async function buscarCep(cep: string): Promise<Partial<EnderecoR> | null> {
 
 const UFS_OPCOES: [string, string][] = UFS.map((u) => [u, u])
 
-export function BlocoEndereco({ valor, aoMudar, prefixo, erros }: { valor: EnderecoR; aoMudar: (v: EnderecoR) => void; prefixo: string; erros: Erros }) {
+/** `deOutraPessoa`: o celular não sugere o endereço do dono do aparelho (empresa, fiador, outro sócio). */
+export function BlocoEndereco({ valor, aoMudar, prefixo, erros, deOutraPessoa }: { valor: EnderecoR; aoMudar: (v: EnderecoR) => void; prefixo: string; erros: Erros; deOutraPessoa?: boolean }) {
+  const auto = (v: string) => (deOutraPessoa ? 'off' : v)
   // A busca do CEP volta depois: aplica sobre o que está na tela AGORA, nunca sobre o de quando digitou.
   const atual = useRef({ valor, aoMudar })
   useEffect(() => {
@@ -204,13 +222,13 @@ export function BlocoEndereco({ valor, aoMudar, prefixo, erros }: { valor: Ender
   const e = (c: string) => erros[`${prefixo}.${c}`]
   return (
     <div className={estilos.grade}>
-      <Campo rotulo="CEP" valor={valor.cep} aoMudar={mudarCep} mascara={mascaraCep} modo="numeric" maximo={9} erro={e('cep')} autocompletar="postal-code" />
+      <Campo rotulo="CEP" valor={valor.cep} aoMudar={mudarCep} mascara={mascaraCep} modo="numeric" maximo={9} erro={e('cep')} autocompletar={auto('postal-code')} />
       <div />
-      <Campo rotulo="Rua / avenida" valor={valor.logradouro} aoMudar={mudar('logradouro')} erro={e('logradouro')} inteiro maximo={250} autocompletar="address-line1" />
+      <Campo rotulo="Rua / avenida" valor={valor.logradouro} aoMudar={mudar('logradouro')} erro={e('logradouro')} inteiro maximo={250} autocompletar={auto('address-line1')} />
       <Campo rotulo="Número" valor={valor.numero} aoMudar={mudar('numero')} erro={e('numero')} maximo={20} dica="Sem número? Escreva S/N." />
-      <Campo rotulo="Complemento" valor={valor.complemento} aoMudar={mudar('complemento')} opcional exemplo="Ex.: apto 302, bloco B" autocompletar="address-line2" />
+      <Campo rotulo="Complemento" valor={valor.complemento} aoMudar={mudar('complemento')} opcional exemplo="Ex.: apto 302, bloco B" autocompletar={auto('address-line2')} />
       <Campo rotulo="Bairro" valor={valor.bairro} aoMudar={mudar('bairro')} erro={e('bairro')} />
-      <Campo rotulo="Cidade" valor={valor.cidade} aoMudar={mudar('cidade')} erro={e('cidade')} autocompletar="address-level2" />
+      <Campo rotulo="Cidade" valor={valor.cidade} aoMudar={mudar('cidade')} erro={e('cidade')} autocompletar={auto('address-level2')} />
       <Lista rotulo="Estado" valor={valor.uf} aoMudar={mudar('uf')} opcoes={UFS_OPCOES} erro={e('uf')} />
     </div>
   )
@@ -225,6 +243,7 @@ export function BlocoPessoa({
   erros,
   contatoOpcional,
   comNaturalidade,
+  deOutraPessoa,
 }: {
   valor: PessoaR
   aoMudar: (v: PessoaR) => void
@@ -232,26 +251,29 @@ export function BlocoPessoa({
   erros: Erros
   contatoOpcional?: boolean
   comNaturalidade?: boolean
+  /** Fiador ou outro sócio: o celular não sugere nome, telefone e e-mail do dono do aparelho. */
+  deOutraPessoa?: boolean
 }) {
+  const auto = (v: string) => (deOutraPessoa ? 'off' : v)
   const mudar = (campo: keyof PessoaR) => (v: string) => aoMudar({ ...valor, [campo]: v })
   const e = (c: string) => erros[`${prefixo}.${c}`]
   return (
     <div className={estilos.corpo}>
       <div className={estilos.grade}>
-        <Campo rotulo="Nome completo" valor={valor.nome} aoMudar={mudar('nome')} erro={e('nome')} inteiro autocompletar="name" maximo={120} />
+        <Campo rotulo="Nome completo" valor={valor.nome} aoMudar={mudar('nome')} erro={e('nome')} inteiro autocompletar={auto('name')} maximo={120} />
         <Campo rotulo="CPF" valor={valor.cpf} aoMudar={mudar('cpf')} mascara={mascaraCpf} modo="numeric" maximo={14} erro={e('cpf')} />
-        <Campo rotulo="Data de nascimento" valor={valor.nascimento} aoMudar={mudar('nascimento')} tipo="date" erro={e('nascimento')} autocompletar="bday" />
+        <Campo rotulo="Data de nascimento" valor={valor.nascimento} aoMudar={mudar('nascimento')} tipo="date" erro={e('nascimento')} autocompletar={auto('bday')} />
         <Campo rotulo="RG" valor={valor.rg} aoMudar={mudar('rg')} maximo={30} erro={e('rg')} />
         <Campo rotulo="Órgão que emitiu o RG" valor={valor.rgOrgao} aoMudar={mudar('rgOrgao')} maximo={30} ajuda="rgOrgao" exemplo="Ex.: SSP/MA" erro={e('rgOrgao')} />
         <Lista rotulo="Estado civil" valor={valor.estadoCivil} aoMudar={mudar('estadoCivil')} opcoes={ESTADOS} ajuda="estadoCivil" erro={e('estadoCivil')} />
         <Campo rotulo="Nacionalidade" valor={valor.nacionalidade} aoMudar={mudar('nacionalidade')} maximo={60} exemplo="Ex.: brasileira" erro={e('nacionalidade')} />
         <Campo rotulo="Profissão" valor={valor.profissao} aoMudar={mudar('profissao')} exemplo="Ex.: comerciante, enfermeira" erro={e('profissao')} />
         {comNaturalidade && <Campo rotulo="Cidade onde nasceu" valor={valor.naturalidade} aoMudar={mudar('naturalidade')} opcional />}
-        <Campo rotulo="Celular (WhatsApp)" valor={valor.celular} aoMudar={mudar('celular')} mascara={mascaraTelefone} tipo="tel" modo="tel" maximo={16} erro={e('celular')} opcional={contatoOpcional} autocompletar="tel" />
-        <Campo rotulo="E-mail" valor={valor.email} aoMudar={mudar('email')} tipo="email" modo="email" maximo={160} exemplo="Ex.: maria@gmail.com" erro={e('email')} opcional={contatoOpcional} autocompletar="email" />
+        <Campo rotulo="Celular (WhatsApp)" valor={valor.celular} aoMudar={mudar('celular')} mascara={mascaraTelefone} tipo="tel" modo="tel" maximo={16} erro={e('celular')} opcional={contatoOpcional} autocompletar={auto('tel')} />
+        <Campo rotulo="E-mail" valor={valor.email} aoMudar={mudar('email')} tipo="email" modo="email" maximo={160} exemplo="Ex.: maria@gmail.com" erro={e('email')} opcional={contatoOpcional} autocompletar={auto('email')} />
       </div>
       <Secao titulo="Endereço onde mora">
-        <BlocoEndereco valor={valor.endereco} aoMudar={(endereco) => aoMudar({ ...valor, endereco })} prefixo={`${prefixo}.endereco`} erros={erros} />
+        <BlocoEndereco valor={valor.endereco} aoMudar={(endereco) => aoMudar({ ...valor, endereco })} prefixo={`${prefixo}.endereco`} erros={erros} deOutraPessoa={deOutraPessoa} />
       </Secao>
     </div>
   )

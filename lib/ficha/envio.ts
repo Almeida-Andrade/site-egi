@@ -27,7 +27,15 @@ export interface Preenchido {
 }
 
 export type Abertura =
-  | { ok: true; enviada: false; unidade: UnidadeDaFicha | null; preenchido: Preenchido | null }
+  | {
+      ok: true
+      enviada: false
+      /** a principal do link */
+      unidade: UnidadeDaFicha | null
+      /** todas as do link, do mesmo imóvel; ausente quando a function ainda é a versão de antes */
+      unidades?: UnidadeDaFicha[]
+      preenchido: Preenchido | null
+    }
   | { ok: true; enviada: true; quando: string }
   | { ok: false; mensagem: string }
 

@@ -20,6 +20,7 @@ import {
   type Rascunho,
 } from '@/lib/ficha/etapas'
 import { mascaraCnpj, mascaraTelefone } from '@/lib/ficha/mascaras'
+import { unidadeExibida } from '@/lib/ficha/unidades'
 import { BlocoConjuge, BlocoEndereco, BlocoPessoa, BlocoTrabalho, Campo, Opcoes, Secao, TituloComAjuda, type Erros } from './Campos'
 import { EtapaDocumentos, type ArquivosPorDocumento } from './Documentos'
 import { Turnstile } from './Turnstile'
@@ -232,7 +233,7 @@ export function FormularioFicha({ alvo }: { alvo: Alvo }) {
     )
   }
 
-  const unidade = abertura.unidade
+  const unidade = unidadeExibida(abertura.unidade, abertura.unidades)
   const doImovel = enderecoDoImovel(unidade)
   const enviando = envio.situacao === 'enviando'
 
